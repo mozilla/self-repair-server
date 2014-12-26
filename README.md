@@ -16,6 +16,13 @@ npm install
 # will need restart if you add new files
 ```
 
+## Test / Explore
+
+1.  build
+2.  open reapir/index.html
+3.  open console mode.
+4.  profit.
+
 
 ## Goals
 

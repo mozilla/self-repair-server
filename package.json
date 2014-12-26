@@ -1,0 +1,15 @@
+{
+  "name": "self-repair-server",
+  "version": "0.0.1",
+  "description": "Server package for self-repair-server.",
+  "main": "",
+  "dependencies": {
+    "webpack": "^1.4.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gregg Lind <glind@mozilla.com>",
+  "license": "MPL 2"
+}
