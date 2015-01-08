@@ -2,6 +2,8 @@
 
 Modeled on UI Tour
 
+![build status](https://travis-ci.org/mozilla/self-repair-server.svg)
+
 ## setup
 
 ```
@@ -56,4 +58,3 @@ Build using webpack
 ## Issues / Bugs
 
 For now, github issues at https://github.com/mozilla/self-repair-server/issues
-
