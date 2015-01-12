@@ -1,0 +1,9 @@
+{
+  "name": "self-repair-server-helper-addon",
+  "title": "self-repair-server-helper-addon",
+  "id": "self-repair-server-helper-addon@glind@mozilla.com",
+  "description": "test that new tour elements work.",
+  "author": "Gregg Lind <glind@mozilla.com>",
+  "license": "MPL 2.0",
+  "version": "0.1.0"
+}

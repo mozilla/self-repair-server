@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tour of Tours</title>
+</head>
+<body>
+  <script src="./uitour.js" type="application/javascript;version=1.7" ></script>
+  <script>
+  var $ = document.querySelector.bind(document);
+  var El = function (elname, string) {
+    var el=document.createElement(elname); el.textContent=string; return el;};
+  if (window.Mozilla && window.Mozilla.UITour) {
+    $("body").appendChild(El('h1',"tour exists.  window.Mozilla.UITour in console."));
+  } else {
+    $("body").appendChild(El('h1',"NO tour :( :( :( :("));
+  }
+
+  </script>
+</body>
+</html>
