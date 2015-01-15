@@ -38,13 +38,13 @@ module.exports = {
     },
     resolve : {
     	// relative to 'entry' above
-        alias: {
+        /*alias: {
             UITour: __dirname + "/thirdparty/uitour.js",
             jquery: "./thirdparty/jquery/jquery.js",
             actions:  __dirname + '/src/actions.js'
             //aplugin: "./aplugin/popper.js",
             //uistuff: "../../ui.js"
-        }
+        }*/
     }
     // unclear how to get split to work, given 'no webpack' errors from cli
     //plugins: [

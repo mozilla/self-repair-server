@@ -14,5 +14,5 @@
 
 let repairList = module.exports = [
   require("./always"),
-  require("./heartbeat-v1-by-user/heartbeat-v1-by-user")
+  require("./heartbeat-v1-by-user/heartbeat-v1-by-user"),
 ];

@@ -11,9 +11,14 @@
 /*global require, exports, log */
 
 "use strict";
-
+let common = require("../common");
 let config = require("./config");
-let actions = require("actions");
+let actions  = common.actions;
+
+/* need to tour observe
+phone home in the callback
+etc.
+*/
 
 let ran30 = function() {
   return false;
@@ -28,7 +33,7 @@ let recordAttempt = function () {
 // showHeartbeat: function(aWindow, aType, aMessage, aFlowId) {
 
 // valid? section
-// validation? section.  Sync?  Blocking?
+// validation? section.  Sync?  Blocking?  who?
 let shouldRun = exports.shouldRun = function (state) {
   if (ran30()) return false;
   let myRng = Math.random() * config.expectedUsers;
@@ -38,7 +43,7 @@ let shouldRun = exports.shouldRun = function (state) {
   }
 };
 
-// run
+// run / do
 let recipe = function (state, callback) {
   actions.showHeartbeat(null, "stars", "Please Rate Firefox", null);
   callback(true);

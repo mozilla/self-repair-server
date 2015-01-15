@@ -12,7 +12,7 @@
 
 "use strict";
 
-let actions = require("actions");
+let actions = require("./common/actions");
 
 // module level vars, state between invocations, etc.
 

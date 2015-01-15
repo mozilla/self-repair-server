@@ -4,6 +4,7 @@
   "description": "Server package for self-repair-server.",
   "main": "",
   "dependencies": {
+    "thirdparty": "file:thirdparty",
     "webpack": "^1.4.13"
   },
   "devDependencies": {},

@@ -8,24 +8,14 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/*global require, exports, log */
+/*global describe, it, require, exports, log */
 
 "use strict";
 
+let { expect } = require("chai");
 
-let log = console.log.bind(console,"repair-logger:");
+let repairs = require("../src/repairs");
 
-/*
-  show heartbeat is complicated here :)
-*/
-
-let actions = {
-  showHeartbeat:  require("./heartbeat").showHeartbeat,
-  // others?  phone home?  record telemetry?  see bug!
-  //   uninstall addon
-  //   change some subset of hidden prefs?
-  //
-  log: log
-};
-
-module.exports = actions;
+describe("repairs", function () {
+  expect(repairs).instanceof(Array);
+});

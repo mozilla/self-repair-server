@@ -44,7 +44,7 @@ console.log(
   "Welcome to heart heart heart beat."
 );
 
-let actions = require("actions");
+let actions = require("./common/actions");
 
 // should this be gotten every time?  This is async, right?
 let state;
