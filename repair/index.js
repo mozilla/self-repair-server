@@ -59,6 +59,8 @@
 	/**!
 	  About this module:
 
+	  Runner
+	  repair list // Should move?
 	  Main loop
 
 	  This is is the output target for webpack
@@ -88,37 +90,71 @@
 	  "Welcome to heart heart heart beat."
 	);
 
-	let runner = __webpack_require__(1);
 	let actions = __webpack_require__(2);
-	let getState = __webpack_require__(3);
+
+	// should this be gotten every time?  This is async, right?
+	let state;
+
+	// should this promise?  GRL likes promises
+	let getState = function (cb) {
+	  // set by side effect, yuck
+	  let herestate = state = {addons: [], os: 'yep', homepage: "jerryjerryjerry.net"};  // set by side effect?  really?
+	  cb(state);
+	};
+
+
+	// TODO, write this, decide of return val (throw? false?  list of errors?)
+	// TODO, use an existing validation system?
+	let validateConfig = function (config) {
+	  return (
+	    (config.name !== undefined) &&
+	    (config.recipe !== undefined) &&
+	    (config.shouldRun !== undefined)
+	  );
+	  // has keys
+	  // these are callables
+	  //
+	}; //
+
+	let attemptRun = function (recipe, state) {
+	  if (! validateConfig(recipe))  throw "invalid config";
+	  if (recipe.shouldRun(state)) {
+	    actions.log("will run", recipe);
+	    recipe.recipe(state, function(){});  // yeah, not sure what all the effects here should be
+	  } else {
+	    actions.log("will not run");
+	  }
+	};
+
+	// should this call back with some sort of progress / success obj?
+	// like which ran, and their statuses?
+	let runAll = function (repairs, state, cb) {
+	  let l = repairs.length;
+	  actions.log(l);
+	  for (let ii=0; ii < l; ii++) {
+	    // note state gets changed by repairs, by definition
+	    let repair = repairs[ii];
+	    actions.log("attempting", repair.name);
+	    attemptRun(repair, state);
+	  }
+	  cb(true);
+	};
+
 
 	// is there a timer here? I dunno!
 	let mainloop = function (repairsList) {
-	  getState().then(
-	  function (state) {
-	    actions.log("about to runAll");
-	    runner.runAll(repairsList, state,
-	    function () { actions.log("runAll callback"); }
-	   );
-	  });
+	  getState(
+	   function (state) {
+	      actions.log("about to runAll");
+	      runAll(repairsList, state,
+	      function () { actions.log("runAll callback"); }
+	     );}
+	  );
 	};
 
+
 	// actually run
-	// is there where 'repairs dev' would be called by env?
-
-	let repairs;
-	if (__DEV__) {
-	  actions.log('using dev repairs list');
-	  repairs = __webpack_require__(4);
-	} else {
-	  repairs = __webpack_require__(5);
-	}
-
-	mainloop(repairs);
-
-	// for use in testing, debugging
-	window.repairs = repairs;
-	window.actions = actions;
+	mainloop(__webpack_require__(1));
 
 	// loop over the list?
 	// do them all?
@@ -126,12 +162,6 @@
 	// ye gods it is Test Pilot *AND* telemetry experiment all over again.
 	// is this reinventing the darn wheel?
 
-
-	/*
-
-
-
-	*/
 
 
 /***/ },
@@ -148,93 +178,14 @@
 	  indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
 	  globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-	/*global require, console */
-
-	/**!
-	  About this module:
-
-	  Runner
-	  repair list // Should move?
-
-	  This is is the output target for webpack
-	*/
-
-
-	/**
-	  potential problems:
-	  - state actually isn't constant over run.  should we fix that. TODO.
-	  -
-
-	  Should be doing something smart to check lots of deps in one go?
-	  Maybe wait until addons list to get smarter about this?
-	  Or only run a subset of these recipes for each person each day?
-
-	  Do all recipe names need to be unique?  If so, why don't I define an obj instead of a list.
-
-
-	TODO?  Promises or callback as first arg?  Are we node?
-
-	*/
-
+	/*global require, exports, log */
 
 	"use strict";
 
-	console.log(
-	  "Welcome to heart heart heart beat."
-	);
-
-	let actions = __webpack_require__(2);
-	let utils = __webpack_require__(6);
-
-	// TODO, write this, decide of return val (throw? false?  list of errors?)
-	// TODO, use an existing validation system?
-	// TODO, record and describe failures
-	let validateConfig = function (config) {
-	  return (
-	    (config.name !== undefined) &&
-	    (config.description !== undefined) &&
-	    (config.recipe !== undefined) &&
-	    (config.shouldRun !== undefined)
-	  );
-	  // has keys
-	  // these are callables
-	  //
-	}; //
-
-
-	// right now NO
-	// - fancy error handling
-	// - stoppability
-	// - retry
-
-	let attemptRun = function (recipe, state) {
-	  if (! validateConfig(recipe))  throw new Error("invalid config");
-	  if (recipe.shouldRun(state)) {
-	    actions.log("will run", recipe);
-	    recipe.recipe(state).then(
-	      function () {actions.log(recipe.name);},
-	      function () {actions.error(recipe.name);}
-	    );  // yeah, not sure what all the effects here should be
-	  } else {
-	    actions.log("will not run");
-	  }
-	};
-
-	// should this call back with some sort of progress / success obj?
-	// like which ran, and their statuses?
-	let runAll = exports.runAll = function (repairs, state, cb) {
-	  let l = repairs.length;
-	  actions.log(l);
-	  for (let ii=0; ii < l; ii++) {
-	    // note state gets changed by repairs, by definition
-	    let repair = repairs[ii];
-	    actions.log("attempting", repair.name);
-	      attemptRun(repair, state);
-	  }
-	  cb(true);
-	};
-
-
+	let repairList = module.exports = [
+	  __webpack_require__(3),
+	  __webpack_require__(4),
+	];
 
 
 /***/ },
@@ -255,19 +206,20 @@
 
 	"use strict";
 
-	let UITour = __webpack_require__(7);  // defined as a third party
 
 	let log = console.log.bind(console,"repair-logger:");
-	let error = console.error.bind(console,"repair-logger:");
+
+	/*
+	  show heartbeat is complicated here :)
+	*/
 
 	let actions = {
-	  showHeartbeat:  log("showing heartbeat"), // UITour.showHeartbeat,
+	  showHeartbeat:  __webpack_require__(5).showHeartbeat,
 	  // others?  phone home?  record telemetry?  see bug!
 	  //   uninstall addon
 	  //   change some subset of hidden prefs?
 	  //
-	  log: log,
-	  error: error
+	  log: log
 	};
 
 	module.exports = actions;
@@ -291,18 +243,27 @@
 
 	"use strict";
 
-	// should this be gotten every time?  This is async, right?
-	let state;
+	let actions = __webpack_require__(2);
 
-	// should this promise?  GRL likes promises
-	let getState = exports.getState = function () {
-	  // set by side effect, yuck
-	  state = {addons: [], os: 'yep', homepage: "jerryjerryjerry.net"};  // set by side effect?  really?
-	  return new Promise(function(r){r(state)});
+	// module level vars, state between invocations, etc.
+
+
+	// validation? section.  Sync?  Blocking?
+	let shouldRun = exports.shouldRun = function (state) {
+	  return true;
+	};
+
+	// run / list of actions.  Async?  (I like promises personally)
+	let recipe = function (state, callback) {
+	  actions.log("everybody recipe is called");
+	  callback(true);
 	};
 
 
 
+	exports.name = "always run example";
+	exports.shouldRun = shouldRun;
+	exports.recipe = recipe;
 
 
 /***/ },
@@ -322,14 +283,49 @@
 	/*global require, exports, log */
 
 	"use strict";
+	let common = __webpack_require__(6);
+	let config = __webpack_require__(7);
+	let actions  = common.actions;
 
-	let repairList = module.exports = [
-	  {
-	    name: "fake dev repair",
-	    shouldRun: function () {true},
-	    recipe: function () {true}
+	/* need to tour observe
+	phone home in the callback
+	etc.
+	*/
+
+	let ran30 = function() {
+	  return false;
+	};  // attempted in last X days?
+
+	let recordAttempt = function () {
+	  // record this somewhere?
+	  // ye gods, this is such action as a distance :( //
+	};
+
+
+	// showHeartbeat: function(aWindow, aType, aMessage, aFlowId) {
+
+	// valid? section
+	// validation? section.  Sync?  Blocking?  who?
+	let shouldRun = exports.shouldRun = function (state) {
+	  if (ran30()) return false;
+	  let myRng = Math.random() * config.expectedUsers;
+	  if (myRng <= config.wanted) {
+	    recordAttempt();  // async?
+	    return true;
 	  }
-	];
+	};
+
+	// run / do
+	let recipe = function (state, callback) {
+	  // do I want to handle args and arity here?
+	  actions.showHeartbeat();
+	  callback(true);
+	};
+
+
+	exports.name = "heartbeat by user v1";
+	exports.shouldRun = shouldRun;
+	exports.recipe = recipe;
 
 
 /***/ },
@@ -350,14 +346,85 @@
 
 	"use strict";
 
-	let repairList = module.exports = [
-	  __webpack_require__(8),
-	  __webpack_require__(9)
-	];
+	let UITour = __webpack_require__(8);  // for now.
+
+	let log = console.log.bind(console,"repair-logger:");
+	log(Object.keys(UITour))
+
+	/*
+	  show heartbeat is complicated here :)
+	*/
+
+	//TODO find a uuid lib
+	function newId () {
+	  return "flow-" + Math.floor(Math.random() * 100000);
+	}
+
+	let showHeartbeat = function () {
+	  let flowid = newId();
+	  UITour.observe(function heartbeatCallback (aEventName, aData) {
+	    //
+	    // if startswith Heartbeat...
+	    //
+
+	    log("maybe", aEventName, flowid, aData);
+
+	    if (aEventName.indexOf("Heartbeat") === 0) {
+	      if (aData.flowId !== flowid) {
+	        log("not my heartbeat.  That's probably an error.", aData.flowId, "wanted", flowid);
+	        return;
+	      }
+	      let which = aEventName.split(":")[1];
+	      log(aEventName, flowid, aData);
+	    }
+	    /*
+	    switch (aEventName) {
+	      case "Heartbeat:NotificationOffered": {
+	        info("'Heartbeat:Offered' notification received (timestamp " + aData.timestamp.toString() + ").");
+	        // The UI was just shown. We can simulate a click on a rating element (i.e., "star").
+	        simulateVote(flowId, 2);
+	        break;
+	      }
+	      case "Heartbeat:Voted": {
+	        info("'Heartbeat:Voted' notification received (timestamp " + aData.timestamp.toString() + ").");
+	        break;
+	      }
+	      case "Heartbeat:NotificationClosed": {
+	        info("'Heartbeat:NotificationClosed' notification received (timestamp " + aData.timestamp.toString() + ").");
+	        is(gBrowser.tabs.length, originalTabCount, "No engagement tab should be opened.");
+
+	        // |done()| needs to be called here and not in "voted" otherwise the messageManager
+	        // will throw a NOT_INITIALIZED error.
+	        done();
+	        break;
+	      }
+	      default:
+	        // We are not expecting other states for this test.
+	        ok(false, "Unexpected notification received: " + aEventName);
+	    }
+	    */
+	  });
+
+	  log("showing heartbeat");
+	  UITour.showHeartbeat(
+	    "Rate Firefox",  //
+	    flowid,             //
+	    "http://localhost/"
+	  )
+	}
+
+	module.exports.showHeartbeat = showHeartbeat;
 
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports.actions = __webpack_require__(2);
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -374,70 +441,16 @@
 
 	"use strict";
 
-	/**
-	  * promise a synchronous or async value.  Useful for starting promise chains
-	  */
-	let resolve = exports.resolve = function (value) {
-	  return new Promise(function (resolve, reject) {resolve(value)});
-	};
+	let million = Math.pow(10,6);
+	let thousand = Math.pow(10,3);
 
-	let reject = exports.reject = function (value) {
-	  return new Promise(function (resolve, reject) {reject(value)});
-	};
-
-	// sdk promised
-	var promised = exports.promised = (function() {
-	  // Note: Define shortcuts and utility functions here in order to avoid
-	  // slower property accesses and unnecessary closure creations on each
-	  // call of this popular function.
-
-	  var call = Function.call;
-	  var concat = Array.prototype.concat;
-
-	  // Utility function that does following:
-	  // execute([ f, self, args...]) => f.apply(self, args)
-	  function execute(args) { return call.apply(call, args) }
-
-	  // Utility function that takes promise of `a` array and maybe promise `b`
-	  // as arguments and returns promise for `a.concat(b)`.
-	  function promisedConcat(promises, unknown) {
-	    return promises.then(function(values) {
-	      return resolve(unknown).then(function(value) {
-	        return values.concat([ value ]);
-	      });
-	    });
-	  }
-
-	  return function promised(f, prototype) {
-	    /**
-	    Returns a wrapped `f`, which when called returns a promise that resolves to
-	    `f(...)` passing all the given arguments to it, which by the way may be
-	    promises. Optionally second `prototype` argument may be provided to be used
-	    a prototype for a returned promise.
-
-	    ## Example
-
-	    var promise = promised(Array)(1, promise(2), promise(3))
-	    promise.then(console.log) // => [ 1, 2, 3 ]
-	    **/
-
-	    return function promised() {
-	      // create array of [ f, this, args... ]
-	      return concat.apply([ f, this ], arguments).
-	        // reduce it via `promisedConcat` to get promised array of fulfillments
-	        reduce(promisedConcat, resolve([], prototype)).
-	        // finally map that to promise of `f.apply(this, args...)`
-	        then(execute);
-	    };
-	  }
-	})();
-
-
-	let group = exports.group = promised(Array);
+	exports.expectedUsers = 150 * million;
+	//exports.wanted = 20 * thousand;
+	exports.wanted = exports.expectedUsers;
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -537,6 +550,14 @@
 		Mozilla.UITour.registerPageID = function(pageID) {
 			_sendEvent('registerPageID', {
 				pageID: pageID
+			});
+		};
+
+		Mozilla.UITour.showHeartbeat = function(message, flowId, engagementURL) {
+			_sendEvent('showHeartbeat', {
+				message: message,
+				flowId: flowId,
+				engagementURL: engagementURL
 			});
 		};
 
@@ -665,6 +686,13 @@
 			});
 		};
 
+		Mozilla.UITour.setConfiguration = function(configName, configValue) {
+			_sendEvent('setConfiguration', {
+				configuration: configName,
+				value: configValue,
+			});
+		};
+
 		Mozilla.UITour.showFirefoxAccounts = function() {
 			_sendEvent('showFirefoxAccounts');
 		};
@@ -715,130 +743,8 @@
 	})();
 
 
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
-	 * You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-	/*jshint forin:true, noarg:false, noempty:true, eqeqeq:true, bitwise:true,
-	  strict:true, undef:true, curly:false, browser:true,
-	  unused:true,
-	  indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
-	  globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
-
-	/*global require, exports, log */
-
-	"use strict";
-
-	let actions = __webpack_require__(2);
-
-	// module level vars, state between invocations, etc.
-
-
-	// validation? section.  Sync?  Blocking?
-	let shouldRun = exports.shouldRun = function (state) {
-	  return true;
-	};
-
-	// run / list of actions.  Async?  (I like promises personally)
-	let recipe = function (state, callback) {
-	  actions.log("everybody recipe is called");
-	  callback(true);
-	};
-
-
-
-	exports.name = "always run example";
-	exports.shouldRun = shouldRun;
-	exports.recipe = recipe;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
-	 * You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-	/*jshint forin:true, noarg:false, noempty:true, eqeqeq:true, bitwise:true,
-	  strict:true, undef:true, curly:false, browser:true,
-	  unused:true,
-	  indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
-	  globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
-
-	/*global require, exports, log */
-
-	"use strict";
-
-	let config = __webpack_require__(10);
-	let actions = __webpack_require__(2);
-
-	let ran30 = function() {
-	  return false;
-	};  // attempted in last X days?
-
-	let recordAttempt = function () {
-	  // record this somewhere?
-	  // ye gods, this is such action as a distance :( //
-	};
-
-
-	// showHeartbeat: function(aWindow, aType, aMessage, aFlowId) {
-
-	// valid? section
-	// validation? section.  Sync?  Blocking?
-	let shouldRun = exports.shouldRun = function (state) {
-	  if (ran30()) return false;
-	  let myRng = Math.random() * config.expectedUsers;
-	  if (myRng <= config.wanted) {
-	    recordAttempt();  // async?
-	    return true;
-	  }
-	};
-
-	// run
-	let recipe = function (state, callback) {
-	  actions.showHeartbeat(null, "stars", "Please Rate Firefox", null);
-	  callback(true);
-	};
-
-
-
-	exports.name = "heartbeat by user v1";
-	exports.shouldRun = shouldRun;
-	exports.recipe = recipe;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this file,
-	 * You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-	/*jshint forin:true, noarg:false, noempty:true, eqeqeq:true, bitwise:true,
-	  strict:true, undef:true, curly:false, browser:true,
-	  unused:true,
-	  indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
-	  globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
-
-	/*global require, exports, log */
-
-	"use strict";
-
-	// this, like all code, is public visible
-
-	let million = Math.pow(10,6);
-	let thousand = Math.pow(10,3);
-
-	exports.expectedUsers = 150 * million;
-	//exports.wanted = 20 * thousand;
-	exports.wanted = exports.expectedUsers;
+	// added to make this requireable.
+	module.exports = Mozilla.UITour;
 
 
 /***/ }
