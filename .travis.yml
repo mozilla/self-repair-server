@@ -1,7 +1,17 @@
-sudo: no
+sudo: false
 language: node_js
 node_js:
 - '0.11'
 - '0.10'
 notifications:
   email: false
+deploy:
+  provider: s3
+  access_key_id: AKIAIDI7G3ZEVDTZCRIA
+  secret_access_key:
+    secure: DKLJcXBz3Jvj++s0mypVSsMWI+bbNqGwBwJhXoCMAxXBtWmAPiR6QqJNYBTIBaQNKu9RD9G11lo+TlvVOM/0nkAGTwDWivLRMAmISebB+tSskVlsLxrA6gCf/nztC6oGboFNwAauPBAec1fI5zRyGLP2ivQpFrTX+nJKseG/SaA=
+  bucket: org.mozilla.self-repair
+  local-dir: repair
+  acl: public_read
+  on:
+    repo: mozilla/self-repair-server
