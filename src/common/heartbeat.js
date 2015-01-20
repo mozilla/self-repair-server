@@ -12,12 +12,10 @@
 
 "use strict";
 
-// gross, installs Mozilla.UITour object
 let UITour = require("thirdparty/uitour");  // for now.
 
-
 let log = console.log.bind(console,"repair-logger:");
-
+//log(Object.keys(UITour))
 
 /*
   show heartbeat is complicated here :)
@@ -35,9 +33,11 @@ let showHeartbeat = function () {
     // if startswith Heartbeat...
     //
 
+    log("maybe", aEventName, flowid, aData);
+
     if (aEventName.indexOf("Heartbeat") === 0) {
-      if (aData.flowid !== flowid) {
-        log("not my heartbeat.  That's probably an error.", aData.flowid, "wanted", flowid);
+      if (aData.flowId !== flowid) {
+        log("not my heartbeat.  That's probably an error.", aData.flowId, "wanted", flowid);
         return;
       }
       let which = aEventName.split(":")[1];

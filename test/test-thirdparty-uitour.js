@@ -8,11 +8,26 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/*global require, exports, log */
+/*global describe, it, require, exports, log */
 
 "use strict";
 
-let repairList = module.exports = [
-  require("./always"),
-  require("./heartbeat-by-user-first-impression/heartbeat-by-user-first-impression"),
-];
+let { expect } = require("chai");
+
+let uitour = require("../thirdparty/uitour");
+
+describe("thirdparty-uitour", function () {
+  it('should have `heartbeat` and `observe`', function(){
+    expect(uitour).include.keys("observe", "showHeartbeat");
+  })
+  it("should fire a showHeartbeat message", function () {
+
+    // when it fires... get something
+  })
+})
+
+/*
+describe("repairs", function () {
+  expect(repairs).instanceof(Array);
+});
+*/

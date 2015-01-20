@@ -8,11 +8,14 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/*global require, exports, log */
+/*global describe, it, require, exports, log */
 
 "use strict";
 
-let repairList = module.exports = [
-  require("./always"),
-  require("./heartbeat-by-user-first-impression/heartbeat-by-user-first-impression"),
-];
+let { expect } = require("chai");
+
+let heartbeat = require("../src/common/heartbeat");
+
+describe("repairs", function () {
+  expect(heartbeat.showHeartbeat).to.exist();
+});

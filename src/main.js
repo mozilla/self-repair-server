@@ -57,42 +57,6 @@ let getState = function (cb) {
 };
 
 
-// TODO, write this, decide of return val (throw? false?  list of errors?)
-// TODO, use an existing validation system?
-let validateConfig = function (config) {
-  return (
-    (config.name !== undefined) &&
-    (config.recipe !== undefined) &&
-    (config.shouldRun !== undefined)
-  );
-  // has keys
-  // these are callables
-  //
-}; //
-
-let attemptRun = function (recipe, state) {
-  if (! validateConfig(recipe))  throw "invalid config";
-  if (recipe.shouldRun(state)) {
-    actions.log("will run", recipe);
-    recipe.recipe(state, function(){});  // yeah, not sure what all the effects here should be
-  } else {
-    actions.log("will not run");
-  }
-};
-
-// should this call back with some sort of progress / success obj?
-// like which ran, and their statuses?
-let runAll = function (repairs, state, cb) {
-  let l = repairs.length;
-  actions.log(l);
-  for (let ii=0; ii < l; ii++) {
-    // note state gets changed by repairs, by definition
-    let repair = repairs[ii];
-    actions.log("attempting", repair.name);
-    attemptRun(repair, state);
-  }
-  cb(true);
-};
 
 
 // is there a timer here? I dunno!

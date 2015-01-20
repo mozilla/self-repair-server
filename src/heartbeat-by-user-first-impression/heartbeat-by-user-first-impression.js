@@ -45,12 +45,15 @@ let shouldRun = exports.shouldRun = function (state) {
 
 // run / do
 let recipe = function (state, callback) {
-  actions.showHeartbeat(null, "stars", "Please Rate Firefox", null);
+  // do I want to handle args and arity here?
+  actions.showHeartbeat();
   callback(true);
 };
-
 
 
 exports.name = "heartbeat by user v1";
 exports.shouldRun = shouldRun;
 exports.recipe = recipe;
+exports.author = "Gregg Lind <glind@mozilla.com>"
+
+

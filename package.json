@@ -7,9 +7,15 @@
     "thirdparty": "file:thirdparty",
     "webpack": "^1.4.13"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "es6-promises": "^1.0.9",
+    "localStorage": "^1.0.3",
+    "mocha-lcov-reporter": "0.0.1",
+    "testdom": "^1.0.0"
+  },
   "scripts": {
-    "test": "echo \"Tests are noop\""
+    "test": "echo \"Tests are noop\"",
+    "test2":  "istanbul --hook-run-in-context cover _mocha -- test/cover-1.js"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"

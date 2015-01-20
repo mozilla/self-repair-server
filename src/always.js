@@ -28,8 +28,11 @@ let recipe = function (state, callback) {
   callback(true);
 };
 
-
-
 exports.name = "always run example";
 exports.shouldRun = shouldRun;
 exports.recipe = recipe;
+
+
+//09:13 < willkg> date created? date last updated? url to source code/history?
+//09:13 < willkg> license?
+//09:14 < willkg> maybe the sha or the current version? (assuming recipes can be changed over time.)

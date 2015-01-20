@@ -15,7 +15,13 @@
 let { expect } = require("chai");
 
 let repairs = require("../src/repairs");
+let runner = require("../src/runner");
 
 describe("repairs", function () {
-  expect(repairs).instanceof(Array);
+  it("repairs is a list", function () {
+    expect(repairs).to.be.an("array");
+  });
+  it("all repairs are valid repairs", function () {
+    expect(repairs.every(runner.validateConfig)).to.be.true;
+  })
 });

@@ -15,6 +15,6 @@
 let million = Math.pow(10,6);
 let thousand = Math.pow(10,3);
 
-exports.expectedUsers = 150 * million;
-//exports.wanted = 20 * thousand;
+exports.expectedUsers = 1 * million;
+exports.wanted = 1 * million;
 exports.wanted = exports.expectedUsers;
