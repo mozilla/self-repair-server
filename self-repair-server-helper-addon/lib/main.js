@@ -21,26 +21,46 @@ let {Services} = Cu.import("resource://gre/modules/Services.jsm");
 
 let simpleprefs = require("sdk/simple-prefs");
 
+let httpsPref = {
+  orig: null,
+  pref: "browser.uitour.requireSecure",
+  set: function() {
+    if (this.orig === null) this.orig = prefSvc.get(this.pref);
+    prefSvc.set(this.pref, false);
+  },
+  unset: function () {
+    if (this.orig === null) return
+    prefSvc.set(this.pref, this.orig);
+  }
+};
+
 let data = require("sdk/self").data;
 
 let addPerm = function (uri) {
   console.log("ADDING:", uri);
   let pageURI = Services.io.newURI(uri, null, null);
   Services.perms.add(pageURI, "uitour", Services.perms.ALLOW_ACTION);
-  console.log("ADDED:", uri);
+  let good = Services.perms.testPermission(pageURI, "uitour") ===  Services.perms.ALLOW_ACTION;
+  console.log("ADDED:", uri, good);
 };
 
 simpleprefs.on("uri", function () {
   addPerm(simpleprefs.prefs.uri);
 });
 
+// 07:29 <Dexter> like loadFrameScript("chrome://browser/content/content-UITour.js", true);
+// ["availableTargets", "sync", "appinfo", "selectedSearchEngine"].forEach((k)=>window.Mozilla.UITour.getConfiguration(k, console.log.bind(console)))
 
 /* set pref, open "tour" page */
 exports.main = function () {
-  simpleprefs.prefs.uri = data.url("tour.html");
+  httpsPref.set();
+  simpleprefs.prefs.uri = "http://localhost:8000"; //data.url("tour.html");
+  addPerm("http://localhost");
   require("sdk/tabs").open(simpleprefs.prefs.uri);
 };
 
 
 require("sdk/system/unload").when(function () {
+  httpsPref.reset();
 });
+

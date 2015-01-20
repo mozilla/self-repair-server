@@ -98,6 +98,14 @@ if (typeof Mozilla == 'undefined') {
 		});
 	};
 
+	Mozilla.UITour.showHeartbeat = function(message, flowId, engagementURL) {
+		_sendEvent('showHeartbeat', {
+			message: message,
+			flowId: flowId,
+			engagementURL: engagementURL
+		});
+	};
+
 	Mozilla.UITour.showHighlight = function(target, effect) {
 		_sendEvent('showHighlight', {
 			target: target,
@@ -220,6 +228,13 @@ if (typeof Mozilla == 'undefined') {
 		_sendEvent('getConfiguration', {
 			callbackID: _waitForCallback(callback),
 			configuration: configName,
+		});
+	};
+
+	Mozilla.UITour.setConfiguration = function(configName, configValue) {
+		_sendEvent('setConfiguration', {
+			configuration: configName,
+			value: configValue,
 		});
 	};
 
