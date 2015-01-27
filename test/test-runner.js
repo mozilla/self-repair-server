@@ -13,6 +13,7 @@
 "use strict";
 
 let { expect } = require("chai");
+require("./utils").shimTodo(it);
 
 let runner = require("../src/runner");
 

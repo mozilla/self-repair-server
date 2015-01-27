@@ -14,6 +14,16 @@
 
 let { expect } = require("chai");
 
+var setup = function () {
+  console.log("setup");
+  require("testdom")(null, {
+    localStorage : 'localStorage',
+    Promise:  'es6-promises'
+  });
+};
+
+setup();
+
 let repairs = require("../src/repairs");
 let runner = require("../src/runner");
 
