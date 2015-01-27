@@ -42,6 +42,8 @@ TODO?  Promises or callback as first arg?  Are we node?
 let actions = require("./common/actions");
 let chai = require("chai");
 
+let config = exports.config = {};
+
 // TODO, write this, decide of return val (throw? false?  list of errors?)
 // TODO, use an existing validation system?  chai maybe?
 // TODO, record and describe failures
@@ -78,12 +80,14 @@ let validateConfig = function (config) {
 let attemptRun = function (recipe, state) {
   let valid = validateConfig(recipe);
   if (!valid[1]) throw new Error("invalid config"); // errors are in valid[0]
-  if (recipe.shouldRun(state)) {
-    actions.log("will run", recipe);
-    recipe.recipe(state).then(
-      function () {actions.log(recipe.name);},
-      function () {actions.error(recipe.name);}
-    );  // yeah, not sure what all the effects here should be
+  if (recipe.shouldRun(state) || config.alwaysrun) {
+    actions.log("will run", recipe, "alwaysrun", config.alwaysrun);
+    recipe.recipe(state)
+
+    //.then(
+    //  function () {actions.log(recipe.name);},
+    //  function () {actions.error(recipe.name);}
+    //);  // yeah, not sure what all the effects here should be
   } else {
     actions.log("will not run");
   }

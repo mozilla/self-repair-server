@@ -49,5 +49,6 @@ describe("runner validates", function () {
     badConfigs.map(function(c) {
       expect(runner.validateConfig(c)[1]).to.be.false;
     });
-  })
+  });
+  it.todo('should allow eligible / shouldRun to be an array', function() {});
 });

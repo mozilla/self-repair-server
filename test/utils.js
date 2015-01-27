@@ -13,3 +13,10 @@
 "use strict";
 
 exports.src = function (string) { return "../src/" + string }
+
+// add 'todo' tests, per https://github.com/mochajs/mocha/issues/1510
+exports.shimTodo = function (itFn) {
+  itFn.todo = function (title, callback) {
+    return itFn.skip("TODO: " + title, callback);
+  }
+}

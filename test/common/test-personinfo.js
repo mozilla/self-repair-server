@@ -12,10 +12,24 @@
 
 "use strict";
 
+
+/* this code mostly exists
+   - for coverage sake
+   - catch when new actions are added
+*/
 let { expect } = require("chai");
+let personinfo = require("../../src/common/personinfo");
 
-let heartbeat = require("../src/common/heartbeat");
+require("../utils").shimTodo(it);
 
-describe("repairs", function () {
-  expect(heartbeat.showHeartbeat).to.exist();
+describe("personalinfo", function () {
+  it("personalinfo exists", function () {
+    expect(personinfo.personinfo).to.be.a("function");
+  })
+  it.todo("personalinfo make shim tour", function () {
+    // shim it with a fake tour?  that
+  })
+  it.todo("personalinfo callsback with data", function () {
+    // hard to test this without shims
+  })
 });

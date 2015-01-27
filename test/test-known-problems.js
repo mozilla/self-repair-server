@@ -8,25 +8,22 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/*global require, console */
+/*global describe, it, require, exports, log */
 
 "use strict";
 
-// TODO, implement all actions in:
-// https://bugzilla.mozilla.org/show_bug.cgi?id=1031506
+var expect = require("chai").expect;
+require("./utils").shimTodo(it);
 
-let log = console.log.bind(console,"repair-logger:");
+let issues = [
+  "if every experiment needs a 'last run' string, might overflow local store",
+  "shouldRun and do()/steps need arity and return decisions"
+];
 
-let actions = {
-  showHeartbeat:  require("./heartbeat").showHeartbeat,
-  // other actions are listed in
-  //
-  // others?  phone home?  record telemetry?  see bug!
-  //   uninstall addon
-  //   change some subset of hidden prefs?
-  //
-  personinfo: require("./personinfo").personinfo,
-  log: log
-};
+describe("list of known issues", function () {
+  issues.forEach(function (k) {
+    it.todo(k, new Function());
+  });
+});
 
-module.exports = actions;
+

@@ -45,34 +45,77 @@ console.log(
 );
 
 let actions = require("./common/actions");
+let runner = require("./runner");
+let personinfo = require("./common/personinfo");
+let phonehome = require("./common/heartbeat-phonehome");  // configs only
 
-// should this be gotten every time?  This is async, right?
+let merge = require("./common/object").merge;
+
+//end url with ?<somejson>
+function paramsToObj(search) {
+  search = search.startsWith("?") ? search.substring(1) : search;
+  search = search.endsWith("/") ? search.substring(0,search.length-1): search;
+  return JSON.parse(decodeURIComponent(search));
+}
+
+
+// allow overrides of any part of the system at client runtime.
+// TODO, decide useful ones!
+let runtimeConfig = {};
+if (typeof window !== "undefined") {
+  runtimeConfig = paramsToObj(window.location.search);
+}
+
+
+
+// will only catch things from other windows
+//if (window) {
+//  window.addEventListener("storage", function (e) {
+//    log("storage", key, oldValue, newValue, uri);
+//  }, false);
+//}
+
+// TODO should this be gotten between every recipe?  This is async, right?
 let state;
-
-// should this promise?  GRL likes promises
-let getState = function (cb) {
-  // set by side effect, yuck
-  let herestate = state = {addons: [], os: 'yep', homepage: "jerryjerryjerry.net"};  // set by side effect?  really?
-  cb(state);
-};
-
-
-
 
 // is there a timer here? I dunno!
 let mainloop = function (repairsList) {
-  getState(
-   function (state) {
+  personinfo.personinfo(
+    null, // tour
+    function (gottenState) {
       actions.log("about to runAll");
-      runAll(repairsList, state,
-      function () { actions.log("runAll callback"); }
-     );}
+      console.log(gottenState);
+      state = gottenState;  // leak it
+      runner.runAll(repairsList, state,
+        function () { actions.log("runAll callback"); }
+    );}
   );
 };
 
 
+
+// process config.  TODO, use a lib for this?
+for (let key in runtimeConfig) {
+  // please be sensible here!
+  let branch = runtimeConfig[key];
+  console.log(key, branch);
+  switch (key) {
+    case "runner":
+      merge(runner.config, branch);
+      break;
+    case "personinfo":
+      merge(personinfo.config.overrides, branch);
+      break;
+    case "phonehome":
+      merge(phonehome.config, branch);
+      break;
+    default:
+      break;
+  }
+}
 // actually run
 mainloop(require("./repairs"));
+
 
 // loop over the list?
 // do them all?

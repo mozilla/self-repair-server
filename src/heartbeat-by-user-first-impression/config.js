@@ -14,7 +14,22 @@
 
 let million = Math.pow(10,6);
 let thousand = Math.pow(10,3);
+let percent = 0.01;
+let days = 24 * 60 * 60 * 1000;
 
-exports.expectedUsers = 1 * million;
-exports.wanted = 1 * million;
-exports.wanted = exports.expectedUsers;
+/*
+  days since last ask?  -- function or constant?
+
+*/
+
+module.exports = {
+  "nightly": {
+    rest: 30 * days,
+    sample: 100 * percent
+  },
+  "aurora": {
+    rest: 0 * days,
+    sample: 100 * percent
+  }
+};
+

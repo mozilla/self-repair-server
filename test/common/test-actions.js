@@ -8,25 +8,20 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/*global require, console */
+/*global describe, it, require, exports, log */
 
 "use strict";
 
-// TODO, implement all actions in:
-// https://bugzilla.mozilla.org/show_bug.cgi?id=1031506
 
-let log = console.log.bind(console,"repair-logger:");
+/* this code mostly exists
+   - for coverage sake
+   - catch when new actions are added
+*/
+let { expect } = require("chai");
+let actions = require("../../src/common/actions");
 
-let actions = {
-  showHeartbeat:  require("./heartbeat").showHeartbeat,
-  // other actions are listed in
-  //
-  // others?  phone home?  record telemetry?  see bug!
-  //   uninstall addon
-  //   change some subset of hidden prefs?
-  //
-  personinfo: require("./personinfo").personinfo,
-  log: log
-};
-
-module.exports = actions;
+describe("actions list", function () {
+  it("log, showHeartbeat, personinfo", function () {
+    expect(actions).to.have.keys(['log','showHeartbeat','personinfo']);
+  });
+});
