@@ -10,6 +10,9 @@ deploy:
   secret_access_key:
     secure: b2wz2BN2iRlSmN6FjxhqKcPWeMdR40zlKRRbgu1fNEVczmuesnGh1ZaKwWuPwRlaK7B/LVeqT9eX388OMIOHIlFLnTLbXL0ZD7L/1oqUoYiAtM9QL4BSi0bHdCHqLX5ww78qguZ5HpboknxcmoLUh62Z4xlFdobQoQAC7VoIuOc=
   bucket: org.mozilla.self-repair
+  skip_cleanup: true
+  endpoint: org.mozilla.self-repair.s3-website-us-west-2.amazonaws.com
+  region: us-west-2
   local-dir: repair
   acl: public_read
   on:
