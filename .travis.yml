@@ -2,14 +2,13 @@ sudo: false
 language: node_js
 node_js:
 - '0.11'
-- '0.10'
 notifications:
   email: false
 deploy:
   provider: s3
-  access_key_id: AKIAIDI7G3ZEVDTZCRIA
+  access_key_id: AKIAJGJURJAHEHGR7WFA
   secret_access_key:
-    secure: DKLJcXBz3Jvj++s0mypVSsMWI+bbNqGwBwJhXoCMAxXBtWmAPiR6QqJNYBTIBaQNKu9RD9G11lo+TlvVOM/0nkAGTwDWivLRMAmISebB+tSskVlsLxrA6gCf/nztC6oGboFNwAauPBAec1fI5zRyGLP2ivQpFrTX+nJKseG/SaA=
+    secure: b2wz2BN2iRlSmN6FjxhqKcPWeMdR40zlKRRbgu1fNEVczmuesnGh1ZaKwWuPwRlaK7B/LVeqT9eX388OMIOHIlFLnTLbXL0ZD7L/1oqUoYiAtM9QL4BSi0bHdCHqLX5ww78qguZ5HpboknxcmoLUh62Z4xlFdobQoQAC7VoIuOc=
   bucket: org.mozilla.self-repair
   local-dir: repair
   acl: public_read
