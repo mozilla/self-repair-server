@@ -13,7 +13,7 @@
 "use strict";
 
 const request = require("./request");
-const extend = require("./object").extend;
+const extend = require("../jetpack/object").extend;
 const personinfo = require("./personinfo");
 const validate = require("./upload-validate").validate;
 const flow = require("./heartbeat-flow");

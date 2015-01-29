@@ -79,4 +79,3 @@ function safeMerge(source) {
   return source;
 }
 exports.safeMerge = safeMerge;
-

@@ -49,7 +49,7 @@ let runner = require("./runner");
 let personinfo = require("./common/personinfo");
 let phonehome = require("./common/heartbeat-phonehome");  // configs only
 
-let merge = require("./common/object").merge;
+let merge = require("./jetpack/object").merge;
 
 //end url with ?<somejson>
 function paramsToObj(search) {

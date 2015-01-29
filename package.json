@@ -1,21 +1,25 @@
 {
   "name": "self-repair-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Server package for self-repair-server.",
   "main": "",
   "dependencies": {
-    "thirdparty": "file:thirdparty",
-    "webpack": "^1.4.13"
   },
   "devDependencies": {
+    "thirdparty": "file:thirdparty",
+    "webpack": "^1.4.13",
     "es6-promises": "^1.0.9",
-    "localStorage": "^1.0.3",
+    "karma-mocha-reporter": "^0.3.1",
     "mocha-lcov-reporter": "0.0.1",
+    "opener": "^1.4.0",
     "testdom": "^1.0.0"
   },
   "scripts": {
-    "test": "echo \"Tests are noop\"",
-    "test2":  "istanbul --hook-run-in-context cover _mocha -- test/cover-1.js"
+    "test": "npm run test:unit",
+    "test:integration": " #npm run build && node_modules/karma/bin/karma start karma.conf.integration.js",
+    "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
+    "build": "webpack",
+    "demo": "npm run build && npm test && opener app/index.html overage/unit/*/index.html"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"

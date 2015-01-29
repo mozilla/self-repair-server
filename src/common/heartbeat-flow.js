@@ -12,7 +12,7 @@
 
 "use strict";
 
-let sdkobj = require("./object");
+let sdkobj = require("../jetpack/object");
 let merge  = sdkobj.merge;
 
 let FlowBase = function () {

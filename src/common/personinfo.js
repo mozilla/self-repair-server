@@ -13,7 +13,7 @@
 "use strict";
 
 let UITour = require("thirdparty/uitour");
-let merge = require("./object").merge;
+let merge = require("../jetpack/object").merge;
 
 let config = exports.config = {
   overrides: {}

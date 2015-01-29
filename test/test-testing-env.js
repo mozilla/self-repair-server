@@ -11,7 +11,7 @@
 /*global describe, it, require, exports, log */
 
 "use strict";
-
+/*
 var expect = require("chai").expect;
 
 var setup = function () {
@@ -39,4 +39,5 @@ describe("testing environment", function () {
     expect(Promise).itself.respondTo("race");  // etc.
   });
 })
+*/
 
