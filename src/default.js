@@ -12,7 +12,7 @@
 
 "use strict";
 
-let actions = require("actions");
+let actions = require("./common/actions");
 
 // module level vars, state between invocations, etc.
 
@@ -26,5 +26,5 @@ let recipe = function (state, callback) {
 
 
 exports.name = "default example recipe";
-exports.shouldRun = shouldRun;
+exports.shouldRun = () =>{};
 exports.recipe = recipe;

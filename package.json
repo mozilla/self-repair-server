@@ -17,9 +17,10 @@
   "scripts": {
     "test": "npm run test:unit",
     "test:integration": " #npm run build && node_modules/karma/bin/karma start karma.conf.integration.js",
+    "pretest:unit": "echo > test/ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/ensure-coverage.js",
     "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
     "build": "webpack",
-    "demo": "npm run build && npm test && opener app/index.html overage/unit/*/index.html"
+    "demo": "npm run build && npm test && opener app/index.html coverage/unit/*/index.html"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"
