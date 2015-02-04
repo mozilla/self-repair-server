@@ -46,14 +46,13 @@ let showHeartbeat = function (flowid, message, engagementUrl, callback) {
     //log("maybe", aEventName, flowid, aData); // all tour events
     if (aEventName.indexOf("Heartbeat") === 0) {
       if (aData.flowId !== flowid) {
-        log("not my heartbeat.  That's probably an error.", aData.flowId, "wanted", flowid);
+        //log("not my heartbeat.  That's probably an error.", aData.flowId, "wanted", flowid);
         return;
       }
-      log(aEventName, flowid, aData);
+      //log(aEventName, flowid, aData);
       if (callback && type.isFunction(callback)) {
         callback(flowid, aEventName, aData);
       }
-
     }
     /*
     switch (aEventName) {
@@ -83,7 +82,6 @@ let showHeartbeat = function (flowid, message, engagementUrl, callback) {
     */
   });
 
-  log("showing heartbeat");
   UITour.showHeartbeat(
     message,  //
     flowid,             //

@@ -18,49 +18,58 @@ let merge = require("../jetpack/object").merge;
 let config = exports.config = {
   overrides: {}
 };
-// ugh.  Promise or callback?
-// ugh.  design this!
+
 // wants TONS MORE DATA.  Day of cycle, etc.
-/* callsback with personinfo */
 // TODO, this in theory can have to wait forever, if something goes wrong.
+// TODO this is super tied to the tour, but won't be in future.
+// should be tied to about:support API
 
-let personinfo = function (tour, callback) {
-  tour = tour || UITour;
-  let out = {
-    updateChannel:  "",
-    fxVersion: "",
-    locale: "unknown"
-  };
+/** Promise personinfo object
+  *
+  * tour: a tourUi object
+  */
 
-  let avail = ["sync","appinfo","availableTargets","selectedSearchEngine"];
-  let wanted = avail.length;
-  let got = 0;
-  let onGet = function (which, data) {
-    console.log(which, data);
-    switch (which) {
-      case "appinfo": {
-        out.updateChannel = data.defaultUpdateChannel;
-        out.fxVersion = data.version;
-        break;
+let personinfo = function (tour) {
+  return new Promise (function (resolve, reject){
+    setTimeout(reject, 5000);  // after 5 sec, reject?  takes too long.
+
+    tour = tour || UITour;
+    let out = {
+      updateChannel:  "",
+      fxVersion: "",
+      locale: "unknown"
+    };
+
+    let avail = ["sync","appinfo","availableTargets","selectedSearchEngine"];
+    let wanted = avail.length;
+    let got = 0;
+    let onGet = function (which, data) {
+      console.log(which, data);
+      switch (which) {
+        case "appinfo": {
+          out.updateChannel = data.defaultUpdateChannel;
+          out.fxVersion = data.version;
+          break;
+        }
+        case "sync":
+        case "selectedSearchEngine":
+        case "availableTargets":
+          break;
+
+        default:
+          break;
       }
-      case "sync":
-      case "selectedSearchEngine":
-      case "availableTargets":
-        break;
-
-      default:
-        break;
-    }
-    // ugh, this is gross
-    got++;
-    if (got >= wanted) {
-      console.log(config.overrides);
-      merge(out, config.overrides);
-      callback(out);
-    }
-  };
-  avail.map(function (which) {
-    UITour.getConfiguration(which,function(data) {onGet(which,data);});
+      // ugh, this is gross
+      got++;
+      if (got >= wanted) {
+        console.log(config.overrides);
+        merge(out, config.overrides);
+        resolve(out);
+      }
+    };
+    avail.map(function (which) {
+      UITour.getConfiguration(which,function(data) {onGet(which,data);});
+    });
   });
 };
 

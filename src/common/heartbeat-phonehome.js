@@ -8,7 +8,7 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/* global */
+/* global require */
 
 "use strict";
 
@@ -16,7 +16,6 @@ const request = require("./request");
 const extend = require("../jetpack/object").extend;
 const personinfo = require("./personinfo");
 const validate = require("./upload-validate").validate;
-const flow = require("./heartbeat-flow");
 
 let log = require("./actions").log;
 log = log.bind(log, "phonehome");
@@ -26,15 +25,15 @@ log = log.bind(log, "phonehome");
   */
 
 /** base configuration of the phonehome module / function
-  *
+  * (overridable from outside)
   */
 let config = exports.config  = {
   phonehome: true,   // will it send?
-  testing: true,         // append on a flag?
+  testing: true,     // append on a flag?
   url: "https://input.mozilla.org/api/v2/hb/",
-  //url: "https://testpilot.mozillalabs.com/submit/" + "pulse-uptake-experiment",
   extraData:  null
 };
+
 
 /** add common fields such as timestamp, userid, etc. to event data
   * fields will be appending in newkey 'extra', which is a dict.
@@ -194,14 +193,6 @@ let phonehome = exports.phonehome = function(dataObject, options){
   return new Promise(function(resolve, reject) {
 
     let send = function (dataObject) {
-      /** TP packet
-        * - special url
-        * - POST instead of get
-        * - explicit about content type.
-        * - will autogen a record at /bagheera end
-        */
-
-
       //function request(url, method, data, headers, contentType) {
       let Args = [
         options.url,
@@ -227,7 +218,6 @@ let phonehome = exports.phonehome = function(dataObject, options){
       }
       return dataObject;
     };
-
 
     // remember, validate strips extra fields silently!
     // TODO, this should be promisy

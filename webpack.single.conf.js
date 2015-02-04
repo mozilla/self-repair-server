@@ -20,32 +20,25 @@
 //  new CommonsChunkPlugin('common.js');
 
 module.exports = {
-	//context: __dirname + "/app",
-	entry: {
-        index:  "./src/main.js",
+  //context: __dirname + "/app",
+  entry: {
+        //index:  "./src/main.js",
         //after:  "./src/after"
-	},
-	output: {
-	    //path: __dirname + "/dist",
-	    path: __dirname + "/repair/",
-	    filename: "[name].js"
-	},
+  },
+  output: {
+      //path: __dirname + "/dist",
+      //path: __dirname + "/repair/",
+      //filename: "[name].packed.js"
+  },
     module: {
         loaders: [
-            { test: /\.css$/, loader: "style!css" }
+          { // << traceur
+            test: /\.js$/,
+            // have to traceur the tests too.
+            exclude: /(node_modules|bower_components)\//,
+            loader: 'traceur'
+          },
+          { test: /\.css$/, loader: "style!css" }
         ]
     },
-    resolve : {
-    	// relative to 'entry' above
-      // aliases are bad b/c other require systems don't use the same ones.
-        /*alias: {
-            UITour: __dirname + "/thirdparty/uitour.js",
-        }*/
-    }
-    // unclear how to get split to work, given 'no webpack' errors from cli
-    //plugins: [
-    //	commonsPlugin
-    //  	//new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
-  	//]
 };
-

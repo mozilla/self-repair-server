@@ -3,21 +3,21 @@
   "version": "0.0.2",
   "description": "Server package for self-repair-server.",
   "main": "",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "thirdparty": "file:thirdparty",
-    "webpack": "^1.4.13",
     "es6-promises": "^1.0.9",
     "karma-mocha-reporter": "^0.3.1",
     "mocha-lcov-reporter": "0.0.1",
+    "node-uuid": "^1.4.2",
     "opener": "^1.4.0",
-    "testdom": "^1.0.0"
+    "thirdparty": "file:thirdparty",
+    "webpack": "^1.4.13"
   },
   "scripts": {
+    "webpack": "webpack --module-bind traceur-loader --config webpack.single.conf.js",
     "test": "npm run test:unit",
     "test:integration": " #npm run build && node_modules/karma/bin/karma start karma.conf.integration.js",
-    "pretest:unit": "echo > test/ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/ensure-coverage.js",
+    "pretest:unit": "echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
     "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
     "build": "webpack",
     "demo": "npm run build && npm test && opener app/index.html coverage/unit/*/index.html"

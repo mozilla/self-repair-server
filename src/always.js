@@ -12,31 +12,66 @@
 
 "use strict";
 
-let actions = require("./common/actions");
+//let actions = require("./common/actions");
+
+let config = {
+  timesCalled: 0
+};
 
 // module level vars, state between invocations, etc.
 
+//
+// localStorage;
 
-// validation? section.  Sync?  Blocking?
+
+/**  shouldRun [required].
+  *
+  * Arguments:
+  * - state
+  *
+  * Returns.
+  * - boolean.
+  */
 let shouldRun = exports.shouldRun = function (state) {
   return true;
 };
 
-// run / list of actions.  Async?  (I like promises personally)
-let recipe = function (state, callback) {
-  actions.log("everybody recipe is called");
-  if (callback) {
-    callback(true);
-  }
+
+/**  run [required].
+  *
+  * Arguments:
+  * - state
+  * - callback
+  *
+  * Returns.
+  * - promise.
+  */
+let run = function (state) {
+  //actions.log("everybody recipe is called");
+  config.timesCalled++;
+  return Promise.resolve(true);
 };
 
+
+/**  metadata:
+  *  - name (of recipe)
+  *  - description
+  *  - owner
+  *  - version (integer, ascending)
+  */
 exports.name = "always run example";
-exports.description = "long description for always run"
+exports.description = `
+  this is the long long description
+  long description for always run.
+  Note that you can use es6-templates just fine
+`;
+exports.owner = "Gregg Lind <glind@mozilla.com>";
+exports.version = 1;
+
+// also required
 exports.shouldRun = shouldRun;
-exports.recipe = recipe;
+exports.run = run;
 
 
-//09:13 < willkg> date created? date last updated? url to source code/history?
-//09:13 < willkg> license?
-//09:14 < willkg> maybe the sha or the current version? (assuming recipes can be changed over time.)
-// descripton
+// useful for testing
+exports.config = config;

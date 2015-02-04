@@ -18,6 +18,14 @@ let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
 let Flow = require("../common/heartbeat-flow").Flow;
 let phonehome = require("../common/heartbeat-phonehome").phonehome;
+let uuid = require("node-uuid").v4;
+let events = require("../common/events");
+
+// TODO, is it module level config, or function level?
+// so far, 3 systems
+// - module.config
+// - function config
+// - external 'sampling config'
 
 /*
   Full description:
@@ -33,52 +41,61 @@ let phonehome = require("../common/heartbeat-phonehome").phonehome;
 
 */
 
-log("module name", module.name);
-let lskey = exports.lskey = ['heartbeat-by-user-first-impressions'];
-let survey_id = "heartbeat-by-user-first-impression";
+const NAME="heartbeat by user v1";
 
-let days = 24 * 60 * 60 * 1000;
+
+let config = {
+  lskey : 'heartbeat-by-user-first-impressions',
+  survey_id : "heartbeat-by-user-first-impression",
+};
+
+
+const days = 24 * 60 * 60 * 1000;
 
 
 // UTILITIES  // TODO, move?
 
-/**
-  usage:
-
-    var state = new Lstore("m");
-    state.data   // mostly a normal-ish obj
-    state.store()
-    state.revive()
-
-*/
+/** Wrap localstore a bit.
+  *
+  *  usage:
+  *
+  *    var state = new Lstore("aLocalStoreKey");
+  *    state.data   // mostly a normal-ish obj
+  *    state.store()
+  *    state.revive()
+  *
+  **/
 let Lstore = function (key, storage) {
+  // to do, proper object chain?
   this.key = key;
   this.data = {};
+  storage = storage || localStorage;
   return {
     store:  function () {
       storage[this.key] = JSON.stringify(this.data);
       return this;
     },
     revive: function () {
-      this.o = JSON.parse(storage[this.key] || "{}");
+      this.data = JSON.parse(storage[this.key] || "{}");
       return this;
     },
-    data: this.data
+    data: this.data,
+    clear:  function () {this.data={}; this.store(); return this;},
+    key: this.key
   };
 };
 
-function newId () {
-  return "flow-" + Math.floor(Math.random() * 100000);
-}
+
 
 // setup state?
 
 var setupState = function (key, storage) {
-  key = key || lskey;
+  key = key || config.lskey;
   storage = storage || localStorage;
-  var eData = new Lstore(storage, key).revive();  // create or revive
-  if (! eData.flows) eData.flows = [];
-  if (! eData.lastRun) eData.lastRun = 0;
+  var eData = new Lstore(key, storage).revive().store();  // create or revive
+  if (! eData.data.flows) eData.data.flows = {};
+  if (! eData.data.lastRun) eData.data.lastRun = 0;
+  eData.store();
   return eData;
 };
 
@@ -87,43 +104,69 @@ var eData = setupState();
 
 // ELIGIBLE.  parts of the eligibility, made explicit for testability
 
-/* */
-let botheredRecently = function (restDays, last) {
-  return (Date.now() - last)/days  > restDays ;
+/* is dayspassed >= restDays
+*/
+let waitedEnough = function (restDays, last, now) {
+  now = now || Date.now();
+  let dayspassed = ((now - last)/days);
+  return dayspassed >= restDays ;
 };
 
-/* */
-let shouldRun = function (userstate, config) {
-  let channel = userstate.updateChannel;
+/** run or not, given configs?
+  *
+  * Args:
+  *
+  * userstate
+  * - updateChannel
+  *
+  * config (optional)
+  * - alt config to use, needs
+  *   - sample
+  *   - restdays
+  *
+  * extras: for testing  (optional)
+  * - when
+  * - updateChannel (to use with allconfigs)
+  * - lastRun (replace eData.lastRun).  epoch_ms
+  * - randomNumber (0,1)
+  */
+let shouldRun = function (userstate, config, extras) {
+  extras = extras || {};
+  let now = extras.when || Date.now();
+  let channel = userstate.updateChannel || extras.updateChannel;
+  let lastRun = extras.lastRun || eData.lastRun || 0;
+
   config = config || allconfigs[channel];
-
   if (!config) {
-    log("no config for", channel, allconfigs);
     return false;
   }
 
-  if (botheredRecently(config.restdays, eData.lastRun)) {
-    log("bothered too recently", config.restdays, eData.lastRun, (Date.now() - eData.lastRun)/days );
+  let restdays = config.restdays;
+
+
+  if (!waitedEnough(restdays, lastRun, now)) {
+    events.message(NAME, "too-soon", {restdays: restdays, lastRun: lastRun, now: now});
     return false;
   }
 
-  // store this?  if so, why?  To override?
-  let myRng = Math.random();
+  let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
+
   if (myRng <= config.sample) {
-    log("running!  rng small", myRng);
-    //recordAttempt();  // async?
     return true;
   } else {
-    log("not running!, wrong rng", myRng);
+    events.message(NAME, "bad-random-number", {randomNumber: myRng});
+    return false;
   }
 };
 
 // run / do
 /* */
-let recipe = function (state, callback) {
-  // do I want to handle args and arity here?
+// TODO, audit 'extras'
+let run = function (state, extras) {
+  eData.data.lastRun = extras.when || Date.now();
+  eData.store();
   let local = {
-    flow_id: newId(),
+    flow_id: extras.flow_id || uuid(),
     max_score: 5,
     question_id: "Please Rate Firefox" ,
     question_text:  "Please Rate Firefox",
@@ -131,29 +174,41 @@ let recipe = function (state, callback) {
     variation_id: "test"
   };
 
+  let storeFlow = function (flow_id, flow) {
+    eData.data.flows[flow_id] = flow.data;
+    eData.store();
+  }.bind(null, local.flow_id);
+
   // make and setup flow
   let flow = new Flow(local);  // create and update
   flow.began();
-  eData.flows[local.flow_id] = flow.data;
 
-  let phaseCallback = function (flowid, action, data) {
-    let log2 = log.bind(log,"phaseCallback");
-    log2(arguments);
+  storeFlow(flow);
+  events.message(local.flow_id, "began", flow.data);
+
+  let phaseCallback = function phaseCallback (flowid, action, data) {
     let msg = action.split(":")[1].toLowerCase().replace("notification","");
     switch (msg) {
       case "offered":
       case "voted": {
         flow[msg](data.timestamp);
-        if (data.score) flow.score = data.score;
-        log2(JSON.stringify(flow.data, null, 2));
-        phonehome(flow.data);
+        if (msg === "voted") {
+          flow.data.score = data.score;
+          eData.data.lastScore = data.score;
+          eData.store();
+          events.message(NAME, 'new-score', {score: data.score});
+        }
+        storeFlow(flow);
+
+        if (!extras.simulate) {
+          phonehome(flow.data);
+        }
+        events.message(flowid, msg, flow.data);
         break;
       }
       default:
         break;
     }
-    // TODO do updates.
-    // TODO phonehome
   };
 
   actions.showHeartbeat(
@@ -162,22 +217,23 @@ let recipe = function (state, callback) {
     "http://localhost/enagement.html",
     phaseCallback
   );
-  if (callback) {
-    callback(true);
-  }
+
+  return Promise.resolve("ok");
 };
 
-exports.name = "heartbeat by user v1";
+exports.name = NAME;
 exports.description = "long description";
 exports.shouldRun = shouldRun;
-exports.eligible = shouldRun;
-exports.steps = recipe;
-exports.recipe = recipe;
+exports.run = run;
 exports.owner = "Gregg Lind <glind@mozilla.com>";
+exports.version = 1;
 
+exports.config = config;
 // extras that we want for testing
 exports.testable = {
-  botheredRecently: botheredRecently,
-  Lstore: Lstore
+  waitedEnough: waitedEnough,
+  Lstore: Lstore,
+  eData: eData,
+  setupState: setupState
 };
 
