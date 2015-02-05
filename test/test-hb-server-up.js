@@ -24,30 +24,13 @@ Results:
 
 "use strict";
 
-let assert = require("assert");
+let { expect } = require("chai");
 require("./utils").shimTodo(it);
 
+let request = require("../src/common/request");
+
 var cors = function(url, dataObject) {
-  return new Promise(function(resolve, reject) {
-    var req = new XMLHttpRequest();
-    req.open('post', url);
-    req.setRequestHeader("Content-Type", 'application/json');  // will trigger pre-flight
-
-    req.onload = function() {
-      if ((req.status >= 200 && req.status < 300) || req.status == 0) {
-        resolve(req);
-      } else {
-        reject(new Error(req.status));
-      }
-    };
-
-    req.onerror = function(e) {
-      //console.error(Error('Network Error'));
-      reject(Error('Network Error'));
-    };
-
-    req.send(JSON.stringify(dataObject || {}));
-  });
+  return request.request(url, "post", dataObject, null, "application/json");
 };
 
 var data = function (id) {
@@ -72,70 +55,73 @@ var data = function (id) {
 
 describe("hb upload nervousness", ()=> it.todo("these tests might not work", new Function()));
 
-describe("hb server is up", function () {
-  it("should accept input", function (done) {
-    let isdone = false;
-    let safedone = function (a) {
-      if (!isdone) {isdone=true; done(a)}
-    };
+describe("hb server", function () {
+  describe("hb server is up", function () {
+    it("should accept input", function (done) {
+      let isdone = false;
+      let safedone = function (a) {
+        if (!isdone) {isdone=true; expect(true).true(); done(a)}
+      };
 
-    this.timeout(5000);
-    //setTimeout(
-    //  () => {
-    //    it.todo("hb server is down, or CORS is wrong", new Function());
-    //    safedone();
-    //  },
-    //  4500
-    //);
-    cors("https://input.mozilla.org/api/v2/hb/",
-    data("lunch")).then(
-      ()=>safedone(),
-      (err) => {it.todo("hb server catchable error" + err, new Function())} // warn
-    );
+      this.timeout(5000);
+      //setTimeout(
+      //  () => {
+      //    it.todo("hb server is down, or CORS is wrong", new Function());
+      //    safedone();
+      //  },
+      //  4500
+      //);
+      cors("https://input.mozilla.org/api/v2/hb/",
+      data("lunch")).then(
+        ()=>safedone(),
+        (err) => {it.todo("hb server catchable error" + err, new Function())} // warn
+      );
+    });
+
+    it("should not accept garbage input", function (done) {
+      let isdone = false;
+      let safedone = function (a) {
+        if (!isdone) {isdone=true; expect(true).true(); done(a)}
+      };
+
+      this.timeout(2000);
+      //setTimeout(
+      //  () => {
+      //    it.todo("hb server is down, or CORS is wrong", new Function());
+      //    safedone();
+      //  },
+      //  1800
+      //);
+      cors("https://input.mozilla.org/api/v2/hb/",
+       {garbage: data}).then(
+        () => safedone(new Error("no garbage!")),
+        () => safedone() // should reject, ok
+      );
+    });
   });
 
-  it("should not accept garbage input", function (done) {
-    let isdone = false;
-    let safedone = function (a) {
-      if (!isdone) {isdone=true; done(a)}
-    };
 
-    this.timeout(2000);
-    //setTimeout(
-    //  () => {
-    //    it.todo("hb server is down, or CORS is wrong", new Function());
-    //    safedone();
-    //  },
-    //  1800
-    //);
-    cors("https://input.mozilla.org/api/v2/hb/",
-     {garbage: data}).then(
-      () => safedone(new Error("no garbage!")),
-      () => safedone() // should reject, ok
-    );
+  describe("some garbage server will CORS reject", () => {
+    it("should not exist", function (done) {
+      let isdone = false;
+      let safedone = function (a) {
+        if (!isdone) {isdone=true; expect(true).true(); done(a);}
+      };
+      this.timeout(500);
+      setTimeout(
+        () => {
+          // server not responding; CORS is wrong AS EXPECTED"
+          safedone();
+        },
+        300
+      );
+      cors("https://some.totally.random-garbage-server.nontld",
+      data("lunch")).then(
+        () => safedone(new Error("should not exist!")),
+        () => safedone
+        ()
+      );
+    });
   });
 });
 
-
-describe("some garbage server", () => {
-  it("should not exist", function (done) {
-    let isdone = false;
-    let safedone = function (a) {
-      if (!isdone) {isdone=true; done(a);}
-    };
-    this.timeout(500);
-    setTimeout(
-      () => {
-        // server not responding; CORS is wrong AS EXPECTED"
-        safedone();
-      },
-      300
-    );
-    cors("https://some.totally.random-garbage-server.nontld",
-    data("lunch")).then(
-      () => safedone(new Error("should not exist!")),
-      () => safedone
-      ()
-    );
-  });
-});
