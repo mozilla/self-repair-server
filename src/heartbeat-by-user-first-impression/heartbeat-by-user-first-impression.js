@@ -65,26 +65,32 @@ const days = 24 * 60 * 60 * 1000;
   *    state.revive()
   *
   **/
-let Lstore = function (key, storage) {
+var Lstore = function (key, storage) {
+   if ( !(this instanceof Lstore) )
+      return new Lstore(key, storage);
+
   // to do, proper object chain?
   this.key = key;
   this.data = {};
   storage = storage || localStorage;
-  return {
-    store:  function () {
-      storage[this.key] = JSON.stringify(this.data);
-      return this;
-    },
-    revive: function () {
-      this.data = JSON.parse(storage[this.key] || "{}");
-      return this;
-    },
-    data: this.data,
-    clear:  function () {this.data={}; this.store(); return this;},
-    key: this.key
-  };
-};
 
+  this.store = function () {
+    storage[this.key] = JSON.stringify(this.data);
+    return this;
+  };
+  this.revive = function () {
+    this.data = JSON.parse(storage[this.key] || "{}");
+    this.store();
+    return this;
+  };
+  this.clear = function () {
+    this.data={};
+    this.store();
+    return this;
+  };
+  this.revive().store(); // always comes started
+  return Object.preventExtensions(this); // freezing would break clear/revive
+};
 
 
 // setup state?
@@ -207,6 +213,8 @@ let run = function (state, extras) {
         break;
       }
       default:
+        // TODO, this should log
+        events.message(flowid, 'unexpected-tour-message', {msg: msg});
         break;
     }
   };
@@ -218,7 +226,7 @@ let run = function (state, extras) {
     phaseCallback
   );
 
-  return Promise.resolve("ok");
+  return Promise.resolve(local.flow_id);
 };
 
 exports.name = NAME;

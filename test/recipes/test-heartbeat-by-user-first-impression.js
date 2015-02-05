@@ -81,12 +81,20 @@ describe("heartbeat-by-user-first-impression", function () {
     let u = uuid();
     let L = new R.testable.Lstore(u);
 
-    it.todo('make something less awful for this', function () {
+    it.todo('proxy s.t. set saves', function () {
       /* in paritcular,
        - proxy?
        - changing data should cause a store always
        - (seems an awful lot like jetpack simple-store)
        */
+    });
+
+    it('robust to forgotten "new"', function () {
+      let u = uuid();
+      let L = R.testable.Lstore(u);
+      let L2 = new R.testable.Lstore(u);
+      expect(L).instanceOf(R.testable.Lstore);
+      expect(L2).instanceOf(R.testable.Lstore);
     });
 
     it("has methods", ()=>{
@@ -97,6 +105,17 @@ describe("heartbeat-by-user-first-impression", function () {
         expect(L).respondTo(x);
       })
     })
+
+    it("creates empty object if revived on an new key, then storing", function () {
+      let u = uuid();
+      new R.testable.Lstore(u);
+      expect(localStorage[u]).equal("{}");
+    });
+
+    it("is sealed to prevent setting keys on it instead of data", function () {
+      // warning, only in strict mode!
+      expect(()=>{L.someProp = 1}).throw();
+    });
 
     it("stores on store", () => {
       L.data.b = [1,2,3];
@@ -141,6 +160,10 @@ describe("heartbeat-by-user-first-impression", function () {
       expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true();
       expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false();
       expect(waitedEnough(10, 0, now), "0 lastRun").true();
+
+      // implict Date.now() at function
+      expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true();
+      expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false();
 
     })
   })
@@ -228,6 +251,52 @@ describe("heartbeat-by-user-first-impression", function () {
           done();
         }
       );
+    });
+
+    it("promises the flowid", function (done) {
+      let u = uuid();
+      let E = R.testable.eData;
+      R.run({},{flow_id: u, simulate:true}).then( // no phoning
+        (reutrned_u) => {
+          expect(E.data.flows[u]).exist();
+          expect(u).equal(reutrned_u);
+          done();
+        }
+      );
+    });
+
+    it("creates flow_id if necessary", function (done) {
+      let E = R.testable.eData;
+      let before = Object.keys(E.data.flows);
+      R.run({},{ simulate:true}).then( // no phoning
+        (u) => {
+          expect(u,"flow_id is string").a("string");
+          expect(before, 'should not be seen before.').not.include(u);
+          expect(E.data.flows[u], 'should be seen now').exist();
+          done();
+        }
+      );
+    });
+
+    it("handles unexpected UITour messages gracefully", function (done) {
+      var u = uuid();
+
+      let toRemove = events.observe(u, (function flowListener (aEventName, aData) {
+        switch (aEventName) {
+          case "unexpected-tour-message": {
+            expect(aData.msg).equal('weirdmessage') // lowercased
+            done();
+            events.unobserve(toRemove);
+          }
+        }
+      }))
+
+      R.run({},{flow_id: u, simulate:true}).then(
+        () => {
+          sendTourEvent("Heartbeat:WeirdMessage", {flowId: u});
+        }
+      ) // running.
+      sendTourEvent("Heartbeat:WeirdMessage", {flowId: u});
     });
 
     // drive the Heartbeat action, even without ui!
