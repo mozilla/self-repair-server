@@ -38,7 +38,7 @@ let log = console.log.bind(console,"repair-logger:");
   return BoundHeartbeat
   - flow: state
 */
-let showHeartbeat = function (flowid, message, engagementUrl, callback) {
+let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, callback) {
   callback = type.isFunction(callback) ? callback : null;
 
   // catch all the messages related to all heartbeat star widgets
@@ -84,6 +84,7 @@ let showHeartbeat = function (flowid, message, engagementUrl, callback) {
 
   UITour.showHeartbeat(
     message,  //
+    thanksMsg,
     flowid,             //
     engagementUrl
   );

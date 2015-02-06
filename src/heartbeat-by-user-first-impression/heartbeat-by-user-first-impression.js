@@ -21,6 +21,8 @@ let phonehome = require("../common/heartbeat-phonehome").phonehome;
 let uuid = require("node-uuid").v4;
 let events = require("../common/events");
 
+let { hasAny } = require("../jetpack/array");
+
 // TODO, is it module level config, or function level?
 // so far, 3 systems
 // - module.config
@@ -141,14 +143,21 @@ let shouldRun = function (userstate, config, extras) {
   let now = extras.when || Date.now();
   let channel = userstate.updateChannel || extras.updateChannel;
   let lastRun = extras.lastRun || eData.lastRun || 0;
+  let locale = (userstate.locale || extras.locale || "unknown").toLowerCase();
 
   config = config || allconfigs[channel];
   if (!config) {
+    events.message(NAME, "no-config", {});
     return false;
   }
 
   let restdays = config.restdays;
+  let locales = (config.locales || []).map((x)=>x.toLowerCase());
 
+  if (!hasAny(locales, [locale, "*"])) {
+    events.message(NAME, "bad-locale", {locale: locale, locales: locales});
+    return false;
+  }
 
   if (!waitedEnough(restdays, lastRun, now)) {
     events.message(NAME, "too-soon", {restdays: restdays, lastRun: lastRun, now: now});
@@ -169,10 +178,13 @@ let shouldRun = function (userstate, config, extras) {
 /* */
 // TODO, audit 'extras'
 let run = function (state, extras) {
+  extras = extras || {};
   eData.data.lastRun = extras.when || Date.now();
   eData.store();
+
+  let flowid = extras.flow_id || uuid();
   let local = {
-    flow_id: extras.flow_id || uuid(),
+    flow_id: flowid,
     max_score: 5,
     question_id: "Please Rate Firefox" ,
     question_text:  "Please Rate Firefox",
@@ -185,9 +197,19 @@ let run = function (state, extras) {
     eData.store();
   }.bind(null, local.flow_id);
 
+  let maybePhonehome = function (flow) {
+    if (!extras.simulate) {
+      phonehome(flow.data);
+      events.message(flowid, "attempted-phonehome", flow.data);
+    } else {
+      events.message(flowid, "simulated-phonehome", flow.data);
+    }
+  };
+
   // make and setup flow
   let flow = new Flow(local);  // create and update
   flow.began();
+  maybePhonehome(flow);
 
   storeFlow(flow);
   events.message(local.flow_id, "began", flow.data);
@@ -205,10 +227,7 @@ let run = function (state, extras) {
           events.message(NAME, 'new-score', {score: data.score});
         }
         storeFlow(flow);
-
-        if (!extras.simulate) {
-          phonehome(flow.data);
-        }
+        maybePhonehome(flow);
         events.message(flowid, msg, flow.data);
         break;
       }
@@ -222,6 +241,7 @@ let run = function (state, extras) {
   actions.showHeartbeat(
     local.flow_id,
     local.question_text,
+    "Thank you!",
     "http://localhost/enagement.html",
     phaseCallback
   );
