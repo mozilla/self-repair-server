@@ -27,8 +27,8 @@ module.exports = {
   },
   output: {
       //path: __dirname + "/dist",
-      //path: __dirname + "/repair/",
-      //filename: "[name].packed.js"
+      path: __dirname + "/repair/single",
+      filename: "recipe.packed.js"
   },
     module: {
         loaders: [
