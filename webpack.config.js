@@ -27,12 +27,18 @@ module.exports = {
 	},
 	output: {
 	    //path: __dirname + "/dist",
-	    path: __dirname + "/repair/",
+	    path: __dirname + "/repair/en-US/",
 	    filename: "[name].js"
 	},
     module: {
         loaders: [
-            { test: /\.css$/, loader: "style!css" }
+          { // << traceur
+            test: /\.js$/,
+            // have to traceur the tests too.
+            exclude: /(node_modules|bower_components)\//,
+            loader: 'traceur'
+          },
+          { test: /\.css$/, loader: "style!css" }
         ]
     },
     resolve : {
