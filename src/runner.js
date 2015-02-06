@@ -59,7 +59,6 @@ let type = require("./jetpack/type");
 
 const config = {
   alwaysRun: false
-
 };
 
 
@@ -137,7 +136,7 @@ let attemptRun = function (recipe, state, myconfig) {
     let valid = validateConfig(recipe);
     if (!valid[1]) resolve({status:  "invalid-config", data: valid[0]}); // errors are in valid[0]
 
-    if (recipe.shouldRun(state) || myconfig.alwaysRun) {
+    if (myconfig.alwaysRun || recipe.shouldRun(state)) {
       // TODO, should config be recorded?
 
       // TODO, what do recipes do?  Callback?
@@ -209,7 +208,7 @@ let runAll = function (repairs, statePromiseFn, myconfig) {
       // is this where to re-get state?
       () => {
         return statePromiseFn().then(
-          (state)=>attemptRun(repair, state, myconfig)
+          (state) => attemptRun(repair, state, myconfig)
         );
       }
     ).then(
@@ -233,7 +232,3 @@ exports.validateRunAttempt = validateRunAttempt;
 
 exports.runAll = runAll;
 exports.attemptRun = attemptRun;
-
-window.runner = exports;
-window.chai = chai;
-window.log = actions.log;
