@@ -13,10 +13,12 @@
 "use strict";
 
 let UITour = require("thirdparty/uitour");
-let merge = require("../jetpack/object").merge;
+let { merge, extend } = require("../jetpack/object");
+let type = require("../jetpack/type");
 
 let config = exports.config = {
-  overrides: {}
+  overrides: {},
+  timeout: 5000
 };
 
 // wants TONS MORE DATA.  Day of cycle, etc.
@@ -27,24 +29,53 @@ let config = exports.config = {
 /** Promise personinfo object
   *
   * tour: a tourUi object
+  *
+  * aConfig:  (extends module config)
+  * - overrides:  {}  // note, only common keys will override.
+  *                   // this is not an 'extras'
+  * - timeout (time to wait)
+  *
   */
 
-let personinfo = function (tour) {
+let personinfo = function (tour, aConfig) {
+  aConfig = extend({}, config, aConfig || {});
   return new Promise (function (resolve, reject){
-    setTimeout(reject, 5000);  // after 5 sec, reject?  takes too long.
+    // both shims
+    let already = false;
+
+    var revise = (out, over) => {
+      over = over || aConfig.overrides;
+      if (over && type.isObject(over) && Object.keys(over).length) {
+        merge(out, over);
+        out.flags.overrides = over; // see what was changed?
+      }
+      return out;
+    };
+
+    setTimeout(
+      () => {
+        if (already) return true;
+
+        out.flags.timeout = aConfig.timeout;
+        out.flags.incomplete = true;
+        resolve(revise(out));
+      },
+      aConfig.timeout);
 
     tour = tour || UITour;
     let out = {
-      updateChannel:  "",
-      fxVersion: "",
-      locale: "unknown"
+      updateChannel:  "unkown",
+      fxVersion: "unknown",
+      locale: "unknown",
+      flags: {
+      }
     };
 
     let avail = ["sync","appinfo","availableTargets","selectedSearchEngine"];
     let wanted = avail.length;
     let got = 0;
     let onGet = function (which, data) {
-      console.log(which, data);
+      //console.log(which, data);
       switch (which) {
         case "appinfo": {
           out.updateChannel = data.defaultUpdateChannel;
@@ -62,13 +93,12 @@ let personinfo = function (tour) {
       // ugh, this is gross
       got++;
       if (got >= wanted) {
-        console.log(config.overrides);
-        merge(out, config.overrides);
-        resolve(out);
+        already = true;
+        resolve(revise(out));
       }
     };
     avail.map(function (which) {
-      UITour.getConfiguration(which,function(data) {onGet(which,data);});
+      tour.getConfiguration(which,function(data) {onGet(which,data);});
     });
   });
 };
