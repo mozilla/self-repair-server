@@ -1,6 +1,6 @@
 {
   "name": "self-repair-server",
-  "version": "0.0.2",
+  "version": "0.9.0",
   "description": "Server package for self-repair-server.",
   "main": "",
   "dependencies": {},
