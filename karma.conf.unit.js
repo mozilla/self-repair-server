@@ -117,8 +117,7 @@ module.exports = function(config) {
     // coverage report.
     coverageReporter: {
       reporters: [
-        {type: 'html', dir:'coverage/', subdir: 'unit'},
-        {type: 'cobertura', dir:'jenkins/', subdir: "unit"}
+        {type: 'html', dir:'coverage/', subdir: 'unit'}
       ]
     }
   });
