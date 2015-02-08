@@ -2,6 +2,8 @@ sudo: false
 language: node_js
 node_js:
 - '0.11'
+addons:
+  firefox: "35.0"
 notifications:
   email: false
 deploy:
