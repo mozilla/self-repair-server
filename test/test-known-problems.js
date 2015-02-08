@@ -16,8 +16,7 @@ var expect = require("chai").expect;
 require("./utils").shimTodo(it);
 
 let issues = [
-  "if every experiment needs a 'last run' string, might overflow local store",
-  "shouldRun and do()/steps need arity and return decisions"
+  "if every experiment needs a 'lastRun' string (and other storage), might overflow local store",
 ];
 
 describe("list of known issues", function () {

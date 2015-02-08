@@ -1,21 +1,35 @@
 {
   "name": "self-repair-server",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "description": "Server package for self-repair-server.",
   "main": "",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "es6-promises": "^1.0.9",
+    "istanbul": "^0.3.5",
+    "istanbul-instrumenter-loader": "^0.1.2",
+    "karma-coverage": "^0.2.7",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-mocha": "^0.1.10",
+    "karma-mocha-reporter": "^0.3.1",
+    "karma-webpack": "^1.5.0",
+    "mocha": "^2.1.0",
+    "node-uuid": "^1.4.2",
+    "opener": "^1.4.0",
     "thirdparty": "file:thirdparty",
+    "traceur-loader": "^0.6.3",
     "webpack": "^1.4.13"
   },
-  "devDependencies": {
-    "es6-promises": "^1.0.9",
-    "localStorage": "^1.0.3",
-    "mocha-lcov-reporter": "0.0.1",
-    "testdom": "^1.0.0"
-  },
   "scripts": {
-    "test": "echo \"Tests are noop\"",
-    "test2":  "istanbul --hook-run-in-context cover _mocha -- test/cover-1.js"
+    "webpack": "webpack --module-bind traceur-loader --config webpack.single.conf.js --watch --progress",
+    "test": "npm run test:unit",
+    "test:integration": " #npm run build && node_modules/karma/bin/karma start karma.conf.integration.js",
+    "pretest:unit": "echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
+    "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
+    "build": "webpack",
+    "demo": "npm run build && npm test && opener app/index.html coverage/unit/*/index.html",
+    "new-recipe": "bash scripts/new-recipe.bash"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"

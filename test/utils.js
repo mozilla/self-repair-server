@@ -8,15 +8,15 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/*global describe, it, require, exports, log */
+/*global exports */
 
 "use strict";
-
-exports.src = function (string) { return "../src/" + string }
 
 // add 'todo' tests, per https://github.com/mochajs/mocha/issues/1510
 exports.shimTodo = function (itFn) {
   itFn.todo = function (title, callback) {
     return itFn.skip("TODO: " + title, callback);
-  }
-}
+  };
+};
+
+exports.uuid = require('node-uuid');

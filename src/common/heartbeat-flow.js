@@ -12,7 +12,7 @@
 
 "use strict";
 
-let sdkobj = require("./object");
+let sdkobj = require("../jetpack/object");
 let merge  = sdkobj.merge;
 
 let FlowBase = function () {
@@ -53,8 +53,6 @@ let FlowBase = function () {
   };
 };
 
-let _current;
-
 // a bit gruesome.  Avoiding writing a full state depedency checker
 let phases = {
   "began": [],
@@ -69,7 +67,7 @@ let provePhaseReady = function (data, phase) {
   reqs.forEach(function(k) {
     let key = "flow_" + k + "_ts";
     if (data[key] <= 0) {
-      throw phase + " requires " + k;
+      throw new Error(phase + " requires " + k);
     }
   });
 };
@@ -81,13 +79,14 @@ var Flow = function (updateProps) {
 
   let obj = {
     data: this.data,
-    link: function (action, whichpage) {
-      console.log("linking at flow!");
-      this.data.flow_links.push([Date.now(), action, whichpage]);
+    // flow.link(link, cso.mood);  TODO, GRL this is a not-awesome design
+    // in particular, locking the ts() here, and fixing number of fields
+    link: function (whichlink, whichsource) {
+      this.data.flow_links.push([Date.now(), whichlink, whichsource]);
       return this;
     },
     rate: function (n) {
-      console.log('rating', n);
+      //console.log('rating', n);
       this.data.score = n;
       return this;
     }
@@ -96,41 +95,21 @@ var Flow = function (updateProps) {
   // only accept 'first set' for these.
   ["began", "offered", "voted", "engaged"].forEach(function (k) {
     obj[k] = (function (ts) {
-      console.log(this);
       provePhaseReady(this.data, k); //
       let key = "flow_" + k + "_ts";
-      console.log("flow", k, key, key in this.data, this.data);
+      //console.log("flow", k, key, key in this.data, this.data);
       let d = this.data;
       if (key in d) {
         if (d[key] === 0) {
           d[key] = ts || Date.now();
         }
       } else {
-        console.log('oh no!');
-        throw (new Error("Bad key in current flow: " + key));
+        throw (new Error("Bad key in flow: " + key));
       }
     }).bind(obj);
   });
   return obj;
 };
 
-
-
-/*
-// future work: ensure that flows are 'forward only'
-let flow = {
-  questiontext: aMessage,
-  engagementurl: aEngagementURL,
-  rating: 0,
-  flowid: aFlowId,
-  stages: {
-    offered: 0,
-    voted: 0,
-    closed: 0
-  }
-};
-
-*/
-
 exports.Flow = Flow;
-
+exports.phases = phases;

@@ -13,8 +13,8 @@ function request(url, method, data, headers, contentType) {
     }
 
     req.onload = function() {
-      console.log(req.status, req.statusText);
-      if (req.status >= 200 && req.status < 300) {
+      //console.log(req.status, req.statusText);
+      if (req.status >= 200 && req.status < 300 || req.status == 0 ) {
         resolve(req.response);
       } else {
         reject(Error(req.statusText));
@@ -22,7 +22,7 @@ function request(url, method, data, headers, contentType) {
     };
 
     req.onerror = function(e) {
-      console.log(e);
+      //console.log(e);
       reject(Error('Network Error'));
     };
 
