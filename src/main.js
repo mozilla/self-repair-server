@@ -66,7 +66,12 @@ function paramsToObj(search) {
 }
 
 function guessLocale () {
-  let re = (x) => /[a-z]{2}\-[a-z]{2}/i.test(x) ;
+  // this should have tests!
+  // ['en-US', 'en-us', 'en',] => good.
+  // ['en-', '12-34', 'ben-us'] => bad
+  // frankly, maybe  I should pass these in as a var.
+  // this fails for 'upper sorbian' => 'hsb'
+  let re = (x) => /^[a-z]{2}(|\-[a-z]{2})$/i.test(x);
   let possibles = window.location.pathname.split("/").filter(re);
   if (possibles.length) {
     personinfo.config.overrides.locale = possibles.pop();
