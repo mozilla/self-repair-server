@@ -65,17 +65,23 @@ function paramsToObj(search) {
   }
 }
 
-function guessLocale () {
+function guessLocale (path, aNav) {
   // this should have tests!
   // ['en-US', 'en-us', 'en',] => good.
   // ['en-', '12-34', 'ben-us'] => bad
   // frankly, maybe  I should pass these in as a var.
   // this fails for 'upper sorbian' => 'hsb'
-  let re = (x) => /^[a-z]{2}(|\-[a-z]{2})$/i.test(x);
-  let possibles = window.location.pathname.split("/").filter(re);
+  path = path || window.location.pathname;
+  nav = aNav || navigator || {};
+  let ans;
+  let re = (x) => /^[a-z]{2,3}(|\-[a-z]{2})$/i.test(x);
+  let possibles = path.split("/").filter(re);
   if (possibles.length) {
-    personinfo.config.overrides.locale = possibles.pop();
+    ans = possibles.pop();
+  } else {
+    ans = (navigator && navigator.language);
   }
+  return ans;
 }
 
 
@@ -109,7 +115,10 @@ let mainloop = function (repairsList) {
 };
 
 
-guessLocale(); // use this locale first.
+let guessedLocale = guessLocale();
+if (guessLocale) {
+  personinfo.config.overrides.locale = guessedLocale;
+} // use this locale first.
 
 // process config.  TODO, use a lib for this?
 for (let key in runtimeConfig) {

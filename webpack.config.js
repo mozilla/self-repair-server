@@ -38,7 +38,8 @@ module.exports = {
             exclude: /(node_modules|bower_components)\//,
             loader: 'traceur'
           },
-          { test: /\.css$/, loader: "style!css" }
+          { test: /\.css$/, loader: "style!css" },
+          { test: /\.json$/, loader: "json"}
         ]
     },
     resolve : {
