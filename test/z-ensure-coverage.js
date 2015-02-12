@@ -11,6 +11,5 @@ require("../src/common/request.js");
 require("../src/common/upload-validate.js");
 require("../src/heartbeat-by-user-first-impression/config.js");
 require("../src/heartbeat-by-user-first-impression/heartbeat-by-user-first-impression.js");
-require("../src/recipes/wutwut/wutwut.js");
 require("../src/repairs.js");
 require("../src/runner.js");
