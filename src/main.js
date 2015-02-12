@@ -72,7 +72,7 @@ function guessLocale (path, aNav) {
   // frankly, maybe  I should pass these in as a var.
   // this fails for 'upper sorbian' => 'hsb'
   path = path || window.location.pathname;
-  nav = aNav || navigator || {};
+  let nav = aNav || navigator || {};
   let ans;
   let re = (x) => /^[a-z]{2,3}(|\-[a-z]{2})$/i.test(x);
   let possibles = path.split("/").filter(re);
