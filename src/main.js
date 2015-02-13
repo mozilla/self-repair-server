@@ -48,14 +48,40 @@ let actions = require("./common/actions");
 let runner = require("./runner");
 let personinfo = require("./common/personinfo");
 let phonehome = require("./common/heartbeat-phonehome");  // configs only
+let events = require("./common/events");
 
-let merge = require("./common/object").merge;
+let merge = require("./jetpack/object").merge;
 
 //end url with ?<somejson>
 function paramsToObj(search) {
+  if (!search) return {};
   search = search.startsWith("?") ? search.substring(1) : search;
   search = search.endsWith("/") ? search.substring(0,search.length-1): search;
-  return JSON.parse(decodeURIComponent(search));
+  search = decodeURIComponent(search);
+  try {
+    return JSON.parse(search);
+  } catch (e) {
+    console.error("bad params:", decodeURIComponent(search));
+  }
+}
+
+function guessLocale (path, aNav) {
+  // this should have tests!
+  // ['en-US', 'en-us', 'en',] => good.
+  // ['en-', '12-34', 'ben-us'] => bad
+  // frankly, maybe  I should pass these in as a var.
+  // this fails for 'upper sorbian' => 'hsb'
+  path = path || window.location.pathname;
+  let nav = aNav || navigator || {};
+  let ans;
+  let re = (x) => /^[a-z]{2,3}(|\-[a-z]{2})$/i.test(x);
+  let possibles = path.split("/").filter(re);
+  if (possibles.length) {
+    ans = possibles.pop();
+  } else {
+    ans = (navigator && navigator.language);
+  }
+  return ans;
 }
 
 
@@ -80,19 +106,19 @@ let state;
 
 // is there a timer here? I dunno!
 let mainloop = function (repairsList) {
-  personinfo.personinfo(
-    null, // tour
-    function (gottenState) {
-      actions.log("about to runAll");
-      console.log(gottenState);
-      state = gottenState;  // leak it
-      runner.runAll(repairsList, state,
-        function () { actions.log("runAll callback"); }
-    );}
+  runner.runAll(repairsList,
+    personinfo.personinfo,
+    null
+  ).then(
+    function () { actions.log("runAll callback"); }
   );
 };
 
 
+let guessedLocale = guessLocale();
+if (guessLocale) {
+  personinfo.config.overrides.locale = guessedLocale;
+} // use this locale first.
 
 // process config.  TODO, use a lib for this?
 for (let key in runtimeConfig) {
@@ -114,7 +140,18 @@ for (let key in runtimeConfig) {
   }
 }
 // actually run
-mainloop(require("./repairs"));
+
+let recipes = require("./repairs")
+mainloop(recipes);
+
+
+window.heartbeat = {
+  actions: actions,
+  runner: runner,
+  personinfo: personinfo,
+  recipes: recipes,
+  events: events
+};
 
 
 // loop over the list?

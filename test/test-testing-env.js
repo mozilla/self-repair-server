@@ -14,29 +14,12 @@
 
 var expect = require("chai").expect;
 
-var setup = function () {
-  require("testdom")(null, {
-    localStorage : 'localStorage',
-    Promise:  'es6-promises'
-  });
-};
-
 describe("testing environment", function () {
-  it('before setup, missing things', function() {
-    // it's hard to test the "before", b/c
-    // /Users/glind/gits/self-repair-server/node_modules/mocha-traceur/node_modules/traceur-runner/node_modules/traceur-source-maps/node_modules/source-map-support/source-map-support.js:60
-    // does some modding that makes isWindow not right during the transpile,
-    // thus expecting XMLHttpRequest not right.
-
-    // Tests would be:
-    //expect(typeof localStorage).to.equal("undefined");
-    //expect(typeof Promise).to.equal("undefined")
-  });
-  it("after setup, has es6-Promises and localStorage", function () {
-    setup();
-    expect(localStorage).to.exist;
+  it('has promises and localStorage', function() {
+    expect(window).to.exist();
+    expect(localStorage).to.exist();
     expect(Promise).itself.respondTo("all");
     expect(Promise).itself.respondTo("race");  // etc.
   });
-})
+});
 

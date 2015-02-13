@@ -12,7 +12,7 @@
 
 "use strict";
 
-const apiUtils = require("./api-utils");
+const apiUtils = require("../jetpack/api-utils");
 
 let vstring = function (name, emptyok ) {
   let msgs = [" must be a non-empty string", " must be a string"];

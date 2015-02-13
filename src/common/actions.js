@@ -26,7 +26,11 @@ let actions = {
   //   change some subset of hidden prefs?
   //
   personinfo: require("./personinfo").personinfo,
-  log: log
+  log: log,
+
 };
+
+// TODO, this is telemetry
+actions.record = actions.log.bind(actions.log, "RECORDING");
 
 module.exports = actions;

@@ -98,9 +98,10 @@ if (typeof Mozilla == 'undefined') {
 		});
 	};
 
-	Mozilla.UITour.showHeartbeat = function(message, flowId, engagementURL) {
+	Mozilla.UITour.showHeartbeat = function(message, thankyouMessage, flowId, engagementURL) {
 		_sendEvent('showHeartbeat', {
 			message: message,
+			thankyouMessage: thankyouMessage,
 			flowId: flowId,
 			engagementURL: engagementURL
 		});
@@ -186,14 +187,6 @@ if (typeof Mozilla == 'undefined') {
 
 		themeIntervalId = setInterval(nextTheme, delay);
 		nextTheme();
-	};
-
-	Mozilla.UITour.addPinnedTab = function() {
-		_sendEvent('addPinnedTab');
-	};
-
-	Mozilla.UITour.removePinnedTab = function() {
-		_sendEvent('removePinnedTab');
 	};
 
 	Mozilla.UITour.showMenu = function(name, callback) {
@@ -287,6 +280,7 @@ if (typeof Mozilla == 'undefined') {
 
 })();
 
-
-// added to make this requireable.
-if (typeof module !== undefined)  module.exports = Mozilla.UITour;
+// Make this library Require-able.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = Mozilla.UITour;
+}

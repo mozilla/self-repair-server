@@ -19,9 +19,16 @@
 */
 let { expect } = require("chai");
 let actions = require("../../src/common/actions");
+require("../utils").shimTodo(it);
+
 
 describe("actions list", function () {
   it("log, showHeartbeat, personinfo", function () {
-    expect(actions).to.have.keys(['log','showHeartbeat','personinfo']);
+    expect(actions).to.have.keys(['log','showHeartbeat','personinfo', 'record']);
   });
+});
+
+
+describe("actions#record", function () {
+  it.todo("goes to telemetry", new Function());
 });

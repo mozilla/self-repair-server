@@ -8,15 +8,14 @@
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
   globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
 
-/* global */
+/* global require */
 
 "use strict";
 
-const request = require("./request");
-const extend = require("./object").extend;
+const request = require("./request").request;
+const extend = require("../jetpack/object").extend;
 const personinfo = require("./personinfo");
 const validate = require("./upload-validate").validate;
-const flow = require("./heartbeat-flow");
 
 let log = require("./actions").log;
 log = log.bind(log, "phonehome");
@@ -26,13 +25,12 @@ log = log.bind(log, "phonehome");
   */
 
 /** base configuration of the phonehome module / function
-  *
+  * (overridable from outside)
   */
 let config = exports.config  = {
   phonehome: true,   // will it send?
-  testing: true,         // append on a flag?
+  testing: true,     // append on a flag?
   url: "https://input.mozilla.org/api/v2/hb/",
-  //url: "https://testpilot.mozillalabs.com/submit/" + "pulse-uptake-experiment",
   extraData:  null
 };
 
@@ -43,7 +41,7 @@ let config = exports.config  = {
   *        if this is unwanted:  `annotate(extend({},obj))`
   *
   */
-let annotate = exports.annotate = function (obj) {
+let annotate = function (obj) {
   return new Promise(function(resolve, reject) {
     obj = extend({}, obj);
 
@@ -53,7 +51,8 @@ let annotate = exports.annotate = function (obj) {
     obj.response_version = 1;
     obj.updated_ts = Date.now();
 
-    personinfo.personinfo(null,
+    // TODO: does this pass the tour and config?  if so, how?
+    personinfo.personinfo().then(
       function (data) {
         obj.platform = "UNK";  //data.os; // will be better
         obj.channel = data.updateChannel;
@@ -76,7 +75,7 @@ let annotate = exports.annotate = function (obj) {
 
         obj.experiment_version = data.addonVersion || "-";
 
-        log("annotated", obj);
+        //log("annotated", obj);
         resolve(obj);
       }
     );
@@ -95,97 +94,16 @@ let annotate = exports.annotate = function (obj) {
   *    Response [1][2]
   *
   *
-  * Note 1: if (!options.phonehome)), return Request instead
+  * Note 1: if (!options.phonehome)), return [RequestArgs] instead
   *
   * Note 2: Success will be
   *   - statusCode = 201 (input heartbeat)
   *   - statusCode = 0 (local file)
-  *   - statusCode = ??? (other systems, mostly 200)
   *
-  *
-  * Note 3: payloads are finite in size (several megs?) for bagheera
-  *         and will die silently (?) on rejection.
   **/
 
-let phonehome_orig = exports.phonehome = function(dataObject, options){
-//
-//  dataObject = dataObject || {};
-//
-//  options = extend({}, config, options);
-//
-//  let { promise, reject, resolve } = promises.defer();
-//  function requestCompleted(which, cb, response) {
-//    // FUTURE: worth catching errors here?  If so, so what to do next?
-//    //log("REQUEST COMPLETE", which, response.status, response.text);
-//    cb(response);
-//  }
-//
-//  dataObject.is_test = !!options.testing;
-//
-//  let send = function (dataObject) {
-//    /** TP packet
-//      * - special url
-//      * - POST instead of get
-//      * - explicit about content type.
-//      * - will autogen a record at /bagheera end
-//      */
-//    var XMLReqTP = new request.Request({
-//      url: options.url,
-//      headers: {'Accept': 'application/json; indent=4'},
-//      onComplete: requestCompleted.bind(null,"HeartbeatInput", resolve),
-//      content: JSON.stringify(dataObject),
-//      contentType: "application/json"
-//    });
-//
-//    log("HeartbeatInput REQUESTS");
-//    log(JSON.stringify(dataObject,null,2));
-//
-//    if (options.phonehome) {
-//      log("posting");
-//      XMLReqTP.post();
-//
-//    } else {
-//      log("phonehome, blocked by configuration");
-//      resolve(XMLReqTP); /* return the request, won't have status */
-//    }
-//  };
-//
-//  // this becomes a promise.
-//  dataObject = annotate(dataObject);
-//
-//  // or things like testpilot and such.
-//  let addExtra = function (dataObject) {
-//    if (options.extraData) {
-//      dataObject.extra = extend({}, dataObject.extra || {}, options.extraData);
-//    }
-//    return dataObject;
-//  };
-//
-//
-//  // remember, validate strips extra fields silently!
-//  let wrap_valid = (d) => {
-//    try {
-//      return (validate(d)); // may turn into a reject.
-//    } catch (exc) {
-//      log(exc);
-//      reject(exc);
-//    }
-//  };
-//
-//  dataObject.then(
-//  addExtra).then(
-//  wrap_valid).then(
-//  send).then(
-//    null,
-//    console.error);
-//
-//  return promise;
-};
 
-
-
-
-let phonehome = exports.phonehome = function(dataObject, options){
+let phonehome = function(dataObject, options){
   dataObject = dataObject || {};
   options = extend({}, config, options);
 
@@ -194,16 +112,8 @@ let phonehome = exports.phonehome = function(dataObject, options){
   return new Promise(function(resolve, reject) {
 
     let send = function (dataObject) {
-      /** TP packet
-        * - special url
-        * - POST instead of get
-        * - explicit about content type.
-        * - will autogen a record at /bagheera end
-        */
-
-
       //function request(url, method, data, headers, contentType) {
-      let Args = [
+      let args = [
         options.url,
         "POST", // method,
         dataObject, // content  (will be stringified)
@@ -212,15 +122,15 @@ let phonehome = exports.phonehome = function(dataObject, options){
       ];
 
       if (options.phonehome) { // for real.
-        log("posting");
-        return request.request.apply(null, Args);
+        //log("posting");
+        return request.apply(null, args);
       } else {
-        log("blocked by configuration");
-        return Args; /* return the Args. */
+        //log("blocked by configuration");
+        return args; /* return the Args. */
       }
     };
 
-    // or things like testpilot and such.
+    /* extend ".extra" */
     let addExtra = function (dataObject) {
       if (options.extraData) {
         dataObject.extra = extend({}, dataObject.extra || {}, options.extraData);
@@ -228,24 +138,22 @@ let phonehome = exports.phonehome = function(dataObject, options){
       return dataObject;
     };
 
-
     // remember, validate strips extra fields silently!
-    // TODO, this should be promisy
     let wrap_valid = function (d)
     {
       return new Promise(function (resolve, reject){
         try {
           resolve(validate(d)); // may turn into a reject.
         } catch (exc) {
-          log(exc);
+          //log(exc);
           reject(exc);
         }
       });
     };
 
-    /** main body. */
 
-    // actually do the work.
+    /** main body */
+
     annotate(dataObject).then(
     addExtra).then(
     wrap_valid).then(
@@ -254,3 +162,6 @@ let phonehome = exports.phonehome = function(dataObject, options){
       reject);
   });
 };
+
+exports.phonehome = phonehome;
+exports.annotate = annotate;

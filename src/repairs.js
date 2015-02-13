@@ -13,6 +13,6 @@
 "use strict";
 
 let repairList = module.exports = [
-  require("./always"),
-  require("./heartbeat-by-user-first-impression/heartbeat-by-user-first-impression"),
+  //require("./always"),
+  //require("./heartbeat-by-user-first-impression/heartbeat-by-user-first-impression"),
 ];

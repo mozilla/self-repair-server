@@ -13,7 +13,7 @@
 "use strict";
 
 let UITour = require("thirdparty/uitour");  // for now.
-let type = require("./type");
+let type = require("../jetpack/type");
 let log = console.log.bind(console,"repair-logger:");
 
 //log(Object.keys(UITour))
@@ -38,7 +38,7 @@ let log = console.log.bind(console,"repair-logger:");
   return BoundHeartbeat
   - flow: state
 */
-let showHeartbeat = function (flowid, message, engagementUrl, callback) {
+let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, callback) {
   callback = type.isFunction(callback) ? callback : null;
 
   // catch all the messages related to all heartbeat star widgets
@@ -46,14 +46,13 @@ let showHeartbeat = function (flowid, message, engagementUrl, callback) {
     //log("maybe", aEventName, flowid, aData); // all tour events
     if (aEventName.indexOf("Heartbeat") === 0) {
       if (aData.flowId !== flowid) {
-        log("not my heartbeat.  That's probably an error.", aData.flowId, "wanted", flowid);
+        //log("not my heartbeat.  That's probably an error.", aData.flowId, "wanted", flowid);
         return;
       }
-      log(aEventName, flowid, aData);
+      //log(aEventName, flowid, aData);
       if (callback && type.isFunction(callback)) {
         callback(flowid, aEventName, aData);
       }
-
     }
     /*
     switch (aEventName) {
@@ -83,9 +82,9 @@ let showHeartbeat = function (flowid, message, engagementUrl, callback) {
     */
   });
 
-  log("showing heartbeat");
   UITour.showHeartbeat(
     message,  //
+    thanksMsg,
     flowid,             //
     engagementUrl
   );
