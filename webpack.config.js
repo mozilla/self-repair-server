@@ -12,12 +12,8 @@
 
 "use strict";
 
-// can't figure out where webpack lives, irritatingly
-//var webpack = require("webpack");
-//console.log(require.paths)
-//var CommonsChunkPlugin = require("./lib/optimize/CommonsChunkPlugin");
-//var commonsPlugin =
-//  new CommonsChunkPlugin('common.js');
+var webpack = require("webpack");
+
 
 module.exports = {
 	//context: __dirname + "/app",
@@ -48,11 +44,14 @@ module.exports = {
         /*alias: {
             UITour: __dirname + "/thirdparty/uitour.js",
         }*/
-    }
+    },
     // unclear how to get split to work, given 'no webpack' errors from cli
-    //plugins: [
+    plugins: [
+      process.env.TRAVIS && new webpack.optimize.UglifyJsPlugin(),
+      new webpack.optimize.DedupePlugin(),
+      //new CommonsChunkPlugin('common.js')
     //	commonsPlugin
     //  	//new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
-  	//]
+  	].filter(Boolean)
 };
 

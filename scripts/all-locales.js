@@ -19,7 +19,6 @@ var fs = require('fs');
 var path = require('path');
 
 
-
 var mkdirSync = function (path) {
   try {
     fs.mkdirSync(path);
@@ -28,6 +27,10 @@ var mkdirSync = function (path) {
   }
 }
 
+var copyFileSync = function(srcFile, destFile, encoding) {
+  var content = fs.readFileSync(srcFile, encoding);
+  fs.writeFileSync(destFile, content, encoding);
+}
 
 var LANGS = [
     'ach', 'af', 'ak', 'an', 'ar', 'as', 'ast', 'az', 'be', 'bg',
@@ -46,14 +49,13 @@ var LANGS = [
 // RTL languages.
 var RTL_LANGS = ['ar', 'fa', 'he', 'ur'];
 
-
+// eventually might have to do a cp -r type thing
 var nothingBurger = function (lang) {
+  var infile = path.join('scripts', 'locale_base', 'index.html');
   var dir = path.join('repair', lang);
-  var file = path.join(dir,"index.html");
+  var outfile = path.join('repair', lang, 'index.html');
   mkdirSync(dir);
-  if (!fs.existsSync(file)) {
-    fs.open(file, 'w'); // creates it
-  }
+  copyFileSync(infile, outfile);
 }
 
 
