@@ -1,0 +1,32 @@
+<html lang="en"><head>
+<title>Explore and Debug</title>
+<meta charset="utf-8">
+</head>
+<body>
+<script src="recipe.packed.js" type="application/javascript;version=1.7"></script>
+<h1>Explore: <span id="expname">recipe name</span></h1>
+<h2>Now What?</h2>
+<p>Open dev tools.  Your recipe is in `window.moz` or `moz`.
+
+</p><h2>Description</h2><h2>
+<p id="description">(not loaded)</p>
+</h2><h2>Owner</h2><h2>
+<p id="owner">(no owner)</p>
+
+</h2><h2>shouldRun</h2><h2>
+<pre id="shouldRun">(shouldRun src)</pre>
+</h2><h2>run</h2><h2>
+<pre id="run">(run src)</pre>
+
+
+<script>
+let $ = window.document.querySelector;
+$("#expname").textContent = moz.recipe.name;
+$("#description").textContent = moz.recipe.description;
+$("#owner").textContent = moz.recipe.owner;
+$("#run").textContent = moz.recipe.run.toString();
+$("#shouldRun").textContent = moz.recipe.shouldRun;
+</script>
+
+
+</h2></body></html>
