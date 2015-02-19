@@ -52,11 +52,26 @@ simpleprefs.on("uri", function () {
 // ["availableTargets", "sync", "appinfo", "selectedSearchEngine"].forEach((k)=>window.Mozilla.UITour.getConfiguration(k, console.log.bind(console)))
 
 /* set pref, open "tour" page */
-exports.main = function () {
+exports.main = function (options) {
+  let statics = options.staticArgs || {};
+
   httpsPref.set();
-  simpleprefs.prefs.uri = "http://localhost:8000"; //data.url("tour.html");
+  simpleprefs.prefs.uri = "http://localhost:8000/repair/en-US/index.html?{%22phonehome%22:{%22testing%22:true},%22runner%22:{%22alwaysRun%22:true},%22personinfo%22:{%22updateChannel%22:%20%22nightly%22}}"; //data.url("tour.html");
   addPerm("http://localhost");
-  require("sdk/tabs").open(simpleprefs.prefs.uri);
+
+  if (statics.wait) {
+    require("timers").setTimeout(()=>{
+      require("sdk/tabs").open({
+        url: simpleprefs.prefs.uri,
+        inBackground: true
+      })
+    }, statics.wait);
+  } else {
+    require("sdk/tabs").open({
+      url: simpleprefs.prefs.uri,
+      inBackground: false
+    });
+  }
 };
 
 
