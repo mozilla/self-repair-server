@@ -7,6 +7,7 @@
 -
 */
 
+var ENV = process.env;
 
 module.exports = function(config) {
   config.set({
@@ -14,16 +15,17 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
-
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha'],
 
 
+
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'app/index.js', included: true},
-      {pattern: 'test-integration/*.js', included: true}
+        // ** <= https://www.npmjs.com/package/minimatch#comparisons-to-other-fnmatchglob-implementations
+      {pattern: 'repair/en-US/index.js', included: true}, //  the built file, MUST GO FIRST
+      {pattern: ENV.npm_config_karmafiles || 'test-built/**/*.js', included: true},
     ],
 
     // list of files to exclude
@@ -33,45 +35,61 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test-integration/*': ['webpack'] // traceur at
+      'test-built/**': ['webpack']
     },
 
     plugins: [
         'karma-coverage',   // for the reporter
         'karma-webpack',
         'karma-mocha',
-        'karma-firefox-launcher'
+        'karma-firefox-launcher',
+        'karma-mocha-reporter'
     ],
 
     webpack: {
       module: {
-        loaders: [
-          { // << traceur
-            test: /\.js$/,
+        loaders : [
+          { // tests get traceur'ed early to pass through karma
+            test: /test.*\.js$/,
             // have to traceur the tests too.
             exclude: /(node_modules|bower_components)\//,
             loader: 'traceur'
-          }
+          },
         ],
         postLoaders: [
-          {
-            test: /\.js$/,
-            exclude: /(node_modules|bower_components)\//,
-            loader: 'istanbul-instrumenter'
-          }
-        ],
+        /**
+          * 1.  instrumement all sources, in original form.
+          * 2.  es6 -> es5 all instrumented source AND tests.
+          * 3.  webpack each test.  (which bundles in a proper require and main)
+          *
+          * This allows
+          * - writing all sources *and* tests in es6
+          * - full coverage
+          */
+           //http://npm.taobao.org/package/istanbul-instrumenter-loader
+        {
+          test: /\.js$/,
+          exclude: /(jetpack|node_modules|bower_components)\//,
+          loader: 'istanbul-instrumenter'
+        },
+        { // << traceur *after* instrumenting
+          test: /\.js$/,
+          // tests should already be traceured
+          exclude: /(test|node_modules|bower_components)\//,
+          loader: 'traceur'
+        },
+        ]
       },
     },
+
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'dots', 'coverage'],
-
+    reporters: ['coverage', 'mocha'],
 
     // web server port
     port: 9876,
-
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
@@ -81,7 +99,6 @@ module.exports = function(config) {
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
     //
-
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
@@ -94,12 +111,13 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true,
+    singleRun: ENV.TRAVIS || false,
 
     // coverage report.
     coverageReporter: {
-      type : 'html',
-      dir : 'coverage/integration'
+      reporters: [
+        {type: 'html', dir:'coverage/', subdir: 'built'}
+      ]
     }
   });
 };

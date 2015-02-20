@@ -40,10 +40,6 @@ TODO?  Promises or callback as first arg?  Are we node?
 
 "use strict";
 
-console.log(
-  "Welcome to heart heart heart beat."
-);
-
 let actions = require("./common/actions");
 let runner = require("./runner");
 let personinfo = require("./common/personinfo");
@@ -106,11 +102,12 @@ let state;
 
 // is there a timer here? I dunno!
 let mainloop = function (repairsList) {
+  console.log("heartbeat main loop");
   runner.runAll(repairsList,
     personinfo.personinfo,
     null
   ).then(
-    function () { actions.log("runAll callback"); }
+    function () { actions.log("mainloop runAll callback"); }
   );
 };
 
@@ -141,18 +138,20 @@ for (let key in runtimeConfig) {
 }
 // actually run
 
-let recipes = require("./repairs")
-mainloop(recipes);
-
+let recipes = require("./repairs");
 
 window.heartbeat = {
   actions: actions,
   runner: runner,
   personinfo: personinfo,
   recipes: recipes,
-  events: events
+  events: events,
+  main: mainloop
 };
 
+
+console.log('heartbeat loaded');
+console.log('to start (if not started): `heartbeat.main(heartbeat.recipes)`');
 
 // loop over the list?
 // do them all?
