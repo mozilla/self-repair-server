@@ -25,6 +25,13 @@ var path = require('path');
 // recall that all methods are run in order on extended Base object.
 
 module.exports = yeoman.generators.Base.extend({
+  constructor: function () {
+    yeoman.generators.Base.apply(this, arguments);
+
+    // This makes `fullname` a required argument.
+    this.argument('fullname', { type: String, required: false });
+  },
+
   initializing: function () {
     //this.pkg = require('../package.json');
     this.uname = this.user.git.name() || 'Your Name';
@@ -39,25 +46,26 @@ module.exports = yeoman.generators.Base.extend({
       'Generating new ' + chalk.red('Self Repair Recipe')
     ));
 
-    var prompts = [{
-      type: 'text',
-      name: 'fullname',
-      message: 'Name of your recipe',
-      default: 'monkeys everywhere'
-    },
-    {
-      type: 'text',
-      name: 'owner',
-      message: 'Owner',
-      default: this.uname + ' <' + this.email + '>'
-    },
-    {
-      type: 'text',
-      name: 'filter_conditions',
-      message: 'Filter Conditions (plain text)',
-      default: 'run under these conditions'
-    },
-    ];
+    var prompts = [
+      this.fullname ? false : {
+        type: 'text',
+        name: 'fullname',
+        message: 'Name of your recipe',
+        default: 'monkeys everywhere'
+      },
+      {
+        type: 'text',
+        name: 'owner',
+        message: 'Owner',
+        default: this.uname + ' <' + this.email + '>'
+      },
+      {
+        type: 'text',
+        name: 'filter_conditions',
+        message: 'Describe when this run',
+        default: 'run under these conditions'
+      }
+    ].filter(Boolean); // filter those already set!
 
     this.prompt(prompts, function (props) {
       this.props = props;

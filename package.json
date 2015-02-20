@@ -21,11 +21,13 @@
     "karma-webpack": "^1.5.0",
     "mocha": "^2.1.0",
     "node-uuid": "^1.4.2",
+    "npm-path": "^1.0.1",
     "opener": "^1.4.0",
     "shelljs": "^0.3.0",
     "thirdparty": "file:thirdparty",
     "traceur-loader": "^0.6.3",
-    "underscore": "^1.7.0",
+    "underscore": "^1.8.1",
+    "underscore.string": "^3.0.3",
     "webpack": "^1.4.13",
     "yo": "^1.4.5"
   },
@@ -38,9 +40,9 @@
     "prebuild": "\\rm -rf repair/* && node scripts/all-locales.js",
     "build": "webpack",
     "demo": "npm run build && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
-    "recipe": "npm run recipe:new self-repair ${NAME}  &&  npm run recipe:open ${NAME}",
-    "recipe:new": "yo self-repair-recipe ${NAME}",
-    "recipe:open": "opener src/recipes/${NAME}/"
+    "recipe": "node scripts/recipe.js all",
+    "recipe:new": "node scripts/recipe.js new",
+    "recipe:open": "node scripts/recipe.js open"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"
