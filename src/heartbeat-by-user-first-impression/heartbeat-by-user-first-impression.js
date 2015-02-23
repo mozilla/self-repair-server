@@ -16,8 +16,9 @@ let allconfigs = require("./config");
 let actions  = common.actions;
 let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
-let Flow = require("../common/heartbeat-flow").Flow;
-let phonehome = require("../common/heartbeat-phonehome").phonehome;
+let { Flow, phonehome } = require("../common/heartbeat/");
+phonehome = phonehome.phonehome;
+
 let uuid = require("node-uuid").v4;
 let events = require("../common/events");
 

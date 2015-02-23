@@ -12,13 +12,13 @@
 
 "use strict";
 
-const request = require("./request").request;
-const extend = require("../jetpack/object").extend;
-const personinfo = require("./personinfo");
+const request = require("../request").request;
+const extend = require("../../jetpack/object").extend;
+const personinfo = require("../personinfo");
 const validate = require("./upload-validate").validate;
 
-let log = require("./actions").log;
-log = log.bind(log, "phonehome");
+var log = console.log.bind(console, "phonehome"); // can't depend on actions,
+  // circular dependency.
 
 /** POST API information for Heartbeat
   * http://fjord.readthedocs.org/en/latest/hb_api.html
