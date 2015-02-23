@@ -17,17 +17,17 @@
 var expect = require("chai").expect;
 var chai = require("chai");
 
-require("../utils").shimTodo(it);
+require("../../utils").shimTodo(it);
 let uuid = require("node-uuid").v4;
 
-let events = require("../../src/common/events");
-let runner = require("../../src/runner");
-let UITour = require("../../thirdparty/uitour");
-let personinfo = require("../../src/common/personinfo");
-let R = require("../../src/heartbeat-by-user-first-impression/heartbeat-by-user-first-impression");
+let events = require("../../../src/common/events");
+let runner = require("../../../src/runner");
+let UITour = require("thirdparty/uitour");
+let personinfo = require("../../../src/common/personinfo");
+let R = require("../../../src/heartbeat-by-user-first-impression/heartbeat-by-user-first-impression");
 let E = R.testable.eData;
 
-let phonehome = require("../../src/common/heartbeat-phonehome");
+let phonehome = require("../../../src/common/heartbeat/phonehome");
 
 describe("heartbeat phonehome", () => {
   let u = "test-phonehome-1";

@@ -15,10 +15,10 @@
 let { expect } = require("chai");
 let assert = require("assert");
 
-require("../utils").shimTodo(it);
+require("../../utils").shimTodo(it);
 
 
-let flow = require("../../src/common/heartbeat-flow");
+let flow = require("../../../src/common/heartbeat/flow");
 let Flow = flow.Flow;
 
 describe('hearbeat flow', () => {

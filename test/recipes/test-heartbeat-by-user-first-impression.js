@@ -28,7 +28,7 @@ let events = require("../../src/common/events");
 let runner = require("../../src/runner");
 let UITour = require("../../thirdparty/uitour");
 
-let phonehome = require("../../src/common/heartbeat-phonehome");
+let phonehome = require("../../src/common/heartbeat/phonehome");
 let personinfo = require("../../src/common/personinfo");
 
 let R = require("../../src/heartbeat-by-user-first-impression/heartbeat-by-user-first-impression");

@@ -43,7 +43,7 @@ TODO?  Promises or callback as first arg?  Are we node?
 let actions = require("./common/actions");
 let runner = require("./runner");
 let personinfo = require("./common/personinfo");
-let phonehome = require("./common/heartbeat-phonehome");  // configs only
+let { phonehome } = require("./common/heartbeat/");  // configs only
 let events = require("./common/events");
 
 let merge = require("./jetpack/object").merge;

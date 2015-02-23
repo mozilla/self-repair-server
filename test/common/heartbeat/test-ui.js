@@ -13,9 +13,9 @@
 "use strict";
 
 let { expect } = require("chai");
-require("../utils").shimTodo(it);
+require("../../utils").shimTodo(it);
 
-let heartbeat = require("../../src/common/heartbeat");
+let heartbeat = require("../../../src/common/heartbeat/ui");
 
 describe("showHeartbeat", function () {
   it("showHeartbeat exists", function () {

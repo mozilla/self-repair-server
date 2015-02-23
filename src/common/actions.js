@@ -15,7 +15,7 @@
 // TODO, implement all actions in:
 // https://bugzilla.mozilla.org/show_bug.cgi?id=1031506
 
-let log = console.log.bind(console,"repair-logger:");
+let log = console.log.bind(console, "repair-logger:");
 
 let actions = {
   showHeartbeat:  require("./heartbeat").showHeartbeat,

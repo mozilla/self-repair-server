@@ -12,8 +12,9 @@
 
 "use strict";
 
+
 let UITour = require("thirdparty/uitour");  // for now.
-let type = require("../jetpack/type");
+let type = require("../../jetpack/type");
 let log = console.log.bind(console,"repair-logger:");
 
 //log(Object.keys(UITour))
