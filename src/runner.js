@@ -54,7 +54,6 @@ run heartbeat
 "use strict";
 
 let actions = require("./common/actions");
-let chai = require("chai");
 let type = require("./jetpack/type");
 
 const config = {
@@ -66,10 +65,8 @@ let validate = function (thing, rules) {
   // TODO, this is way wack.  Reinvent wheels much?  return order?
   let errors  = [];
   rules.map(function(rule) {
-    try {
-      rule(thing);
-    } catch (E) {
-      errors.push(E);
+    if (! rule(thing) ) {
+      errors.push(new Error("Problem: "+ rule.toString()));
     }
   });
   return ([errors, errors.length === 0]);
@@ -81,19 +78,16 @@ let validate = function (thing, rules) {
 let validateConfig = function (config) {
   // I think this should return an errors, status object, not a bool.
   let rules = [
-    function (c) {chai.expect(c.name).to.be.a("string")},
-    function (c) {chai.expect(c.description).to.be.a("string")},
-    function (c) {chai.expect(c.owner).to.be.a("string")},
-    function (c) {chai.expect(c.version).to.be.a("number")},
-    function (c) {chai.expect(c.run).to.be.a("function")},
-    function (c) {chai.expect(c.shouldRun).to.be.a("function")}
+    (c) => typeof c.name === 'string',
+    (c) => typeof c.description === 'string',
+    (c) => typeof c.owner === 'string',
+    (c) => typeof c.version === 'number',
+    (c) => typeof c.run === 'function',
+    (c) => typeof c.shouldRun === 'function',
   ];
 
   return validate(config, rules);
-  // has keys
-  // these are callables?
-  //
-}; //
+};
 
 
 /** out guard
@@ -101,7 +95,7 @@ let validateConfig = function (config) {
   */
 let validateRunAttempt = function (obj) {
   let rules = [
-    function (c) {chai.expect(c).to.contain.keys('status', 'name');}
+    (c) => 'status' in c && 'name' in c
   ];
   return validate(obj, rules);
 };
