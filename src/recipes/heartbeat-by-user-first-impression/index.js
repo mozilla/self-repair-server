@@ -11,18 +11,18 @@
 
 
 "use strict";
-let common = require("../common");
+let common = require("../../common");
 let allconfigs = require("./config");
 let actions  = common.actions;
 let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
-let { Flow, phonehome } = require("../common/heartbeat/");
+let { Flow, phonehome } = require("../../common/heartbeat/");
 phonehome = phonehome.phonehome;
 
 let uuid = require("node-uuid").v4;
-let events = require("../common/events");
+let events = require("../../common/events");
 
-let { hasAny } = require("../jetpack/array");
+let { hasAny } = require("../../jetpack/array");
 
 // TODO, is it module level config, or function level?
 // so far, 3 systems
@@ -243,7 +243,7 @@ let run = function (state, extras) {
     local.flow_id,
     local.question_text,
     "Thank you!",
-    "http://localhost/enagement.html",
+    null, //"http://localhost/enagement.html",
     phaseCallback
   );
 
@@ -251,14 +251,19 @@ let run = function (state, extras) {
 };
 
 exports.name = NAME;
-exports.description = "long description";
+exports.description = `Heartbeat User First Impressions
+
+Samples over USERS once per sessions, at 5 minutes after
+session startup.
+`;
 exports.shouldRun = shouldRun;
 exports.run = run;
 exports.owner = "Gregg Lind <glind@mozilla.com>";
-exports.version = 1;
+exports.version = 2;
 
 exports.config = config;
 // extras that we want for testing
+// TODO:  these should spin off into another module, by v.11
 exports.testable = {
   waitedEnough: waitedEnough,
   Lstore: Lstore,
