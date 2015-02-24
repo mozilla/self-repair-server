@@ -11,6 +11,7 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "es6-promises": "^1.0.9",
+    "generator-self-repair-recipe": "file:generator-self-repair-recipe",
     "istanbul": "^0.3.5",
     "istanbul-instrumenter-loader": "^0.1.2",
     "karma-coverage": "^0.2.7",
@@ -20,10 +21,15 @@
     "karma-webpack": "^1.5.0",
     "mocha": "^2.1.0",
     "node-uuid": "^1.4.2",
+    "npm-path": "^1.0.1",
     "opener": "^1.4.0",
+    "shelljs": "^0.3.0",
     "thirdparty": "file:thirdparty",
     "traceur-loader": "^0.6.3",
-    "webpack": "^1.4.13"
+    "underscore": "^1.8.1",
+    "underscore.string": "^3.0.3",
+    "webpack": "^1.4.13",
+    "yo": "^1.4.5"
   },
   "scripts": {
     "webpack": "webpack --module-bind traceur-loader --config webpack.single.conf.js --watch --progress",
@@ -35,7 +41,9 @@
     "prebuild": "\\rm -rf repair && mkdir repair && node scripts/all-locales.js",
     "build": "webpack",
     "demo": "npm run build && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
-    "new-recipe": "bash scripts/new-recipe.bash"
+    "recipe": "node scripts/recipe.js all",
+    "recipe:new": "node scripts/recipe.js new",
+    "recipe:open": "node scripts/recipe.js open"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"

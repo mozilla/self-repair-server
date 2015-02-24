@@ -1,0 +1,36 @@
+{
+  "name": "generator-self-repair-recipe",
+  "version": "0.1.0",
+  "description": "Self Repair Server Recipe Scaffold",
+  "license": "MIT",
+  "main": "app/index.js",
+  "repository": "gregglind/generator-repair-recipe",
+  "author": {
+    "name": "Gregg Lind",
+    "email": "gregg.lind@gmail.com",
+    "url": "https://github.com/gregglind"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "app"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.18.0",
+    "chalk": "^0.5.0",
+    "yosay": "^0.3.0"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "peerDependencies": {
+    "yo": ">=1.0.0"
+  }
+}
