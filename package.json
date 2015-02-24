@@ -32,7 +32,7 @@
     "test:built": "node_modules/karma/bin/karma start karma.conf.built.js",
     "pretest:unit": "echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
     "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
-    "prebuild": "\\rm -rf repair && mkdir repair && node scripts/all-locales.js",
+    "prebuild": "\\rm -rf deploy && mkdir deploy && node scripts/all-locales.js",
     "build": "webpack",
     "demo": "npm run build && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
     "new-recipe": "bash scripts/new-recipe.bash"

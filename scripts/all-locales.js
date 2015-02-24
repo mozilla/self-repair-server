@@ -52,9 +52,11 @@ var RTL_LANGS = ['ar', 'fa', 'he', 'ur'];
 // eventually might have to do a cp -r type thing
 var nothingBurger = function (lang) {
   var infile = path.join('scripts', 'locale_base', 'index.html');
-  var dir = path.join('repair', lang);
-  var outfile = path.join('repair', lang, 'index.html');
-  mkdirSync(dir);
+  var dir1 = path.join('deploy', lang);
+  var dir2 = path.join('deploy', lang, 'repair');
+  mkdirSync(dir1);
+  mkdirSync(dir2);
+  var outfile = path.join(dir2,'index.html');
   copyFileSync(infile, outfile);
 }
 

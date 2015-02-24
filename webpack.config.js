@@ -23,7 +23,7 @@ module.exports = {
 	},
 	output: {
 	    //path: __dirname + "/dist",
-	    path: __dirname + "/repair/en-US/",
+	    path: __dirname + "/deploy/en-US/repair",
 	    filename: "[name].js"
 	},
     module: {

@@ -23,7 +23,7 @@ deploy:
   skip_cleanup: true
   endpoint: org.mozilla.self-repair.s3-website-us-west-2.amazonaws.com
   region: us-west-2
-  local-dir: repair
+  local-dir: deploy
   acl: public_read
   on:
     repo: mozilla/self-repair-server
