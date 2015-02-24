@@ -13,17 +13,21 @@ npm install
 ## build
 
 ```
-./node_modules/webpack/bin/webpack.js
-./node_modules/webpack/bin/webpack.js --progress --colors --watch &
-# will need restart if you add new files
+npm run build
+
+# or more verbosely
+  ./node_modules/webpack/bin/webpack.js
+  ./node_modules/webpack/bin/webpack.js --progress --colors --watch &
+  # will need restart if you add new files
 ```
 
 ## Test / Explore
 
-1.  build
-2.  open reapir/index.html
-3.  open console mode.
-4.  profit.
+1.  `npm build`
+2.  npm run open deploy/en-US/repair/index.html  # will actually run recipes, for now.
+3.  open console mode in devtools
+4.  `heartbeat`
+5.  profit.
 
 
 ## Goals
@@ -165,6 +169,14 @@ console.log
 )
 ```
 
+## Recipes and locales
+
+All locales are built at once, and put in `deploy/%locale%`
+
+```
+npm run prebuild # creates 'empty' directories in deploy
+npm run build    # creates the 'en-US' file.
+```
 
 
 ## Issues / Bugs
