@@ -24,7 +24,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
         // ** <= https://www.npmjs.com/package/minimatch#comparisons-to-other-fnmatchglob-implementations
-      {pattern: 'repair/en-US/index.js', included: true}, //  the built file, MUST GO FIRST
+      {pattern: 'deploy/en-US/repair/index.js', included: true}, //  the built file, MUST GO FIRST
       {pattern: ENV.npm_config_karmafiles || 'test-built/**/*.js', included: true},
     ],
 
