@@ -24,7 +24,7 @@ let events = require("../../../src/common/events");
 let runner = require("../../../src/runner");
 let UITour = require("thirdparty/uitour");
 let personinfo = require("../../../src/common/personinfo");
-let R = require("../../../src/heartbeat-by-user-first-impression/heartbeat-by-user-first-impression");
+let R = require("../../../src/recipes/heartbeat-by-user-first-impression");
 let E = R.testable.eData;
 
 let phonehome = require("../../../src/common/heartbeat/phonehome");

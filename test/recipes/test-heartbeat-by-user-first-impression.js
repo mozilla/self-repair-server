@@ -31,8 +31,8 @@ let UITour = require("../../thirdparty/uitour");
 let phonehome = require("../../src/common/heartbeat/phonehome");
 let personinfo = require("../../src/common/personinfo");
 
-let R = require("../../src/heartbeat-by-user-first-impression/heartbeat-by-user-first-impression");
-let C = require("../../src/heartbeat-by-user-first-impression/config");
+let R = require("../../src/recipes/heartbeat-by-user-first-impression");
+let C = require("../../src/recipes/heartbeat-by-user-first-impression/config");
 
 const percent = 0.01;
 let days = 1000 * 86400;
