@@ -34,6 +34,7 @@
     "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
     "prebuild": "\\rm -rf deploy && mkdir deploy && node scripts/all-locales.js",
     "build": "webpack",
+    "postbuild": "cp scripts/s3_base/index.html deploy/index.html && cp scripts/s3_base/index.html deploy/error.html",
     "demo": "npm run build && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
     "new-recipe": "bash scripts/new-recipe.bash"
   },
