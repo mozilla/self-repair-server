@@ -26,6 +26,7 @@
     "webpack": "^1.4.13"
   },
   "scripts": {
+    "open": "opener",
     "webpack": "webpack --module-bind traceur-loader --config webpack.single.conf.js --watch --progress",
     "test": "npm run test:unit && npm run test:built",
     "pretest:built": "npm run build",
