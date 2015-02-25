@@ -27,7 +27,8 @@ describe("built file exports", function () {
     'personinfo': 'object',
     'recipes': 'array',
     'events': 'object',
-    'main': 'function'
+    'main': 'function',
+    'phonehome': 'object'
   };
   it("exports names are right", function () {
     expect(heartbeat).to.exist();
@@ -44,6 +45,7 @@ describe("built file exports", function () {
       expect(heartbeat.recipes.length).to.equal(1);
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true();
+      expect(hb.name).equal("heartbeat by user v1");
       expect(hb.version).equal(2);
     })
   })
