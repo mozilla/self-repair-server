@@ -6,7 +6,8 @@
   strict:true, undef:true, curly:false, browser:true,
   unused:true,
   indent:2, maxerr:50, devel:true, node:true, boss:true, white:true,
-  globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true  */
+  globalstrict:true, nomen:false, newcap:true, esnext: true, moz: true,
+  asi: true  */
 
 /*global describe, it, require, exports, log */
 
@@ -38,4 +39,12 @@ describe("built file exports", function () {
       expect(heartbeat[k]).to.be.a(mytype);
     }
   });
+  describe("recipe list", function () {
+    it("has one recipe, heartbeat first impressions", () => {
+      expect(heartbeat.recipes.length).to.equal(1);
+      let hb = heartbeat.recipes[0];
+      expect(heartbeat.runner.validateConfig(hb)[1]).true();
+      expect(hb.version).equal(2);
+    })
+  })
 });
