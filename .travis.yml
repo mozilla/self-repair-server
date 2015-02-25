@@ -15,10 +15,6 @@ addons:
 notifications:
   email: false
 
-before_deploy:
-  - touch deploy/releases
-  - date >> deploy/releases
-
 deploy:
   provider: s3
   access_key_id: AKIAJGJURJAHEHGR7WFA
