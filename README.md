@@ -115,7 +115,7 @@ npm run webpack -- test/recipes/always recipe.packed.js
 
 ```
 // parse the query string as JSON => args to modules.
-http://localhost:8000/?{%22phonehome%22:{%22testing%22:true},%22runner%22:{%22alwaysRun%22:true},%22personinfo%22:{%22updateChannel%22:%20%22nightly%22,%20%22locale%22:%20%22en-US%22}}/
+http://localhost:8000/?{"phonehome":{"testing":true},"runner":{"alwaysRun":true},"personinfo":{"updateChannel":%20"nightly",%20"locale":%20"en-US"}}/
 
 ```
 
@@ -178,6 +178,11 @@ npm run prebuild # creates 'empty' directories in deploy
 npm run build    # creates the 'en-US' file.
 ```
 
+## Debug the live server
+
+```
+https://self-repair.mozilla.org/en-US/repair/?{"runner":{"alwaysRun":true}}
+```
 
 ## Issues / Bugs
 

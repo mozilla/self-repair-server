@@ -23,8 +23,6 @@
 
 /**
   potential problems:
-  - state actually isn't constant over run.  should we fix that. TODO.
-  -
 
   Should be doing something smart to check lots of deps in one go?
   Maybe wait until addons list to get smarter about this?
@@ -52,8 +50,10 @@ let merge = require("./jetpack/object").merge;
 // allow overrides of any part of the system at client runtime.
 // TODO, decide useful ones!
 let runtimeConfig = {};
+let runSafe = false; // for now, just sets phonehome.testing = true;
 if (typeof window !== "undefined") {
   runtimeConfig = paramsToObj(window.location.search);
+  runSafe = !!window.location.search;
 }
 
 // will only catch things from other windows
@@ -63,8 +63,6 @@ if (typeof window !== "undefined") {
 //  }, false);
 //}
 
-// TODO should this be gotten between every recipe?  This is async, right?
-let state;
 
 // is there a timer here? I dunno!
 let mainloop = function (repairsList) {
@@ -83,6 +81,9 @@ if (guessedLocale) {
   personinfo.config.overrides.locale = guessedLocale;
 } // use this locale first.
 
+
+phonehome.config.testing = runSafe; // first guess, true if any params
+
 // process config.  TODO, use a lib for this?
 for (let key in runtimeConfig) {
   // please be sensible here!
@@ -96,7 +97,7 @@ for (let key in runtimeConfig) {
       merge(personinfo.config.overrides, branch);
       break;
     case "phonehome":
-      merge(phonehome.config, branch);
+      merge(phonehome.config, branch);  // but can override in specific params
       break;
     default:
       break;
@@ -112,16 +113,17 @@ window.heartbeat = {
   personinfo: personinfo,
   recipes: recipes,
   events: events,
-  main: mainloop
+  main: mainloop,
+  phonehome: phonehome,  // mostly to allow devTools override
 };
 
-
-console.log('heartbeat loaded');
-console.log('to start (if not started): `heartbeat.main(heartbeat.recipes)`');
-
-// loop over the list?
-// do them all?
-// sync or async?
-// ye gods it is Test Pilot *AND* telemetry experiment all over again.
-// is this reinventing the darn wheel?
+console.log('== heartbeat loaded ==');
+console.log('Configuration');
+console.log("- phonehome testing flag:", phonehome.config.testing);
+console.log("- force shouldRun to be true:", runner.config.alwaysRun);
+console.log('Recipes:', recipes.length);
+if (recipes.length) {
+  recipes.forEach((r)=>console.log('-', r.name));
+}
+console.log('Command to start (if not started): `heartbeat.main(heartbeat.recipes)`');
 
