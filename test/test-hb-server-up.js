@@ -78,7 +78,10 @@ describe("hb server", function () {
       );
     });
 
-    it("should not accept garbage input", function (done) {
+    // this leads to garbage loglines at
+    // https://input.mozilla.org/en-US/analytics/hberrorlog
+    // but now works properly, fixed, but disabled at  #75
+    it.skip("should not accept garbage input", function (done) {
       let isdone = false;
       let safedone = function (a) {
         if (!isdone) {isdone=true; expect(true).true(); done(a)}
@@ -93,7 +96,7 @@ describe("hb server", function () {
       //  1800
       //);
       cors("https://input.mozilla.org/api/v2/hb/",
-       {garbage: data}).then(
+       {garbage: data()}).then(
         () => safedone(new Error("no garbage!")),
         () => safedone() // should reject, ok
       );
