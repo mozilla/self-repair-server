@@ -182,82 +182,99 @@ describe("heartbeat-by-user-first-impression", function () {
     })
 
     describe("should-run", function () {
-      describe("nightly", function () {
-        it("stop run if too recent", function (done){
-          let obs = events.observe(R.name, (msg, data) => {
-            events.unobserve(obs);
-            if (msg === "too-soon") {
-              done()
-            } // else {
-            //  done(new Error([msg, data]));
-            //}
-          })
+      describe("known channels", function () {
+        var allchannels = ['nightly', 'aurora', 'beta'];
 
-          let state = {updateChannel: "nightly", locale: "en-US"};
-          let restdays = C.nightly.restdays;
-          let now = Date.now();
-          let ans = R.shouldRun(state, C.nightly,
-            {when: now - 1, lastRun: now - (restdays * days)
-          })
-          expect(ans).false();
-        });
-        it("go if been long enough!", function (){
-          // use the real configs, as though this is a nightly
-          let state = {updateChannel: "nightly", locale: "en-US"};
-          let restdays = C.nightly.restdays;
-          let now = Date.now();
-          let ans = R.shouldRun(state, undefined,
-            { when: now,
-              lastRun: now - (restdays * days),
-              randomNumber: .99 * C.nightly.sample // also clear the sampler!
-            })
-          expect(ans).true();
-        });
-        it("should respect the sampling percentage", function (){
-          let state = {updateChannel: "nightly", locale: "en-US"};
-          let p = C['nightly'].sample;
-          let restdays = C.nightly.restdays;
-          let now = Date.now();
-          expect(R.shouldRun(state, null, {
-            randomNumber: 99*percent*p,
-            when: now,
-            lastRun: now - (restdays * days)
-          }), "99% of rng is good!").true();
-          expect(R.shouldRun(state, null, {
-            randomNumber: 101*percent*p,
-            when: now,
-            lastRun: now - (restdays * days)
-          }), "101% of rng is bad").false();
-        });
-
-        it("runs on en-US ONLY", function () {
-          let now = Date.now();
-          let p = C['nightly'].sample;
-          let restdays = C.nightly.restdays;
-          let state = {updateChannel: "nightly", locale: "en-US"};
-            expect(R.shouldRun(state, null, {
-            randomNumber: 0,
-            when: now,
-            lastRun: now - (restdays * days)
-          }), "99% of rng is fine").true();
+        it('config has right channels: '+ allchannels.join('|'), () => {
+          expect(C).keys(allchannels);
         })
-        it("refuses bad locale", function (done) {
-          let badlocale = "es-MX";
-          let observed = events.observe(R.name, function (msg, data) {
-            if (msg === "bad-locale" &&
-               data.locale === badlocale.toLowerCase()){
-              done();
-              events.unobserve(observed)
-            }
+
+        // check that each channel behaves
+        it('stop run if too recent', function (done){
+          allchannels.forEach(function (channel) {
+            let obs = events.observe(R.name, (msg, data) => {
+              events.unobserve(obs);
+              if (msg === "too-soon") {
+                done()
+              } // else {
+              //  done(new Error([msg, data]));
+              //}
+            })
+
+            let state = {updateChannel: channel, locale: "en-US"};
+            let restdays = C[channel].restdays;
+            let now = Date.now();
+            let ans = R.shouldRun(state, C[channel],
+              {when: now - 1, lastRun: now - (restdays * days)
+            })
+            expect(ans, channel).false();
           })
-          let now = Date.now();
-          let restdays = C.nightly.restdays;
-          let state = {updateChannel: "nightly", locale: badlocale};
+        });
+        it('go if been long enough!', function (){
+          allchannels.forEach(function (channel) {
+            // use the real configs, as though this is a nightly
+            let state = {updateChannel: channel, locale: "en-US"};
+            let restdays = C[channel].restdays;
+            let now = Date.now();
+            let ans = R.shouldRun(state, undefined,
+              { when: now,
+                lastRun: now - (restdays * days),
+                randomNumber: .99 * C[channel].sample // also clear the sampler!
+              })
+            expect(ans, channel).true();
+          })
+        });
+        it('should respect the sampling percentage', function (){
+          allchannels.forEach(function (channel) {
+            let state = {updateChannel: channel, locale: "en-US"};
+            let p = C[channel].sample;
+            let restdays = C[channel].restdays;
+            let now = Date.now();
             expect(R.shouldRun(state, null, {
-            randomNumber: 0,
-            when: now,
-            lastRun: now - (restdays * days)
-          }), "bad locale is bad").false();
+              randomNumber: 99*percent*p,
+              when: now,
+              lastRun: now - (restdays * days)
+            }), channel + ' 99% of rng is good!').true();
+            expect(R.shouldRun(state, null, {
+              randomNumber: 101*percent*p,
+              when: now,
+              lastRun: now - (restdays * days)
+            }), channel + ' 101% of rng is bad').false();
+          })
+        });
+
+        it('runs on en-US ONLY', function () {
+          allchannels.forEach(function (channel) {
+            let now = Date.now();
+            let p = C[channel].sample;
+            let restdays = C[channel].restdays;
+            let state = {updateChannel: channel, locale: "en-US"};
+              expect(R.shouldRun(state, null, {
+              randomNumber: 0,
+              when: now,
+              lastRun: now - (restdays * days)
+            }), channel + ' en-US').true();
+          })
+        })
+        it('refuses bad locale', function (done) {
+          allchannels.forEach(function (channel) {
+            let badlocale = "es-MX";
+            let observed = events.observe(R.name, function (msg, data) {
+              if (msg === "bad-locale" &&
+                 data.locale === badlocale.toLowerCase()){
+                done();
+                events.unobserve(observed)
+              }
+            })
+            let now = Date.now();
+            let restdays = C[channel].restdays;
+            let state = {updateChannel: channel, locale: badlocale};
+              expect(R.shouldRun(state, null, {
+              randomNumber: 0,
+              when: now,
+              lastRun: now - (restdays * days)
+            }), channel + ' bad locale is bad').false();
+          })
         })
       });
 
