@@ -51,10 +51,12 @@ let merge = require("./jetpack/object").merge;
 // TODO, decide useful ones!
 let runtimeConfig = {};
 let runSafe = false; // for now, just sets phonehome.testing = true;
+let loud = false;
 if (typeof window !== "undefined") {
   runtimeConfig = paramsToObj(window.location.search);
-  runSafe = !!window.location.search;
+  loud = runSafe = !!window.location.search; // anything passed!
 }
+
 
 // will only catch things from other windows
 //if (window) {
@@ -66,12 +68,12 @@ if (typeof window !== "undefined") {
 
 // is there a timer here? I dunno!
 let mainloop = function (repairsList) {
-  console.log("heartbeat main loop");
+  loud && actions.log("heartbeat main loop");
   runner.runAll(repairsList,
     personinfo.personinfo,
     null
   ).then(
-    function () { actions.log("mainloop runAll callback"); }
+    function () { loud && actions.log("mainloop runAll callback"); }
   );
 };
 
@@ -88,7 +90,7 @@ phonehome.config.testing = runSafe; // first guess, true if any params
 for (let key in runtimeConfig) {
   // please be sensible here!
   let branch = runtimeConfig[key];
-  console.log(key, branch);
+  actions.log(key, branch);
   switch (key) {
     case "runner":
       merge(runner.config, branch);
@@ -107,6 +109,23 @@ for (let key in runtimeConfig) {
 
 let recipes = require("./repairs");
 
+let about = `
+== Self Repair Service Loaded ==
+# Configuration
+- phonehome testing flag: ${phonehome.config.testing}
+- force shouldRun to be true: ${runner.config.alwaysRun}
+
+# Recipes: ${recipes.length}
+${recipes.map(function(r) {return '- ' + r.name}).join("\n")}
+
+#Command to start (if not started):
+"heartbeat.main(heartbeat.recipes)"
+`;
+
+
+
+loud && console.log(about);
+
 window.heartbeat = {
   actions: actions,
   runner: runner,
@@ -117,13 +136,7 @@ window.heartbeat = {
   phonehome: phonehome,  // mostly to allow devTools override
 };
 
-console.log('== heartbeat loaded ==');
-console.log('Configuration');
-console.log("- phonehome testing flag:", phonehome.config.testing);
-console.log("- force shouldRun to be true:", runner.config.alwaysRun);
-console.log('Recipes:', recipes.length);
-if (recipes.length) {
-  recipes.forEach((r)=>console.log('-', r.name));
-}
-console.log('Command to start (if not started): `heartbeat.main(heartbeat.recipes)`');
+
+
+
 
