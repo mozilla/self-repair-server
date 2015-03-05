@@ -12,34 +12,29 @@
 
 "use strict";
 
-
 let UITour = require("thirdparty/uitour");  // for now.
 let type = require("../../jetpack/type");
 let log = console.log.bind(console,"repair-logger:");
 
-//log(Object.keys(UITour))
-
-/*
-  show heartbeat is complicated here :)
-*/
-
-
-/* make a '5 stars heartbeat tracking object for client-side code
-  flowid:  string, should be uuid like, but not required
-  message: the text to show to the user
-  engagementUrl:
-    url to open with query args after vote.
-    if null, then 'voting' will do nothing.
-  callback:  to run on 'state change'.
-    takes callback(flowid, aEventName, aData);
-    aData:
-      - flowid: an id
-
-
-  return BoundHeartbeat
-  - flow: state
-*/
-let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, callback) {
+/** make a '5 stars heartbeat tracking object for client-side code
+  *
+  *  flowid:  string, should be uuid like, but not required
+  *  message: the text to show to the user
+  *  engagementUrl:
+  *    url to open with query args after vote.
+  *    if null, then 'voting' will do nothing.
+  *  learnMoreMsg: text for the 'learn more',
+  *  learnMoreUrl: url that 'Learn more' links to,
+  *  callback:  to run on 'state change'.
+  *    takes callback(flowid, aEventName, aData);
+  *    aData:
+  *      - flowid: an id
+  *
+  *
+  *  return BoundHeartbeat
+  *  - flow: state
+  **/
+let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMoreMsg, learnMoreUrl,  callback) {
   callback = type.isFunction(callback) ? callback : null;
 
   // catch all the messages related to all heartbeat star widgets
@@ -55,45 +50,18 @@ let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, callbac
         callback(flowid, aEventName, aData);
       }
     }
-    /*
-    switch (aEventName) {
-      case "Heartbeat:NotificationOffered": {
-        info("'Heartbeat:Offered' notification received (timestamp " + aData.timestamp.toString() + ").");
-        // The UI was just shown. We can simulate a click on a rating element (i.e., "star").
-        simulateVote(flowId, 2);
-        break;
-      }
-      case "Heartbeat:Voted": {
-        info("'Heartbeat:Voted' notification received (timestamp " + aData.timestamp.toString() + ").");
-        break;
-      }
-      case "Heartbeat:NotificationClosed": {
-        info("'Heartbeat:NotificationClosed' notification received (timestamp " + aData.timestamp.toString() + ").");
-        is(gBrowser.tabs.length, originalTabCount, "No engagement tab should be opened.");
-
-        // |done()| needs to be called here and not in "voted" otherwise the messageManager
-        // will throw a NOT_INITIALIZED error.
-        done();
-        break;
-      }
-      default:
-        // We are not expecting other states for this test.
-        ok(false, "Unexpected notification received: " + aEventName);
-    }
-    */
   });
 
   UITour.showHeartbeat(
     message,  //
     thanksMsg,
     flowid,             //
-    engagementUrl
+    engagementUrl,
+    learnMoreMsg,
+    learnMoreUrl
   );
 
   return {flowid: flowid};
 };
 
 module.exports.showHeartbeat = showHeartbeat;
-
-
-// should there be other common heartbeat things here?

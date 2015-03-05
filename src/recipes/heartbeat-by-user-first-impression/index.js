@@ -193,6 +193,8 @@ let run = function (state, extras) {
     variation_id:  "" + VERSION  // wants a string
   };
 
+  let learnmoreUrl = "https://wiki.mozilla.org/Advocacy/heartbeat";
+
   let storeFlow = function (flow_id, flow) {
     eData.data.flows[flow_id] = flow.data;
     eData.store();
@@ -219,14 +221,21 @@ let run = function (state, extras) {
     let msg = action.split(":")[1].toLowerCase().replace("notification","");
     switch (msg) {
       case "offered":
-      case "voted": {
-        flow[msg](data.timestamp);
+      case "voted":
+      case "learnmore": {
+        if (msg === "learnmore") { // abuse the existing 'link' field
+          flow.link(learnmoreUrl, "notice");
+        } else {
+          flow[msg](data.timestamp);
+        }
+
         if (msg === "voted") {
           flow.data.score = data.score;
           eData.data.lastScore = data.score;
           eData.store();
           events.message(NAME, 'new-score', {score: data.score});
         }
+
         storeFlow(flow);
         maybePhonehome(flow);
         events.message(flowid, msg, flow.data);
@@ -244,7 +253,10 @@ let run = function (state, extras) {
     local.question_text,
     "Thank you!",
     null, //"http://localhost/enagement.html",
+    "Learn more",  // learn more text
+    learnmoreUrl,  // learn more link
     phaseCallback
+
   );
 
   return Promise.resolve(local.flow_id);
