@@ -45,7 +45,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-
+const VERSION=3;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -190,7 +190,7 @@ let run = function (state, extras) {
     question_id: "Please Rate Firefox" ,
     question_text:  "Please Rate Firefox",
     survey_id: "heartbeat-by-user-first-impression",
-    variation_id: "test"
+    variation_id:  "" + VERSION  // wants a string
   };
 
   let storeFlow = function (flow_id, flow) {
@@ -259,7 +259,7 @@ session startup.
 exports.shouldRun = shouldRun;
 exports.run = run;
 exports.owner = "Gregg Lind <glind@mozilla.com>";
-exports.version = 2;
+exports.version = VERSION;
 
 exports.config = config;
 // extras that we want for testing
