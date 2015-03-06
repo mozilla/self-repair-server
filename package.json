@@ -31,16 +31,17 @@
   "scripts": {
     "open": "opener",
     "webpack": "webpack --module-bind traceur-loader --config webpack.single.conf.js --watch --progress",
-    "test": "npm run test:unit && npm run test:built",
+    "test": "npm run test:unit && npm run test:built && npm run thirdparty",
     "pretest:built": "npm run compile",
     "test:built": "node_modules/karma/bin/karma start karma.conf.built.js",
     "pretest:unit": "echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
     "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
-    "precompile": "\\rm -rf deploy && mkdir deploy && node scripts/all-locales.js",
+    "precompile": "command rm -rf deploy && mkdir deploy && node scripts/all-locales.js",
     "compile": "webpack",
     "postcompile": "cp scripts/s3_base/index.html deploy/index.html && cp scripts/s3_base/index.html deploy/error.html",
     "demo": "npm run compile && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
-    "new-recipe": "bash scripts/new-recipe.bash"
+    "new-recipe": "bash scripts/new-recipe.bash",
+    "thirdparty":  "python scripts/check-ui-tour-changes.py thirdparty/uitour.js"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"
