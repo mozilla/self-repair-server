@@ -49,11 +49,11 @@ module.exports = function(config) {
     webpack: {
       module: {
         loaders : [
-          { // tests get traceur'ed early to pass through karma
+          { // tests get babel-loader'ed early to pass through karma
             test: /test.*\.js$/,
-            // have to traceur the tests too.
+            // have to babel-loader the tests too.
             exclude: /(node_modules|bower_components)\//,
-            loader: 'traceur'
+            loader: 'babel-loader'
           },
         ],
         postLoaders: [
@@ -72,11 +72,11 @@ module.exports = function(config) {
           exclude: /(jetpack|node_modules|bower_components)\//,
           loader: 'istanbul-instrumenter'
         },
-        { // << traceur *after* instrumenting
+        { // << babel-loader *after* instrumenting
           test: /\.js$/,
-          // tests should already be traceured
+          // tests should already be babel-loadered
           exclude: /(test|node_modules|bower_components)\//,
-          loader: 'traceur'
+          loader: 'babel-loader'
         },
         ]
       },

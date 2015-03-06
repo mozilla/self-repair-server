@@ -14,7 +14,6 @@
 
 var webpack = require("webpack");
 
-
 module.exports = {
 	//context: __dirname + "/app",
 	entry: {
@@ -22,36 +21,35 @@ module.exports = {
         //after:  "./src/after"
 	},
 	output: {
-	    //path: __dirname + "/dist",
 	    path: __dirname + "/deploy/en-US/repair",
 	    filename: "[name].js"
 	},
     module: {
         loaders: [
-          { // << traceur
+          { // << babel-loader
             test: /\.js$/,
-            // have to traceur the tests too.
+            // have to babel-loader the tests too.
             exclude: /(node_modules|bower_components)\//,
-            loader: 'traceur'
+            loader: 'babel-loader'
           },
           { test: /\.css$/, loader: "style!css" },
           { test: /\.json$/, loader: "json"}
         ]
     },
     resolve : {
-    	// relative to 'entry' above
+      // relative to 'entry' above
       // aliases are bad b/c other require systems don't use the same ones.
-        /*alias: {
-            UITour: __dirname + "/thirdparty/uitour.js",
-        }*/
+      /*alias: {
+          UITour: __dirname + "/thirdparty/uitour.js",
+      }*/
     },
     // unclear how to get split to work, given 'no webpack' errors from cli
     plugins: [
       process.env.TRAVIS && new webpack.optimize.UglifyJsPlugin(),
       new webpack.optimize.DedupePlugin(),
       //new CommonsChunkPlugin('common.js')
-    //	commonsPlugin
-    //  	//new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
+      //	commonsPlugin
+      //  	//new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
   	].filter(Boolean)
 };
 

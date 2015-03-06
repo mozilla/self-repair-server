@@ -9,6 +9,9 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "babel": "^4.7.1",
+    "babel-core": "^4.7.1",
+    "babel-loader": "^4.1.0",
     "chai": "^1.10.0",
     "es6-promises": "^1.0.9",
     "istanbul": "^0.3.5",
