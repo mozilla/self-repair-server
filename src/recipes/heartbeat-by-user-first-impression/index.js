@@ -45,7 +45,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=3;
+const VERSION=4;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -187,8 +187,8 @@ let run = function (state, extras) {
   let local = {
     flow_id: flowid,
     max_score: 5,
-    question_id: "Please Rate Firefox" ,
-    question_text:  "Please Rate Firefox",
+    question_id: "Please rate Firefox" ,
+    question_text:  "Please rate Firefox",
     survey_id: "heartbeat-by-user-first-impression",
     variation_id:  "" + VERSION  // wants a string
   };
