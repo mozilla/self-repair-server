@@ -1,6 +1,6 @@
 {
   "name": "self-repair-server",
-  "version": "0.10.5",
+  "version": "0.10.6",
   "description": "Server package for Mozilla self-repair-server.",
   "main": "",
   "repository": {
@@ -9,6 +9,9 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "babel": "^4.7.1",
+    "babel-core": "^4.7.1",
+    "babel-loader": "^4.1.0",
     "chai": "^1.10.0",
     "es6-promises": "^1.0.9",
     "istanbul": "^0.3.5",
@@ -28,16 +31,14 @@
   "scripts": {
     "open": "opener",
     "webpack": "webpack --module-bind traceur-loader --config webpack.single.conf.js --watch --progress",
-    "test": "npm run test:unit && npm run test:built",
-    "pretest:built": "npm run build",
-    "test:built": "node_modules/karma/bin/karma start karma.conf.built.js",
-    "pretest:unit": "echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
-    "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
-    "prebuild": "\\rm -rf deploy && mkdir deploy && node scripts/all-locales.js",
-    "build": "webpack",
-    "postbuild": "cp scripts/s3_base/index.html deploy/index.html && cp scripts/s3_base/index.html deploy/error.html",
-    "demo": "npm run build && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
-    "new-recipe": "bash scripts/new-recipe.bash"
+    "test": "node_modules/karma/bin/karma start karma.conf.js && npm run thirdparty",
+    "pretest": "npm run compile && echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
+    "precompile": "command rm -rf deploy && mkdir deploy && node scripts/all-locales.js",
+    "compile": "webpack",
+    "postcompile": "cp scripts/s3_base/index.html deploy/index.html && cp scripts/s3_base/index.html deploy/error.html",
+    "demo": "npm run compile && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
+    "new-recipe": "bash scripts/new-recipe.bash",
+    "thirdparty":  "python scripts/check-ui-tour-changes.py thirdparty/uitour.js"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"
