@@ -13,17 +13,17 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
-
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha'],
 
-
     // list of files / patterns to load in the browser
     files: [
-        // ** <= https://www.npmjs.com/package/minimatch#comparisons-to-other-fnmatchglob-implementations
-      {pattern: ENV.npm_config_karmafiles || 'test/**/*.js', included: true},
+      // ** <= https://www.npmjs.com/package/minimatch#comparisons-to-other-fnmatchglob-implementations
       //{pattern: 'src/*.js', included: false}, // not needed, get wepbacked via tests
+      {pattern: 'deploy/en-US/repair/index.js', included: true}, //  the built file, MUST GO FIRST
+      {pattern: ENV.npm_config_karmafiles || 'test/**/*.js', included: true},
+
     ],
 
     // list of files to exclude
@@ -56,27 +56,27 @@ module.exports = function(config) {
           },
         ],
         postLoaders: [
-        /**
-          * 1.  instrumement all sources, in original form.
-          * 2.  es6 -> es5 all instrumented source AND tests.
-          * 3.  webpack each test.  (which bundles in a proper require and main)
-          *
-          * This allows
-          * - writing all sources *and* tests in es6
-          * - full coverage
-          */
-           //http://npm.taobao.org/package/istanbul-instrumenter-loader
-        {
-          test: /\.js$/,
-          exclude: /(jetpack|node_modules|bower_components)\//,
-          loader: 'istanbul-instrumenter'
-        },
-        { // << babel-loader *after* instrumenting
-          test: /\.js$/,
-          // tests should already be babel-loadered
-          exclude: /(test|node_modules|bower_components)\//,
-          loader: 'babel-loader'
-        },
+          /**
+            * 1.  instrumement all sources, in original form.
+            * 2.  es6 -> es5 all instrumented source AND tests.
+            * 3.  webpack each test.  (which bundles in a proper require and main)
+            *
+            * This allows
+            * - writing all sources *and* tests in es6
+            * - full coverage
+            */
+             //http://npm.taobao.org/package/istanbul-instrumenter-loader
+          {
+            test: /\.js$/,
+            exclude: /(jetpack|node_modules|bower_components)\//,
+            loader: 'istanbul-instrumenter'
+          },
+          { // << babel-loader *after* instrumenting
+            test: /\.js$/,
+            // tests should already be babel-loadered
+            exclude: /(test|node_modules|bower_components)\//,
+            loader: 'babel-loader'
+          },
         ]
       },
     },
@@ -117,7 +117,7 @@ module.exports = function(config) {
     // coverage report.
     coverageReporter: {
       reporters: [
-        {type: 'html', dir:'coverage/', subdir: 'unit'}
+        {type: 'html', dir:'coverage/', subdir: '.'}
       ]
     }
   });

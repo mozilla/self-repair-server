@@ -31,11 +31,8 @@
   "scripts": {
     "open": "opener",
     "webpack": "webpack --module-bind traceur-loader --config webpack.single.conf.js --watch --progress",
-    "test": "npm run test:unit && npm run test:built && npm run thirdparty",
-    "pretest:built": "npm run compile",
-    "test:built": "node_modules/karma/bin/karma start karma.conf.built.js",
-    "pretest:unit": "echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
-    "test:unit": "node_modules/karma/bin/karma start karma.conf.unit.js",
+    "test": "node_modules/karma/bin/karma start karma.conf.js && npm run thirdparty",
+    "pretest": "npm run compile && echo > test/z-ensure-coverage.js; find src -type f -name '*.js' -print0 | xargs -0 -I '{}' echo 'require(\"../{}\");' | egrep -v \"(jetpack|main.js)\" >> test/z-ensure-coverage.js",
     "precompile": "command rm -rf deploy && mkdir deploy && node scripts/all-locales.js",
     "compile": "webpack",
     "postcompile": "cp scripts/s3_base/index.html deploy/index.html && cp scripts/s3_base/index.html deploy/error.html",
