@@ -25,7 +25,6 @@
     "node-uuid": "^1.4.2",
     "opener": "^1.4.0",
     "thirdparty": "file:thirdparty",
-    "traceur-loader": "^0.6.3",
     "webpack": "^1.4.13"
   },
   "scripts": {
