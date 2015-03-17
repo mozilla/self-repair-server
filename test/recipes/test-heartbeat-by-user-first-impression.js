@@ -26,7 +26,6 @@ let uuid = require("node-uuid").v4;
 
 let events = require("../../src/common/events");
 let runner = require("../../src/runner");
-let UITour = require("../../thirdparty/uitour");
 
 let phonehome = require("../../src/common/heartbeat/phonehome");
 let personinfo = require("../../src/common/personinfo");
@@ -54,19 +53,6 @@ describe("heartbeat-by-user-first-impression", function () {
   afterEach(function () {
     personinfo.config.timeout = orig;
     phonehome.config.testing = false;
-  });
-
-  describe("test uitour", function () {
-    it("uitour observes, and utils sends", function (done) {
-      UITour.observe(function aListener (aEventName, aData) {
-        if (aEventName === "mycustom") {
-          expect(aData).deep.equal({cool:"yes"})
-          done();
-        }
-      });
-      // super tour specific
-      sendTourEvent("mycustom", {cool: "yes"});
-    });
   });
 
   describe("heartbeat-by-user-first-impression", function () {
@@ -420,9 +406,10 @@ describe("heartbeat-by-user-first-impression", function () {
 
         // two at once!  wut!?
         let finished = 0;
-        let phonehomes = 0; // 3 per!
+        let numWanted = ["began", "offered", "voted", "learnmore"].length;
+        let phonehomes = 0; //  numWanted per uuid
 
-        uuids.forEach(function(u) {
+        let runs = uuids.map(function(u) {
 
           let E = R.testable.eData;
           delete E.data.flows[u];  // if there!
@@ -435,7 +422,7 @@ describe("heartbeat-by-user-first-impression", function () {
           let seen = {};
 
           let checkFinished = function () {
-            if (finished === uuids.length && phonehomes === 3*uuids.length) {
+            if (finished === uuids.length && phonehomes === numWanted * uuids.length) {
               events.unobserve(obsPhonehome);
               events.unobserve(flowObserve);
               done() ; // the whole test!
@@ -456,7 +443,8 @@ describe("heartbeat-by-user-first-impression", function () {
             switch (msg) {
               case "began":
               case "offered":
-              case "voted": {
+              case "voted":
+              case "learnmore": {
                 seen[msg] = true;
                 // local store
                 expect(aData).deep.equal(getSavedFlow(u));
@@ -469,10 +457,17 @@ describe("heartbeat-by-user-first-impression", function () {
                   expect(seen).deep.equal({
                     began: true,
                     voted: true,
-                    offered: true
+                    offered: true,
+                    learnmore: true
                   })
                   finished++;
                   checkFinished();
+                }
+
+                if (msg === "learnmore") {
+                  expect(aData.flow_links.length, "has link").equal(1);
+                  expect(aData.flow_links[0].length, "link have 3 parts").equal(3);
+                  expect(aData.flow_links[0][2], "came from a notice").equal("notice");
                 }
                 break;
               }
@@ -481,11 +476,20 @@ describe("heartbeat-by-user-first-impression", function () {
             }
           }))
 
-          R.run({},{flow_id: u, simulate:false}); // running.
+          return R.run({},{flow_id: u, simulate:false}); // running.
+        });
 
-          // similuate how tour events will come through.
-          sendTourEvent("Heartbeat:NotificationOffered", {flowId: u});
-          sendTourEvent("Heartbeat:Voted", {flowId: u, score: 3});
+        // WAIT UNTIL ALL READY
+        // similuate how tour events will come through.
+        // NOT a test of sending messages out of order.
+        // send the messages interleaved.
+        Promise.all(runs).then(function () {
+          sendTourEvent("Heartbeat:NotificationOffered", {flowId: uuids[0]});
+          sendTourEvent("Heartbeat:NotificationOffered", {flowId: uuids[1]});
+          sendTourEvent("Heartbeat:LearnMore", {flowId: uuids[0]});
+          sendTourEvent("Heartbeat:LearnMore", {flowId: uuids[1]});
+          sendTourEvent("Heartbeat:Voted", {flowId: uuids[0], score: 3}); // has to be last
+          sendTourEvent("Heartbeat:Voted", {flowId: uuids[1], score: 3}); // has to be last
         });
       })
     });
