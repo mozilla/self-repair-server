@@ -26,7 +26,6 @@ let uuid = require("node-uuid").v4;
 
 let events = require("../../src/common/events");
 let runner = require("../../src/runner");
-let UITour = require("../../thirdparty/uitour");
 
 let phonehome = require("../../src/common/heartbeat/phonehome");
 let personinfo = require("../../src/common/personinfo");
@@ -54,19 +53,6 @@ describe("heartbeat-by-user-first-impression", function () {
   afterEach(function () {
     personinfo.config.timeout = orig;
     phonehome.config.testing = false;
-  });
-
-  describe("test uitour", function () {
-    it("uitour observes, and utils sends", function (done) {
-      UITour.observe(function aListener (aEventName, aData) {
-        if (aEventName === "mycustom") {
-          expect(aData).deep.equal({cool:"yes"})
-          done();
-        }
-      });
-      // super tour specific
-      sendTourEvent("mycustom", {cool: "yes"});
-    });
   });
 
   describe("heartbeat-by-user-first-impression", function () {

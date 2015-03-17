@@ -16,6 +16,32 @@ let UITour = require("thirdparty/uitour");  // for now.
 let type = require("../../jetpack/type");
 let log = console.log.bind(console,"repair-logger:");
 
+// mapping of flowid: callback
+let _callbacks = {};
+
+/** Callback that catches ALL heartbeat callbacks.
+  *
+  * (Warning, UITour.observe can only have 1 listener.
+  * For now, it's this one.  see issues #110)
+  */
+function heartbeatsCallback (aEventName, aData) {
+  //log("maybe", aEventName, flowid, aData); // all tour events
+  if (aEventName.indexOf("Heartbeat") === 0) {
+    let flowId = aData.flowId;
+    if (!(flowId in _callbacks)) {
+      return;
+      // TODO... what exactly?  how weird is this?
+    }
+    let callback = _callbacks[flowId];
+    if (callback && type.isFunction(callback)) {
+      callback(flowId, aEventName, aData);
+    }
+  }
+}
+
+UITour.observe(heartbeatsCallback);
+
+
 /** make a '5 stars heartbeat tracking object for client-side code
   *
   *  flowid:  string, should be uuid like, but not required
@@ -37,20 +63,7 @@ let log = console.log.bind(console,"repair-logger:");
 let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMoreMsg, learnMoreUrl,  callback) {
   callback = type.isFunction(callback) ? callback : null;
 
-  // catch all the messages related to all heartbeat star widgets
-  UITour.observe(function heartbeatCallback (aEventName, aData) {
-    //log("maybe", aEventName, flowid, aData); // all tour events
-    if (aEventName.indexOf("Heartbeat") === 0) {
-      if (aData.flowId !== flowid) {
-        //log("not my heartbeat.  That's probably an error.", aData.flowId, "wanted", flowid);
-        return;
-      }
-      //log(aEventName, flowid, aData);
-      if (callback && type.isFunction(callback)) {
-        callback(flowid, aEventName, aData);
-      }
-    }
-  });
+  _callbacks[flowid] = callback;  // this registers it.
 
   UITour.showHeartbeat(
     message,  //
