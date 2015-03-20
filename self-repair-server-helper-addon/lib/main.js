@@ -56,7 +56,7 @@ exports.main = function (options) {
   let statics = options.staticArgs || {};
 
   httpsPref.set();
-  simpleprefs.prefs.uri = "http://localhost:8000/repair/en-US/index.html?{%22phonehome%22:{%22testing%22:true},%22runner%22:{%22alwaysRun%22:true},%22personinfo%22:{%22updateChannel%22:%20%22nightly%22}}"; //data.url("tour.html");
+  simpleprefs.prefs.uri = "http://localhost:8000/deploy/en-US/repair/index.html?{%22phonehome%22:{%22testing%22:true},%22runner%22:{%22alwaysRun%22:true},%22personinfo%22:{%22updateChannel%22:%20%22nightly%22}}"; //data.url("tour.html");
   addPerm("http://localhost");
 
   if (statics.wait) {
