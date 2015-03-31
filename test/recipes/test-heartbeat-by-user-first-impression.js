@@ -169,7 +169,7 @@ describe("heartbeat-by-user-first-impression", function () {
 
     describe("should-run", function () {
       describe("known channels", function () {
-        var allchannels = ['nightly', 'aurora', 'beta'];
+        var allchannels = ['nightly', 'aurora', 'beta', 'release'];
 
         it('config has right channels: '+ allchannels.join('|'), () => {
           expect(C).keys(allchannels);
@@ -277,7 +277,7 @@ describe("heartbeat-by-user-first-impression", function () {
         });
 
         it("should not run, b/c no config", function(){
-          ["release","aurora","beta"].forEach(function(c){
+          ["release","aurora","beta","release"].forEach(function(c){
             let state = {updateChannel: c};
             R.shouldRun(state);
             expect(R.shouldRun(state)).to.be.false();
