@@ -17,6 +17,7 @@ let actions  = common.actions;
 let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
 let { Flow, phonehome } = require("../../common/heartbeat/");
+let phConfig = phonehome.config;
 phonehome = phonehome.phonehome;
 
 let uuid = require("node-uuid").v4;
@@ -45,7 +46,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=6;
+const VERSION=7;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -248,11 +249,20 @@ let run = function (state, extras) {
     }
   };
 
+  //      updateChannel:  "unkown",
+  //    fxVersion: "unknown",
+
+  let engagementUrl =  `https://www.mozilla.org/en-US/firefox/feedback/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`;  //"http://localhost/enagement.html",
+
+  if (phConfig.testing) {
+    engagementUrl = engagementUrl + "&testing=1"; // only if testing.
+  }
+
   actions.showHeartbeat(
     local.flow_id,
     local.question_text,
     "Thank you!",
-    null, //"http://localhost/enagement.html",
+    engagementUrl,
     "Learn more",  // learn more text
     learnmoreUrl,  // learn more link
     phaseCallback
