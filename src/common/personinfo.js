@@ -64,7 +64,7 @@ let personinfo = function (tour, aConfig) {
 
     tour = tour || UITour;
     let out = {
-      updateChannel:  "unkown",
+      updateChannel:  "unknown",
       fxVersion: "unknown",
       locale: "unknown",
       flags: {
