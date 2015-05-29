@@ -229,17 +229,20 @@ describe("heartbeat-by-user-first-impression", function () {
           })
         });
 
-        it('runs on en-US ONLY', function () {
+        it('runs on in several locales', function () {
+          let oklocales = ['en-US', 'en-GB', 'de', 'fr']
           allchannels.forEach(function (channel) {
-            let now = Date.now();
-            let p = C[channel].sample;
-            let restdays = C[channel].restdays;
-            let state = {updateChannel: channel, locale: "en-US"};
-              expect(R.shouldRun(state, null, {
-              randomNumber: 0,
-              when: now,
-              lastRun: now - (restdays * days)
-            }), channel + ' en-US').true();
+            oklocales.forEach(function (locale) {
+              let now = Date.now();
+              let p = C[channel].sample;
+              let restdays = C[channel].restdays;
+              let state = {updateChannel: channel, locale: locale};
+                expect(R.shouldRun(state, null, {
+                randomNumber: 0,
+                when: now,
+                lastRun: now - (restdays * days)
+              }), channel + " " + locale).true();
+            })
           })
         })
         it('refuses bad locale', function (done) {

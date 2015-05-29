@@ -26,22 +26,21 @@ module.exports = {
   "nightly": {
     restdays: 30,
     sample: 1 / thousand,  // 1 of 1000
-    locales: ['en-US']
+    locales: ['en-US', 'fr', 'en-GB', 'de']
   },
   "aurora": {
     restdays: 30,
-    sample: 2 / thousand,  // 1 in 500
-    locales: ['en-US']
+    sample: 20 * percent * percent,  // 1 in 500
+    locales: ['en-US', 'fr', 'en-GB', 'de']
   },
   "beta": {
     restdays: 30,
-    sample: 4 / (10 * thousand),  // 1 in 2500
-    locales: ['en-US']
+    sample: 4 * percent * percent,  // 1 in 2500
+    locales: ['en-US', 'fr', 'en-GB', 'de']
   },
   "release": {
     restdays: 30,
     sample: 100/million,  // 1 in 100,000
-    locales: ['en-US']
+    locales: ['en-US', 'fr', 'en-GB', 'de']
   }
 };
-
