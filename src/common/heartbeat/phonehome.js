@@ -57,7 +57,7 @@ let annotate = function (obj) {
         obj.platform = "UNK";  //data.os; // will be better
         obj.channel = data.updateChannel;
         obj.version = data.fxVersion;
-        obj.locale = "UNK"; //TODO // data.location;
+        obj.locale = obj.locale || "UNK"; //TODO // data.location;
 
         // modified per https://bugzilla.mozilla.org/show_bug.cgi?id=1092375
         obj.build_id = "-"; //data.prefs['gecko.buildID'] || "-";

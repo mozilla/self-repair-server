@@ -46,7 +46,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=7;
+const VERSION=8;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -56,6 +56,19 @@ let config = {
 
 const days = 24 * 60 * 60 * 1000;
 
+
+let translations = {
+  'fr': {
+    question_text: 'Veuillez noter Firefox',
+    learnmore: "En savoir plus",
+    thankyou:  "Merci!"
+  },
+  'de': {
+    question_text: 'Bitte bewerten Sie Firefox',
+    learnmore: "Weitere Informationen",
+    thankyou: "Danke!"
+  }
+};
 
 // UTILITIES  // TODO, move?
 
@@ -184,14 +197,22 @@ let run = function (state, extras) {
   eData.data.lastRun = extras.when || Date.now();
   eData.store();
 
+  let locale = (state.locale || "UNK").toLowerCase();
+  let trans = translations[locale] || {};
+
+  let question_text = trans.question_text || "Please rate Firefox";
+  let learnmore = trans.learnmore || "Learn more";
+  let thankyou = trans.thankyou || "Thank you!";
+
   let flowid = extras.flow_id || uuid();
   let local = {
     flow_id: flowid,
     max_score: 5,
     question_id: "Please rate Firefox" ,
-    question_text:  "Please rate Firefox",
+    question_text:  question_text,
     survey_id: "heartbeat-by-user-first-impression",
-    variation_id:  "" + VERSION  // wants a string
+    variation_id:  "" + VERSION,  // wants a string
+    locale: locale
   };
 
   let learnmoreUrl = "https://wiki.mozilla.org/Advocacy/heartbeat";
@@ -261,9 +282,9 @@ let run = function (state, extras) {
   actions.showHeartbeat(
     local.flow_id,
     local.question_text,
-    "Thank you!",
-    engagementUrl,
-    "Learn more",  // learn more text
+    thankyou,
+    /^en-us/.test(locale) && engagementUrl || null, // only if en-us
+    learnmore,  // learn more text
     learnmoreUrl,  // learn more link
     phaseCallback
 
