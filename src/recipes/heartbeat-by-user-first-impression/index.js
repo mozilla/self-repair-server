@@ -61,7 +61,7 @@ let translations = {
   'fr': {
     question_text: 'Veuillez noter Firefox',
     learnmore: "En savoir plus",
-    thankyou:  "Merci!"
+    thankyou:  "Merci! "
   },
   'de': {
     question_text: 'Bitte bewerten Sie Firefox',
