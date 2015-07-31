@@ -18,7 +18,6 @@
 var fs = require('fs');
 var path = require('path');
 
-
 var mkdirSync = function (path) {
   try {
     fs.mkdirSync(path);
@@ -51,7 +50,7 @@ var RTL_LANGS = ['ar', 'fa', 'he', 'ur'];
 
 // eventually might have to do a cp -r type thing
 var nothingBurger = function (lang) {
-  var infile = path.join('scripts', 'locale_base', 'index.html');
+  var infile = path.join('scripts', 'locale_base', 'index-no-js.html');
   var dir1 = path.join('deploy', lang);
   var dir2 = path.join('deploy', lang, 'repair');
   mkdirSync(dir1);
@@ -60,9 +59,7 @@ var nothingBurger = function (lang) {
   copyFileSync(infile, outfile);
 }
 
-
-// do t!
+// do it!
 LANGS.forEach(nothingBurger);
 RTL_LANGS.forEach(nothingBurger);
-
 
