@@ -14,6 +14,8 @@
 
 var webpack = require("webpack");
 
+var TRAVIS = !! process.env.TRAVIS;
+
 module.exports = {
 	//context: __dirname + "/app",
 	entry: {
@@ -30,7 +32,10 @@ module.exports = {
             test: /\.js$/,
             // have to babel-loader the tests too.
             exclude: /(node_modules|bower_components)\//,
-            loader: 'babel-loader'
+            loader: 'babel-loader',
+            query: {  // options
+              comments: !TRAVIS
+            }
           },
           { test: /\.css$/, loader: "style!css" },
           { test: /\.json$/, loader: "json"}
@@ -45,7 +50,7 @@ module.exports = {
     },
     // unclear how to get split to work, given 'no webpack' errors from cli
     plugins: [
-      process.env.TRAVIS && new webpack.optimize.UglifyJsPlugin(),
+      TRAVIS && new webpack.optimize.UglifyJsPlugin(),
       new webpack.optimize.DedupePlugin(),
       //new CommonsChunkPlugin('common.js')
       //	commonsPlugin
