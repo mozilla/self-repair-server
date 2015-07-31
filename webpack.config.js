@@ -22,7 +22,7 @@ module.exports = {
 	},
 	output: {
 	    path: __dirname + "/deploy/en-US/repair",
-	    filename: "[name].js"
+	    filename: "[name].js"  // will be inlined.
 	},
     module: {
         loaders: [
