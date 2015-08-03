@@ -16,6 +16,8 @@ let UITour = require("thirdparty/uitour");
 let { merge, extend } = require("../jetpack/object");
 let type = require("../jetpack/type");
 
+const { getUserCountry } = require("./geo");
+
 let config = exports.config = {
   overrides: {},
   timeout: 5000
@@ -35,14 +37,20 @@ let config = exports.config = {
   *                   // this is not an 'extras'
   * - timeout (time to wait)
   *
+  *
   */
 
 let personinfo = function (tour, aConfig) {
+  // resolves two places...
+  // 1. timeout, if takes too long.  contorlled by aConfig.timeout;
+  // 2. onGet, if all providers are accounted for.
+
   aConfig = extend({}, config, aConfig || {});
-  return new Promise (function (resolve, reject){
+  return new Promise (function (resolve, reject) {
     // both shims
     let already = false;
 
+    // for cleaning up after data is gotten, to ensure overrides stick.
     var revise = (out, over) => {
       over = over || aConfig.overrides;
       if (over && type.isObject(over) && Object.keys(over).length) {
@@ -52,27 +60,26 @@ let personinfo = function (tour, aConfig) {
       return out;
     };
 
-    setTimeout(
-      () => {
-        if (already) return true;
 
-        out.flags.timeout = aConfig.timeout;
-        out.flags.incomplete = true;
-        resolve(revise(out));
-      },
-      aConfig.timeout);
-
-    tour = tour || UITour;
+    // the output data structure.
     let out = {
       updateChannel:  "unknown",
       fxVersion: "unknown",
       locale: "unknown",
+      country: "unknown",  // to match the upload spec
       flags: {
       }
     };
 
+    tour = tour || UITour;
+
+    // ## providers
     let avail = ["sync","appinfo","availableTargets","selectedSearchEngine"];
-    let wanted = avail.length;
+    // add new providers here, so that the time out and message mechanism works.
+    let nontour = ['country'];
+
+    // listen for all providers
+    let wanted = avail.length; + nontour.length;
     let got = 0;
     let onGet = function (which, data) {
       //console.log(which, data);
@@ -82,10 +89,16 @@ let personinfo = function (tour, aConfig) {
           out.fxVersion = data.version;
           break;
         }
+
         case "sync":
         case "selectedSearchEngine":
         case "availableTargets":
           break;
+
+        case "country": {
+          out.country = data;
+          break;
+        }
 
         default:
           break;
@@ -94,12 +107,26 @@ let personinfo = function (tour, aConfig) {
       got++;
       if (got >= wanted) {
         already = true;
-        resolve(revise(out));
+        resolve(revise(out));  // revise allows overrides to come through
       }
     };
     avail.map(function (which) {
       tour.getConfiguration(which,function(data) {onGet(which,data);});
     });
+
+    // get the geo stuff.
+    getUserCountry().then((ans)=> onGet('country',ans));
+
+    // time out if it takes too long.
+    setTimeout(
+      () => {
+        if (already) return true;
+
+        out.flags.timeout = aConfig.timeout;
+        out.flags.incomplete = true;
+        resolve(revise(out));
+      },
+      aConfig.timeout);
   });
 };
 

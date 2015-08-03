@@ -95,10 +95,10 @@ describe("heartbeat phonehome", () => {
         )
       }
     )
-  phonehome.phonehome().then(
-    () => done(new Error("should reject as invalid")),
-    () => done()
-  )
+    phonehome.phonehome().then(
+      () => done(new Error("should reject as invalid")),
+      () => done()
+    )
   });
 
 

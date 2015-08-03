@@ -10,7 +10,7 @@
   asi: true
   */
 
-/*global describe, it, require, console, beforeEach, afterEach */
+/*global describe, it, require, console, beforeEach, afterEach, before */
 
 
 "use strict";
@@ -32,6 +32,7 @@ let personinfo = require("../../src/common/personinfo");
 
 let R = require("../../src/recipes/heartbeat-by-user-first-impression");
 let C = require("../../src/recipes/heartbeat-by-user-first-impression/config");
+
 
 const percent = 0.01;
 let days = 1000 * 86400;
@@ -55,6 +56,10 @@ describe("heartbeat-by-user-first-impression", function () {
     phonehome.config.testing = false;
   });
 
+  var localStoreMsg = `check that other tests arent fully clearing localStore.
+
+  There is complex interactions between require, run order, etc when webpack and mocha interact`;
+
   describe("heartbeat-by-user-first-impression", function () {
     it("is valid recipe", ()=>{
       try {
@@ -66,12 +71,12 @@ describe("heartbeat-by-user-first-impression", function () {
     });
 
     describe("eStore maps to localStorage", function() {
-      it("is created during import on default key", function () {
+      it("is created, during import (on default key)", function () {
         let E = R.testable.eData;
-        expect(E.key).equal(R.config.lskey);
-        expect(E).keys("store", "revive", "data", "key", "clear");
-        expect(E.data).contain.keys("flows","lastRun");
-        expect(E.key in localStorage).true();
+        expect(E.key, "wrong ls key").equal(R.config.lskey);
+        expect(E, "wrong keys").keys("store", "revive", "data", "key", "clear");
+        expect(E.data, "wrong data keys").contain.keys("flows","lastRun");
+        expect(E.key in localStorage, "E.key not in localStorage. ${localStoreMsg}").true();
       });
     });
 

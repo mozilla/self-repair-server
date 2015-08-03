@@ -75,6 +75,7 @@ let annotate = function (obj) {
 
         obj.experiment_version = data.addonVersion || "-";
 
+        obj.country = data.country || "unknown";
         //log("annotated", obj);
         resolve(obj);
       }
