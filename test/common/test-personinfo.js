@@ -50,11 +50,14 @@ describe("personalinfo", function () {
       let channel = "baloney";
       let aConfig = {
         timeout: 100,
-        overrides: {"updateChannel": channel}
+        overrides: {"updateChannel": channel,
+          country: 'us'}
       };
       personinfo.personinfo(null, aConfig).then(
         (out) => {
           expect(out.updateChannel).equal(channel);
+          expect(out.country).equal(aConfig.overrides.country);
+
           expect(out.flags.timeout).equal(aConfig.timeout);
           expect(out.flags.incomplete).true();
           done();

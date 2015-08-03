@@ -25,6 +25,7 @@
     "mocha": "^2.1.0",
     "node-uuid": "^1.4.2",
     "opener": "^1.4.0",
+    "scriptjs": "^2.5.7",
     "shelljs": "^0.5.1",
     "thirdparty": "file:thirdparty",
     "webpack": "^1.4.13"

@@ -110,7 +110,7 @@ let validate = exports.validate = function (packet) {
     "profile_usage": vJsonableObject("profile_usage"),    //
     "addons": vJsonableObject("addons"), // lets do {addons} ... vArray("addons"),           //
     "extra": vJsonableObject("extra"),
-
+    "country": vstring('country', false),
     // is packet real?
     "is_test": vboolean('is_test'), //true
   };
