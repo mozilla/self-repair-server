@@ -37,7 +37,7 @@ var clearOurKeys = function () {
   localStorage.removeItem('geoLastUpdated');
 };
 
-describe('geo', () => {
+describe.skip('geo', () => {
   before (clearOurKeys);
   after (clearOurKeys);
 
