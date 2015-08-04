@@ -18,7 +18,7 @@
 var $script = require("scriptjs");
 
 var GEO_URL = 'https://geo.mozilla.org/country.js';
-var GEO_CACHE_DURATION = 1000 * 60 * 60 * 24 * 30; // 30 days
+var GEO_CACHE_DURATION = 1000 * 60 * 60 * 24 * (30 + Math.random()); // 30-ish days
 
 function downloadUserCountry() {
   return new Promise(function (resolve, reject) {
