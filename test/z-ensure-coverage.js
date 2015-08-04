@@ -2,6 +2,7 @@
 require("../src/always.js");
 require("../src/common/actions.js");
 require("../src/common/client-utils.js");
+require("../src/common/deploy-geo.js");
 require("../src/common/events.js");
 require("../src/common/geo.js");
 require("../src/common/heartbeat/flow.js");
