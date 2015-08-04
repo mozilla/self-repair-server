@@ -33,7 +33,12 @@ var useReal = function (now=new Date(), rng=Math.random()) {
       y = now.getFullYear();
 
   // false ONLY in 2015/Aug *and* 'too early'
-  let ans = !(y == 2015 && m == 7 && ((d / 30) < rng) );
+  if (y === 2015 && m === 7) {
+    // 32 so there is no chance of a divide by zero.
+    return rng < (1 / (32 - d))
+  } else {
+    return true;
+  }
 
   return ans
 }
