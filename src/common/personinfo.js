@@ -16,8 +16,7 @@ let UITour = require("thirdparty/uitour");
 let { merge, extend } = require("../jetpack/object");
 let type = require("../jetpack/type");
 
-//const { getUserCountry } = require("./geo");
-const getUserCountry = () => Promise.resolve("--");
+const { getUserCountry } = require("./deploy-geo");
 
 let config = exports.config = {
   overrides: {},
