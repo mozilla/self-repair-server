@@ -83,4 +83,15 @@ describe('deployGeo', () => {
       });
     })
   });
+
+  describe("deprecate deploy-geo after phased rollout", () => {
+    it("remove after august 2015", function () {
+      // sep 06 is arbitrary
+      if (Date.now () >= new Date(Date.parse("Sep 06 2015"))) {
+        expect(false, "see issue 133.  remove deploy-geo.js, fix personinfo").to.be.true();
+      } else {
+        expect(true).to.be.true();
+      }
+    })
+  })
 })
