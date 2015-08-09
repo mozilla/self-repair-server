@@ -46,7 +46,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=10;
+const VERSION=11;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -281,7 +281,7 @@ let run = function (state, extras) {
     `https://qsurvey.mozilla.com/s3/New-Tab-Experience-39-40?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
   ];
 
-  let engagementUrl = eUrls[~~(Math.random() >= 0.9)];  // 90/10 split
+  let engagementUrl = eUrls[~~(Math.random() >= 0.7)];  // 70/30 split
 
   if (phConfig.testing) {
     engagementUrl = engagementUrl + "&testing=1"; // only if testing.
