@@ -40,7 +40,7 @@ module.exports = {
   },
   "release": {
     restdays: 30,
-    sample: 100/million,  // 1 in 100,000
+    sample: 400/million,  // 1 in 2,500 // temporary.  #139
     locales: ['en-US', 'fr', 'en-GB', 'de']
   }
 };
