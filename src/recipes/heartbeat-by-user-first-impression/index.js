@@ -46,7 +46,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=12;
+const VERSION=13;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -276,16 +276,19 @@ let run = function (state, extras) {
   // as shown below, this is en-us only!
   //let engagementUrl =  `https://www.mozilla.org/en-US/firefox/feedback/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`;  //"http://localhost/enagement.html",
 
-  let eUrls = [
-    `https://qsurvey.mozilla.com/s3/Mozilla-Games-Survey?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
-    `https://qsurvey.mozilla.com/s3/New-Tab-Experience-39-40?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
-  ];
+  //let eUrls = [
+  //  `https://qsurvey.mozilla.com/s3/Mozilla-Games-Survey?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
+  //  `https://qsurvey.mozilla.com/s3/New-Tab-Experience-39-40?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
+  //];
+  //
+  //let engagementUrl = eUrls[~~(Math.random() >= 0.50)];  // 50/50 split, see #139
+  //
+  //if (phConfig.testing) {
+  //  engagementUrl = engagementUrl + "&testing=1"; // only if testing.
+  //}
 
-  let engagementUrl = eUrls[~~(Math.random() >= 0.50)];  // 50/50 split, see #139
-
-  if (phConfig.testing) {
-    engagementUrl = engagementUrl + "&testing=1"; // only if testing.
-  }
+  // none right now!
+  let engagementUrl = null;
 
   actions.showHeartbeat(
     local.flow_id,
