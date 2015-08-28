@@ -46,7 +46,7 @@ describe("built file exports", function () {
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true();
       expect(hb.name).equal("heartbeat by user v1");
-      expect(hb.version).equal(13);
+      expect(hb.version).equal(14);
     })
   })
 
