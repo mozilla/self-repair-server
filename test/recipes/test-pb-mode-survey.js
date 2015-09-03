@@ -30,21 +30,14 @@ let runner = require("../../src/runner");
 let phonehome = require("../../src/common/heartbeat/phonehome");
 let personinfo = require("../../src/common/personinfo");
 
-let R = require("../../src/recipes/heartbeat-by-user-first-impression");
-let C = require("../../src/recipes/heartbeat-by-user-first-impression/config");
+let R = require("../../src/recipes/pb-mode-survey");
+let C = require("../../src/recipes/pb-mode-survey/config");
 
 
 const percent = 0.01;
 let days = 1000 * 86400;
 
-let sendTourEvent = function (aEventName, aData) {
-  events.dispatchEvent(document,
-      "mozUITourNotification",
-      {event: aEventName,
-        params: aData});
-};
-
-describe("heartbeat-by-user-first-impression", function () {
+describe("pb-mode-survey", function () {
   // these feel very action at a distance to me!
   let orig = personinfo.config.timeout;
   beforeEach(function () {
@@ -80,9 +73,6 @@ describe("heartbeat-by-user-first-impression", function () {
       });
     });
 
-
-
-
     describe("eStore stores things", function () {
       // all of these are tested in the racing test.
       it("knows last Run", function (){});
@@ -92,7 +82,6 @@ describe("heartbeat-by-user-first-impression", function () {
         // otherwise derivable from 'flows'
       });
       it.todo("should cap the number of flows (for localStorage size)", new Function());
-
     });
 
     describe("waitedEnough", function(){
@@ -175,7 +164,7 @@ describe("heartbeat-by-user-first-impression", function () {
         });
 
         it('runs on in several locales', function () {
-          let oklocales = ['en-US', 'en-GB', 'de', 'fr']
+          let oklocales = ['en-US'];
           allchannels.forEach(function (channel) {
             oklocales.forEach(function (locale) {
               let now = Date.now();
@@ -281,16 +270,17 @@ describe("heartbeat-by-user-first-impression", function () {
           }
         )
       });
-      it("should phone home correctly", function () {
-        expect("tested in 'racing' exmaple").a("string");
+      it("does not phone home", function () {
+        expect("you just have to believe this").a("string");
       });
 
-      it("creates a stored flow by side effect", function (done) {
+      it("creates a stored (empty) flow by side effect", function (done) {
         let u = uuid();
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           () => {
-            expect(E.data.flows[u]).exist();
+            expect(E.data.flows[u], "must exist").exist();
+            expect(E.data.flows[u], "must be an empty obj").deep.equal({}); // must be empty
             done();
           }
         );
@@ -321,130 +311,11 @@ describe("heartbeat-by-user-first-impression", function () {
         );
       });
 
-      it("handles unexpected UITour messages gracefully", function (done) {
-        var u = uuid();
-
-        let toRemove = events.observe(u, (function flowListener (aEventName, aData) {
-          switch (aEventName) {
-            case "unexpected-tour-message": {
-              expect(aData.msg).equal('weirdmessage') // lowercased
-              done();
-              events.unobserve(toRemove);
-            }
-          }
-        }))
-
-        R.run({},{flow_id: u, simulate:true}).then(
-          () => {
-            sendTourEvent("Heartbeat:WeirdMessage", {flowId: u});
-          }
-        ) // running.
-        sendTourEvent("Heartbeat:WeirdMessage", {flowId: u});
-      });
-
-      // drive the Heartbeat action, even without ui!
-      it("walk through two simultaneous (racing) flows, integration test, and phonesHome at each stage", function (done) {
-        /**
-          * 'flow' tests ensure that stages go through in order
-          */
-
-        // https://input.mozilla.org/en-US/analytics/hbdata/13948
-        // https://input.mozilla.org/en-US/analytics/hbdata/13947
-        let uuids = ["uuid1-racing-1", "uuid-racing-2"];
-
-        // two at once!  wut!?
-        let finished = 0;
-        let numWanted = ["began", "offered", "voted", "learnmore"].length;
-        let phonehomes = 0; //  numWanted per uuid
-
-        let runs = uuids.map(function(u) {
-
-          let E = R.testable.eData;
-          delete E.data.flows[u];  // if there!
-
-          let getSavedFlow = function (flowid) {
-            return JSON.parse(localStorage[E.key]).flows[flowid];
-          }
-
-          // `events.observe` to catch rebroadcasted events at the experiment.
-          let seen = {};
-
-          let checkFinished = function () {
-            if (finished === uuids.length && phonehomes === numWanted * uuids.length) {
-              events.unobserve(obsPhonehome);
-              events.unobserve(flowObserve);
-              done() ; // the whole test!
-            }
-          }
-
-          let obsPhonehome = events.observe(u, function phonehomeListener (msg, data) {
-            // should see 3 phonehomes!
-            if (msg === "attempted-phonehome") {
-              phonehomes++;
-              checkFinished(); // are we done?
-            }
-          });
-
-          let flowObserve = events.observe(u, (function flowListener (aEventName, aData) {
-            let msg = aEventName;
-            // these all take the 'flow.data' as aData
-            switch (msg) {
-              case "began":
-              case "offered":
-              case "voted":
-              case "learnmore": {
-                seen[msg] = true;
-                // local store
-                expect(aData).deep.equal(getSavedFlow(u));
-                // mapped store
-                expect(aData).deep.equal(E.data.flows[u]);
-
-                if (msg === "voted") {
-                  expect(E.data.flows[u].score).equal(3);
-                  expect(E.data.lastScore).exist(); // now it's set
-                  expect(seen).deep.equal({
-                    began: true,
-                    voted: true,
-                    offered: true,
-                    learnmore: true
-                  })
-                  finished++;
-                  checkFinished();
-                }
-
-                if (msg === "learnmore") {
-                  expect(aData.flow_links.length, "has link").equal(1);
-                  expect(aData.flow_links[0].length, "link have 3 parts").equal(3);
-                  expect(aData.flow_links[0][2], "came from a notice").equal("notice");
-                }
-                break;
-              }
-              default:
-                break;
-            }
-          }))
-
-          return R.run({},{flow_id: u, simulate:false}); // running.
-        });
-
-        // WAIT UNTIL ALL READY
-        // similuate how tour events will come through.
-        // NOT a test of sending messages out of order.
-        // send the messages interleaved.
-        Promise.all(runs).then(function () {
-          sendTourEvent("Heartbeat:NotificationOffered", {flowId: uuids[0]});
-          sendTourEvent("Heartbeat:NotificationOffered", {flowId: uuids[1]});
-          sendTourEvent("Heartbeat:LearnMore", {flowId: uuids[0]});
-          sendTourEvent("Heartbeat:LearnMore", {flowId: uuids[1]});
-          sendTourEvent("Heartbeat:Voted", {flowId: uuids[0], score: 3}); // has to be last
-          sendTourEvent("Heartbeat:Voted", {flowId: uuids[1], score: 3}); // has to be last
-        });
-      })
     });
 
     describe("testable functions", function () {
       it("exports exist (and some are functions)", () =>{
-        var expected = ["eData", "waitedEnough",  "setupState"];
+        var expected = ["eData", "waitedEnough", "setupState"];
         // chaijs/chai/issues/359
         expect(R.testable, "keys exist").keys(expected.slice(0));
         expected.slice(1).forEach((k) => {

@@ -134,6 +134,7 @@ window.heartbeat = {
   events: events,
   main: mainloop,
   phonehome: phonehome,  // mostly to allow devTools override
+  UITour: require("thirdparty/uitour") // test pb mode stuff.
 };
 
 
