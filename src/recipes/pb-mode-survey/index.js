@@ -14,11 +14,9 @@
 let common = require("../../common");
 let allconfigs = require("./config");
 let actions  = common.actions;
-let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
+let log = actions.log.bind(actions.log, "pb-mode-survey");
 
 let { Flow, phonehome } = require("../../common/heartbeat/");
-let { Lstore } = require("../../common/recipe-utils");
-
 let phConfig = phonehome.config;
 phonehome = phonehome.phonehome;
 
@@ -26,6 +24,11 @@ let uuid = require("node-uuid").v4;
 let events = require("../../common/events");
 
 let { hasAny } = require("../../jetpack/array");
+
+let UITour = require("thirdparty/uitour");
+
+let { Lstore } = require("../../common/recipe-utils");
+
 
 // TODO, is it module level config, or function level?
 // so far, 3 systems
@@ -47,31 +50,15 @@ let { hasAny } = require("../../jetpack/array");
 
 */
 
-const NAME="heartbeat by user v1";
-const VERSION=14;
+const NAME="pb-mode-survey";
+const VERSION=1;
 
 let config = {
-  lskey : 'heartbeat-by-user-first-impressions',
-  survey_id : "heartbeat-by-user-first-impression",
+  lskey : 'pb-mode-survey',
+  survey_id : "pb-mode-survey",
 };
-
 
 const days = 24 * 60 * 60 * 1000;
-
-
-let translations = {
-  'fr': {
-    question_text: 'Veuillez noter Firefox',
-    learnmore: "En savoir plus",
-    thankyou:  "Merci! "
-  },
-  'de': {
-    question_text: 'Bitte bewerten Sie Firefox',
-    learnmore: "Weitere Informationen",
-    thankyou: "Danke!"
-  }
-};
-
 
 // setup state?
 
@@ -154,119 +141,42 @@ let shouldRun = function (userstate, config, extras) {
 
 // run / do
 /* */
-// TODO, audit 'extras'
 let run = function (state, extras) {
   extras = extras || {};
   eData.data.lastRun = extras.when || Date.now();
   eData.store();
 
-  let locale = (state.locale || "UNK").toLowerCase();
-  let trans = translations[locale] || {};
-
-  let question_text = trans.question_text || "Please rate Firefox";
-  let learnmore = trans.learnmore || "Learn more";
-  let thankyou = trans.thankyou || "Thank you!";
-
   let flowid = extras.flow_id || uuid();
   let local = {
     flow_id: flowid,
-    max_score: 5,
-    question_id: "Please rate Firefox" ,
-    question_text:  question_text,
-    survey_id: "heartbeat-by-user-first-impression",
-    variation_id:  "" + VERSION,  // wants a string
-    locale: locale
   };
-
-  let learnmoreUrl = "https://wiki.mozilla.org/Advocacy/heartbeat";
 
   let storeFlow = function (flow_id, flow) {
     eData.data.flows[flow_id] = flow.data;
     eData.store();
   }.bind(null, local.flow_id);
 
-  let maybePhonehome = function (flow) {
-    if (!extras.simulate) {
-      phonehome(flow.data);
-      events.message(flowid, "attempted-phonehome", flow.data);
-    } else {
-      events.message(flowid, "simulated-phonehome", flow.data);
+  storeFlow({data:{}});
+  events.message(local.flow_id, "began", {});
+
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=1196104#c2
+  UITour.showHeartbeat(
+    "Would you like to share feedback with Mozilla?",
+    "Thank you!",
+    flowid,
+    `http://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
+    null, // learn more text
+    null, // learn more link
+    {
+      engagementButtonLabel: "Take Survey",
+      privateWindowsOnly: true,
     }
-  };
-
-  // make and setup flow
-  let flow = new Flow(local);  // create and update
-  flow.began();
-  maybePhonehome(flow);
-
-  storeFlow(flow);
-  events.message(local.flow_id, "began", flow.data);
-
-  let phaseCallback = function phaseCallback (flowid, action, data) {
-    let msg = action.split(":")[1].toLowerCase().replace("notification","");
-    switch (msg) {
-      case "offered":
-      case "voted":
-      case "learnmore": {
-        if (msg === "learnmore") { // abuse the existing 'link' field
-          flow.link(learnmoreUrl, "notice");
-        } else {
-          flow[msg](data.timestamp);
-        }
-
-        if (msg === "voted") {
-          flow.data.score = data.score;
-          eData.data.lastScore = data.score;
-          eData.store();
-          events.message(NAME, 'new-score', {score: data.score});
-        }
-
-        storeFlow(flow);
-        maybePhonehome(flow);
-        events.message(flowid, msg, flow.data);
-        break;
-      }
-      default:
-        // TODO, this should log
-        events.message(flowid, 'unexpected-tour-message', {msg: msg});
-        break;
-    }
-  };
-
-  //      updateChannel:  "unkown",
-  //    fxVersion: "unknown",
-
-  // as shown below, this is en-us only!
-  //let engagementUrl =  `https://www.mozilla.org/en-US/firefox/feedback/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`;  //"http://localhost/enagement.html",
-
-  let eUrls = [
-    `https://qsurvey.mozilla.com/s3/Firefox-USE-Survey?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
-    `http://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
-  ];
-
-  let engagementUrl = eUrls[~~(Math.random() <= 0.50)];
-  if (phConfig.testing && engagementUrl) {
-    engagementUrl = engagementUrl + "&testing=1"; // only if testing.
-  }
-
-  actions.showHeartbeat(
-    local.flow_id,
-    local.question_text,
-    thankyou,
-    /^en-us/.test(locale) && engagementUrl || null, // only if en-us
-    learnmore,  // learn more text
-    learnmoreUrl,  // learn more link
-    phaseCallback
   );
-
   return Promise.resolve(local.flow_id);
 };
 
 exports.name = NAME;
-exports.description = `Heartbeat User First Impressions
-
-Samples over USERS once per sessions, at 5 minutes after
-session startup.
+exports.description = `Private Browser Mode (no phone home) survey launcher.
 `;
 exports.shouldRun = shouldRun;
 exports.run = run;
@@ -281,4 +191,3 @@ exports.testable = {
   eData: eData,
   setupState: setupState
 };
-
