@@ -30,7 +30,7 @@ module.exports = {
   },
   "aurora": {
     restdays: 30,
-    sample: 20 * percent * percent,  // 1 in 500
+    sample: 20 * percent,
     locales: ['en-US']
   },
   "beta": {
@@ -40,7 +40,7 @@ module.exports = {
   },
   "release": {
     restdays: 30,
-    sample: 10/million,  // 1 in 100000 // temporary.  #139
+    sample: 10/million,  // 1 in 100000
     locales: ['en-US']
   }
 };

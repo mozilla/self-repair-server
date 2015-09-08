@@ -121,7 +121,7 @@ describe("pb-mode-survey", function () {
               //}
             })
 
-            let state = {updateChannel: channel, locale: "en-US"};
+            let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: "en-US"};
             let restdays = C[channel].restdays;
             let now = Date.now();
             let ans = R.shouldRun(state, C[channel],
@@ -133,7 +133,7 @@ describe("pb-mode-survey", function () {
         it('go if been long enough!', function (){
           allchannels.forEach(function (channel) {
             // use the real configs, as though this is a nightly
-            let state = {updateChannel: channel, locale: "en-US"};
+            let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: "en-US"};
             let restdays = C[channel].restdays;
             let now = Date.now();
             let ans = R.shouldRun(state, undefined,
@@ -146,7 +146,7 @@ describe("pb-mode-survey", function () {
         });
         it('should respect the sampling percentage', function (){
           allchannels.forEach(function (channel) {
-            let state = {updateChannel: channel, locale: "en-US"};
+            let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: "en-US"};
             let p = C[channel].sample;
             let restdays = C[channel].restdays;
             let now = Date.now();
@@ -163,6 +163,30 @@ describe("pb-mode-survey", function () {
           })
         });
 
+        it('only runs on 41+', function () {
+          let locale = "en-US";
+          let now = Date.now();
+
+          // good!
+          allchannels.forEach(function (channel) {
+            let restdays = C[channel].restdays;
+            let state;
+            state = {fxVersion:  "41.0a1", updateChannel: channel, locale: locale};
+            expect(R.shouldRun(state, null, {
+              randomNumber: 0,
+              when: now,
+              lastRun: now - (restdays * days)
+            }), channel + " version okay").true();
+
+            state = {fxVersion:  "40.0a1", updateChannel: 'nightly', locale: locale};
+            expect(R.shouldRun(state, null, {
+              randomNumber: 0,
+              when: now,
+              lastRun: now - (restdays * days)
+            }), channel + " version bad").false();
+          })
+        });
+
         it('runs on in several locales', function () {
           let oklocales = ['en-US'];
           allchannels.forEach(function (channel) {
@@ -170,7 +194,7 @@ describe("pb-mode-survey", function () {
               let now = Date.now();
               let p = C[channel].sample;
               let restdays = C[channel].restdays;
-              let state = {updateChannel: channel, locale: locale};
+              let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: locale};
                 expect(R.shouldRun(state, null, {
                 randomNumber: 0,
                 when: now,
@@ -191,7 +215,7 @@ describe("pb-mode-survey", function () {
             })
             let now = Date.now();
             let restdays = C[channel].restdays;
-            let state = {updateChannel: channel, locale: badlocale};
+            let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: badlocale};
               expect(R.shouldRun(state, null, {
               randomNumber: 0,
               when: now,
@@ -203,7 +227,7 @@ describe("pb-mode-survey", function () {
 
       describe("all other platforms", function () {
         it("config is overridable if needed", function () {
-          let state = {updateChannel: "fakeyfake"};
+          let state = {fxVersion:  "41.0a1", updateChannel: "fakeyfake"};
           expect(R.shouldRun(state, {
             sample: 100 * percent,
             restdays: 0,
@@ -215,7 +239,7 @@ describe("pb-mode-survey", function () {
 
         it("should not run, b/c no config", function(){
           ["release","aurora","beta","release"].forEach(function(c){
-            let state = {updateChannel: c};
+            let state = {fxVersion:  "41.0a1", updateChannel: c};
             R.shouldRun(state);
             expect(R.shouldRun(state)).to.be.false();
           });
@@ -231,26 +255,26 @@ describe("pb-mode-survey", function () {
           };
           let extras = {lastRun: 0, when: Date.now()}
           it("should respect good locales", function () {
-            let userstate = {locale: "it-IT"};
+            let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(['ru-RU', 'it-IT']);
             let ans = R.shouldRun(userstate, config, extras);
             expect(ans).true();
           });
           it("should respect bad locales", function () {
-            let userstate = {locale: "it-IT"};
+            let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(['ru-RU']);
             let ans = R.shouldRun(userstate, config, extras);
             expect(ans).false();
           })
           it("should treat unspecified locales as NONE",
            function () {
-            let userstate = {locale: "it-IT"};
+            let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig();
             let ans = R.shouldRun(userstate, config, extras);
             expect(ans).false();
           });
           it("should treat * as 'any'", function () {
-            let userstate = {locale: "it-IT"};
+            let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(["*"]);
             let ans = R.shouldRun(userstate, config, extras);
             expect(ans).true();

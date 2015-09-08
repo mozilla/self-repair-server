@@ -119,6 +119,13 @@ let shouldRun = function (userstate, config, extras) {
   let restdays = config.restdays;
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
 
+  // bad version.
+  let shortVersion = 1 * (userstate.fxVersion.match(/^[0-9]+/) || 0);
+  if (shortVersion < 41) {
+    events.message(NAME, "bad-version", {shortVersion: shortVersion});
+    return false;
+  }
+
   if (!hasAny(locales, [locale, "*"])) {
     events.message(NAME, "bad-locale", {locale: locale, locales: locales});
     return false;
