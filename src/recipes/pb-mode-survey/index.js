@@ -51,7 +51,7 @@ let { Lstore } = require("../../common/recipe-utils");
 */
 
 const NAME="pb-mode-survey";
-const VERSION=1;
+const VERSION=2;
 
 let config = {
   lskey : 'pb-mode-survey',
@@ -171,7 +171,7 @@ let run = function (state, extras) {
     "Would you like to share feedback with Mozilla?",
     "Thank you!",
     flowid,
-    `http://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
+    `http://qsurvey.mozilla.com/s3/Private-Browsing-Survey?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
     null, // learn more text
     null, // learn more link
     {
