@@ -42,17 +42,20 @@ describe("built file exports", function () {
     }
   });
   describe("recipe list", function () {
-    it("has one recipe, heartbeat first impressions", () => {
+    it("has 2 recipes.", () => {
       expect(heartbeat.recipes.length).to.equal(2);
-      let hb = heartbeat.recipes[0];
-      expect(heartbeat.runner.validateConfig(hb)[1]).true();
-      expect(hb.name).equal("heartbeat by user v1");
-      expect(hb.version).equal(14);
-
-      let R = heartbeat.recipes[1];
-      expect(heartbeat.runner.validateConfig(R)[1]).true();
-      expect(R.name).equal("pb-mode-survey");
-      expect(R.version).equal(1);
+      it("has heartbeat, right version", function () {
+        let hb = heartbeat.recipes[0];
+        expect(heartbeat.runner.validateConfig(hb)[1]).true();
+        expect(hb.name).equal("heartbeat by user v1");
+        expect(hb.version).equal(14);
+      })
+      it("has pb mode survey", function () {
+        let R = heartbeat.recipes[1];
+        expect(heartbeat.runner.validateConfig(R)[1]).true();
+        expect(R.name).equal("pb-mode-survey");
+        expect(R.version).equal(2);
+      })
     })
   })
 
