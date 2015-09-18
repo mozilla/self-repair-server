@@ -24,7 +24,7 @@
     "karma-webpack": "^1.5.0",
     "mocha": "^2.1.0",
     "node-uuid": "^1.4.2",
-    "opener": "^1.4.0",
+    "opener": "^1.4.1",
     "scriptjs": "^2.5.7",
     "serve": "^1.4.0",
     "shelljs": "^0.5.1",
@@ -42,7 +42,9 @@
     "demo": "npm run compile && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
     "new-recipe": "bash scripts/new-recipe.bash",
     "thirdparty": "python scripts/check-ui-tour-changes.py thirdparty/uitour.js",
-    "serve":  "serve -p 3111"
+    "serve": "serve -p 3111",
+    "open-local": "opener 'http://localhost:3111/deploy/en-US/repair/?{\"runner\":{\"alwaysRun\":true}}'",
+    "open-prod": "opener 'https://self-repair.mozilla.org/en-US/repair/?{\"runner\":{\"alwaysRun\":true}}'"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"
