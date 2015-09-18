@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=14;
+const VERSION=15;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -241,10 +241,24 @@ let run = function (state, extras) {
 
   let eUrls = [
     `https://qsurvey.mozilla.com/s3/Firefox-USE-Survey?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
-    `http://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
+    `https://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
+    `https://qsurvey.mozilla.com/s3/Heartbeat-Bright-Spots?source=heartbeat&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
   ];
 
-  let engagementUrl = eUrls[~~(Math.random() <= 0.50)];
+  let cutBreaks = function (arr, breaks, rng=Math.random()) {
+    // should have tests, gah!  was not ready to deal with this yet.
+    // should have way of overring rng too
+    let out;
+    for (let ii = 0; ii < breaks.length; ii++) {
+      if (rng <= breaks[ii]) {
+        return arr[ii];
+      }
+    }
+  };
+
+  let breaks = [.20, .7, 1.0];
+
+  let engagementUrl = cutBreaks(eUrls, breaks);
   if (phConfig.testing && engagementUrl) {
     engagementUrl = engagementUrl + "&testing=1"; // only if testing.
   }
