@@ -61,7 +61,7 @@
 	- `browser.uitour.requireSecure;false`
 	- `browser.uitour.testingOrigins;http://localhost:3111`
 
-(To add a pref, right-click in `about:config`)
+   (To add a pref, right-click in `about:config`)
 
 1.  You are ready to cook.  Awesome job.
 
