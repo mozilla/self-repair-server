@@ -41,6 +41,6 @@ module.exports = {
   "release": {
     restdays: 30,
     sample: 10/million,  // 1 in 100000
-    locales: ['en-US']
+    locales: ['en-US','de']
   }
 };
