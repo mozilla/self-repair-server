@@ -40,7 +40,7 @@
 	```
 	# usual git project clone and fork
 	
-	git clone mozilla/self-repair-server
+	git clone https://github.com/mozilla/self-repair-server.git
 	cd self-repair-server
 	hub fork
 	```
