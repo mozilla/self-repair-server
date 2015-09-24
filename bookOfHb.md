@@ -56,10 +56,12 @@
 
 1. Preheat the oven.
 
-	**Firefox Settings** - allow local UITour debug in `about:config`
+	**Firefox Settings** - In the Firefox profile you are doing to use to debug Heartbeat, allow local UITour debug in `about:config`, by ADDING or TOGGLING these prefs.
 
 	- `browser.uitour.requireSecure;false`
 	- `browser.uitour.testingOrigins;http://localhost:3111`
+
+(To add a pref, right-click in `about:config`)
 
 1.  You are ready to cook.  Awesome job.
 
