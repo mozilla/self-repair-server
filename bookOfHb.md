@@ -20,6 +20,12 @@
 1. Pots and Pans
 
 	```
+	# if you want Homebrew (OSX packages)  
+	# http://brew.sh/
+	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	
+	
+	
 	# required: git, node
 	brew install node   # includes npm
 	brew install git    # git
@@ -53,7 +59,7 @@
 	**Firefox Settings** - allow local UITour debug in `about:config`
 	
 	- `browser.uitour.requireSecure;false`
-	- `browser.uitour.testingOrigins;http://localhost`
+	- `browser.uitour.testingOrigins;http://localhost:3111`
 
 1.  You are ready to cook.  Awesome job.
 
@@ -63,10 +69,13 @@
 
     `npm run open-prod`
 
+1.  You should see a HB notification box.
+
 2.  Explore with [DevTools](https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Helper_commands) [Console](https://developer.mozilla.org/en-US/docs/Web/API/console
 )  `Alt + Cmd + I`
 
 	`inspect(heartbeat)`
+
 
 
 ### Modify 
@@ -88,12 +97,12 @@ git checkout -b 151-my-issue
 ```
 npm run compile  
 
-# run from anywhere
+# run from anywhere in directory
 # rebuilds `deploy/` directory
 # outputs at `deploy/en-US/repair/index.js`
 # npm silently calls `precompile` and `postcompile`.  
 # see `package.json` "scripts" for details.
-# see "How is Appy Made" for details of build process.
+# see "How is Appy Formed" for details of build process.
 ```
 
 
@@ -145,7 +154,7 @@ Put your feet up and feel superior.
 
 **Warning**:  This flow is fragile.  New system for this, coming REAL SOON NOW (tm).  _Code review will help, and is your friend_.
 
-1. **Learn From The Elders**:  [Example historical deploy commit](https://github.com/mozilla/self-repair-server/commit/c8f75dee5d).
+1. **Learn From The Elders**:  [Example historical deploy commit](https://github.com/mozilla/self-repair-server/commit/c8f75dee5d).  [Bright Spots Study](https://github.com/mozilla/self-repair-server/pull/156/files).
 
 1. **Write Survey**.   Surveys live at SurveyGizmo (where there are Surveys).
 
@@ -244,7 +253,7 @@ Self-Repair currently piggy-backs on the Firefox UITour system.
 
 
 
-## How is appy made?
+## How is Appy Formed?
 
 `npm run compile` does:
 
@@ -255,7 +264,7 @@ Self-Repair currently piggy-backs on the Firefox UITour system.
 1.  **compile**: 
 1.  `webpack`, (see `webpack.config.js`), 
 2.  follows all `requires` from **ENTRY** `src/main.js` to [resolve the file DAG](https://nodejs.org/api/modules.html).  
-3.  runs all es6 code through `babel` to convert it to es5 javascript,
+3.  runs all [es6](https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/ECMAScript_6_support_in_Mozilla) code through [`babel`](https://babeljs.io/) to convert it to es5 javascript,
 4.  outputs the whole 'built' (single script) file at `/deploy/en-US/repair/index.js`.
 
 
@@ -292,8 +301,8 @@ https://github.com/mozilla/self-repair-server/issues/
 
 - try `npm run thirdpary` first, to see if `mozilla-central` has changed.
 - turn off `TRAVIS` env variable.  This will log more and keep Firefox open.  This is all shown in `karma.conf.js`
-- make sure your test file name fullfills the glob for `test/**/*.js`
-- tests use BDD style [Chai.js](http://chaijs.com/api/bdd/).
+- the name of your test file must match `test/**/*.js` [(glob-star patterns)](https://github.com/isaacs/node-glob#glob). Else, `karma` will miss it.
+- tests use BDD style [Chai.js](http://chaijs.com/api/bdd/).  Plain node `assert` and other test styles should work as well.
 - [Karma.js](http://karma-runner.github.io/0.13/index.html) is the runner.
 
 What is `npm test`?
@@ -304,13 +313,9 @@ What is `npm test`?
 	- the built one-page app
 	- es5 transpiled one-page-apps for each 'test' file.  These are the tests.  
 
-
-
-
 ### Javascript dev is frustrating, and I am sad.
 
 It used to be worse.  (shrug).  [Open an issue](https://github.com/mozilla/self-repair-server/issues/). 
-
 
 
 
