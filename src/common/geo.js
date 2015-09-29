@@ -25,6 +25,9 @@ function downloadUserCountry() {
     $script(GEO_URL, 'geo');
     $script.ready('geo', function() {
       try {
+        if (typeof geoip_country_code == "undefined") {
+          throw(new Error("geo: unable to load js file."))
+        }
         gSnippetsMap.set('geoCountry', geoip_country_code());
         gSnippetsMap.set('geoLastUpdated', new Date());
         resolve();
