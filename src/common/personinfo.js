@@ -115,7 +115,7 @@ let personinfo = function (tour, aConfig) {
     });
 
     // get the geo stuff.
-    getUserCountry().then((ans)=> onGet('country',ans));
+    getUserCountry().then((ans)=> onGet('country',ans), (err)=>{});
 
     // time out if it takes too long.
     setTimeout(
