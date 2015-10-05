@@ -18,6 +18,7 @@ let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
 let { Flow, phonehome } = require("../../common/heartbeat/");
 let { Lstore } = require("../../common/recipe-utils");
+let { releaseDateMultiplier } = require("../../common/sampling/releasedate");
 
 let phConfig = phonehome.config;
 phonehome = phonehome.phonehome;
@@ -88,64 +89,6 @@ let waitedEnough = function (restDays, last, now) {
 };
 
 
-/*      Sample multiplier helpers      */
-
-// Multipliers are unbounded
-// Multipliers are 1/(average adoption rate) where average adoption rate is for
-// versions 36-40.  This is for the first 3 weeks of a release; after that
-// we plateau enough to call it 1.0
-let multipliers = [154.63, 22.25, 10.33, 7.08, 5.80, 4.81, 3.97,
-                     2.94,  2.32,  1.97, 1.74, 1.59, 1.48, 1.36,
-                     1.28,  1.22,  1.18, 1.15, 1.13, 1.11, 1.09
-                     // , 1.0, 1.0, ...
-                  ]
-
-// Assume that releases occur at 9:00AM PDT
-let timeOfRelease =  ' 9:00:00 GMT-0700 (PDT)'
-
-// This will be manually curated for now.  Rel-Eng later?
-let releaseDateStrings = {
-  //<string_version>: <string time>
-  '42': 'Tue Nov 03 2015' + timeOfRelease
-};
-
-let defaultMultiplier = 1.0
-
-/**
-  * Returns a multiplier given a userstate (version, channel + current date)
-  * Note that this needs to remain step-wise by day to prevent geo-biasing
-  *
-  * Args:
-  *
-  * userstate
-  * - updateChannel
-  * - fxVersion
-  *
-  * extras: for testing  (optional)
-  * - updateChannel (to use with allconfigs)
-  * - fxVersion
-  * - currentDate
-  */
-let sampleMultiplier = function(userstate, extras) {
-  let updateChannel = extras.updateChannel || userstate.updateChannel || 'unknown';
-  if (!(updateChannel === 'release')) {
-    return defaultMultiplier;
-  };
-
-  let fxVersion = extras.fxVersion || userstate.fxVersion || 'unknown';
-  let releaseDateString = releaseDateStrings[fxVersion.substring(0,2)];
-  if (releaseDateString === undefined) {
-    return defaultMultiplier;
-  };
-
-  let currentDate = Date.parse(extras.currentDate || Date());
-  let releaseDate = Date.parse(releaseDateString);
-  let daysDiff = Math.floor( (currentDate - releaseDate) / days );
-
-  let multiplier = multipliers[daysDiff] || defaultMultiplier;
-  return multiplier;
-};
-
 
 /** run or not, given configs?
   *
@@ -190,7 +133,8 @@ let shouldRun = function (userstate, config, extras) {
     events.message(NAME, "too-soon", {restdays: restdays, lastRun: lastRun, now: now});
     return false;
   }
-  let multiplier = sampleMultiplier(userstate, extras);
+
+  let multiplier = releaseDateMultiplier(userstate, extras);
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
 
   if (myRng <= multiplier*config.sample) {
