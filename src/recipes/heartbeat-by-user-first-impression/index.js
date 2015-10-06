@@ -270,7 +270,11 @@ let run = function (state, extras) {
     /^en-us/.test(locale) && engagementUrl || null, // only if en-us
     learnmore,  // learn more text
     learnmoreUrl,  // learn more link
-    phaseCallback
+    phaseCallback,
+    {   // telemetry
+      surveyId: local.survey_id,
+      surveyVersion: local.variation_id
+    }
   );
 
   return Promise.resolve(local.flow_id);

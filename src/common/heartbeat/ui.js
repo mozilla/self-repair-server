@@ -60,7 +60,7 @@ UITour.observe(heartbeatsCallback);
   *  return BoundHeartbeat
   *  - flow: state
   **/
-let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMoreMsg, learnMoreUrl,  callback) {
+let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMoreMsg, learnMoreUrl,  callback, extraTelemetryArgs={}) {
   callback = type.isFunction(callback) ? callback : null;
 
   _callbacks[flowid] = callback;  // this registers it.
@@ -71,7 +71,8 @@ let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMo
     flowid,             //
     engagementUrl,
     learnMoreMsg,
-    learnMoreUrl
+    learnMoreUrl,
+    extraTelemetryArgs
   );
 
   return {flowid: flowid};
