@@ -236,6 +236,15 @@ let run = function (state, extras) {
     engagementUrl = engagementUrl + "&testing=1"; // only if testing.
   }
 
+  // UNIFIED TELEMETRY: https://hg.mozilla.org/mozilla-central/rev/7b81b08f1899
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=1193535
+  let extraTelemetryArgs = {
+      surveyId: local.survey_id,
+      surveyVersion: local.variation_id,
+  }
+  if (phConfig.testing) {extraTelemetryArgs.testing = 1}
+
+
   actions.showHeartbeat(
     local.flow_id,
     local.question_text,
@@ -243,7 +252,8 @@ let run = function (state, extras) {
     engagementUrl || null, // already checked locale
     learnmore,  // learn more text
     learnmoreUrl,  // learn more link
-    phaseCallback
+    phaseCallback,
+    extraTelemetryArgs
   );
 
   return Promise.resolve(local.flow_id);
