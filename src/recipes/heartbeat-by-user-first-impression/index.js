@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=16;
+const VERSION=17;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
