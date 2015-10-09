@@ -175,7 +175,15 @@ describe("heartbeat-by-user-first-impression", function () {
         });
 
         it('runs on in several locales', function () {
-          let oklocales = ['en-US', 'en-GB', 'de', 'fr']
+          let oklocales = [ 'de',
+            'en-US',
+            'en-GB',
+            'es',
+            'es-ES',
+            'es-MX',
+            'fr',
+            'zh-CN',
+          ];
           allchannels.forEach(function (channel) {
             oklocales.forEach(function (locale) {
               let now = Date.now();
@@ -192,7 +200,7 @@ describe("heartbeat-by-user-first-impression", function () {
         })
         it('refuses bad locale', function (done) {
           allchannels.forEach(function (channel) {
-            let badlocale = "es-MX";
+            let badlocale = "fi";
             let observed = events.observe(R.name, function (msg, data) {
               if (msg === "bad-locale" &&
                  data.locale === badlocale.toLowerCase()){
