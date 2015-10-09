@@ -55,11 +55,12 @@ let releaseDateMultiplier = function(userstate = {}, extras = {}) {
 
   // Resolve parameters
   let fxVersion = extras.fxVersion || userstate.fxVersion || "unknown";
-  let version = 1 * (fxVersion.match(/^[0-9]+/) || 0);
+  let version = (1 * String(fxVersion).match(/^[0-9]+/)) || 0;
 
   let channel = extras.updateChannel || userstate.updateChannel || "unknown";
-  let releaseDateSampling = extras.releaseDateSampling || RELEASEDATESAMPLING;
   let defaultMultiplier = extras.defaultMultiplier || DEFAULTMULTIPLIER;
+
+  let releaseDateSampling = extras.releaseDateSampling || RELEASEDATESAMPLING;
 
   // Get sampling for this version/channel
   let sampling;
