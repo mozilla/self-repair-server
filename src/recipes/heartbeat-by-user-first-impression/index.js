@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=15;
+const VERSION=16;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -59,18 +59,7 @@ let config = {
 const days = 24 * 60 * 60 * 1000;
 
 
-let translations = {
-  'fr': {
-    question_text: 'Veuillez noter Firefox',
-    learnmore: "En savoir plus",
-    thankyou:  "Merci! "
-  },
-  'de': {
-    question_text: 'Bitte bewerten Sie Firefox',
-    learnmore: "Weitere Informationen",
-    thankyou: "Danke!"
-  }
-};
+let translations = require('../../localeStrings');
 
 
 // setup state?
@@ -161,11 +150,11 @@ let run = function (state, extras) {
   eData.store();
 
   let locale = (state.locale || "UNK").toLowerCase();
-  let trans = translations[locale] || {};
+  let trans = translations.getTranslation(locale).heartbeat;
 
-  let question_text = trans.question_text || "Please rate Firefox";
-  let learnmore = trans.learnmore || "Learn more";
-  let thankyou = trans.thankyou || "Thank you!";
+  let question_text = trans.question_text();
+  let learnmore = trans.learnmore();
+  let thankyou = trans.thankyou();
 
   let flowid = extras.flow_id || uuid();
   let local = {
