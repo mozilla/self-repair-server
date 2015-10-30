@@ -100,7 +100,6 @@ let waitedEnough = function (restDays, last, now) {
 };
 
 
-
 /** run or not, given configs?
   *
   * Args:
