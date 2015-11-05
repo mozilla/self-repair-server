@@ -13,7 +13,7 @@
 "use strict";
 
 let repairList = module.exports = [
-  require("./always"),
+  //require("./always"),
   require("./recipes/heartbeat-by-user-first-impression"),
   //require("./recipes/pb-mode-survey")
   require("./recipes/ios-promo")
