@@ -38,7 +38,7 @@ fs.writeFileSync(htmlpath, html);
 
 // known working locales.
 
-"fr de en-GB".split(/\s+/).forEach(function (locale) {
+"fr de en-GB es-ES es-MX zh-CN".split(/\s+/).forEach(function (locale) {
   console.log("copying site: en-US =>", locale);
   var D = "deploy/" + locale
   rm('-rf', D);

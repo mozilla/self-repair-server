@@ -48,7 +48,7 @@ describe("built file exports", function () {
         let hb = heartbeat.recipes[0];
         expect(heartbeat.runner.validateConfig(hb)[1]).true();
         expect(hb.name).equal("heartbeat by user v1");
-        expect(hb.version).equal(15);
+        expect(hb.version).equal(21);
       })
       it("has pb mode survey", function () {
         let R = heartbeat.recipes[1];
@@ -69,5 +69,8 @@ describe("built file exports", function () {
     };
     // one fail per line.
     //it.skip('if fail, revert sampling back (see #139)', bomb('Aug 17 2015'));
+
+    it('if fail, revert sampling back from 42 oversamle', bomb('Nov 9 2015'));
+
   })
 });
