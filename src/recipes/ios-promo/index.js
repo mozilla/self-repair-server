@@ -262,8 +262,12 @@ let shouldRun = function (userstate, config, extras) {
 
 // run / do
 let run = function (state, extras) {
+
+  // TODO: We may target different messages by OS / Channel
+
   extras = extras || {};
   let now = extras.when || Date.now();
+
   eData.data.lastRun = now;
   eData.store();
   globalEData.data.lastRun = now;
@@ -283,11 +287,14 @@ let run = function (state, extras) {
   storeFlow({data:{}});
   events.message(local.flow_id, "began", {});
 
+  // Add parameters to url
+  let full_url = BRANCH.url + `?source=hb&hbv=${VERSION}&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}`;
+
   UITour.showHeartbeat(
     BRANCH.prompt,
     BRANCH.thankyou,
     flowid,
-    BRANCH.url,
+    full_url,
     null, // learn more text, TODO: should this be "What's this?" or something?
     null, // learn more link
     {
@@ -297,14 +304,14 @@ let run = function (state, extras) {
   return Promise.resolve(local.flow_id);
 };
 
-exports.name = BRANCH.name;
+exports.name        = BRANCH.name;
 exports.description = "iOS heartbeat campaign branch: " + BRANCH.name;
-exports.shouldRun = shouldRun;
-exports.run = run;
-exports.owner = "Robert Rayborn <rrayborn@mozilla.com>";
-exports.version = VERSION;
+exports.shouldRun   = shouldRun;
+exports.run         = run;
+exports.owner       = "Robert Rayborn <rrayborn@mozilla.com>";
+exports.version     = VERSION;
 
-exports.config = config;
+exports.config      = config;
 // extras that we want for testing
 // TODO:  these should spin off into another module, by v.11
 exports.testable = {

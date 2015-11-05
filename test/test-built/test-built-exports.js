@@ -41,9 +41,10 @@ describe("built file exports", function () {
       expect(heartbeat[k]).to.be.a(mytype);
     }
   });
+  let numRecipes = 3;
   describe("recipe list", function () {
-    it("has 1 recipe.", () => {
-      expect(heartbeat.recipes.length).to.equal(1);
+    it("has " + numRecipes + " recipes.", () => {
+      expect(heartbeat.recipes.length).to.equal(numRecipes);
       it("has heartbeat, right version", function () {
         let hb = heartbeat.recipes[0];
         expect(heartbeat.runner.validateConfig(hb)[1]).true();
