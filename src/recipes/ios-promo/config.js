@@ -12,9 +12,14 @@
 
 "use strict";
 
-let repairList = module.exports = [
-  require("./always"),
-  require("./recipes/heartbeat-by-user-first-impression"),
-  //require("./recipes/pb-mode-survey")
-  require("./recipes/ios-promo")
-];
+let million = Math.pow(10,6);
+let thousand = Math.pow(10,3);
+let percent = 0.01;
+let days = 24 * 60 * 60 * 1000;
+
+module.exports = {
+  "all": {
+    sample: 1 * percent, // will be 1.0 when we launch
+    locales: ["en-AU", "en-NZ", "en-CA"] // will be en-* locales when we launch
+  }
+};
