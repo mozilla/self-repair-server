@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=21;
+const VERSION=22;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -248,7 +248,20 @@ let run = function (state, extras) {
 
   let breaks = [1.0];
 
-  let engagementUrl = cutBreaks(eUrls, breaks);
+  
+
+  //ad-hoc for germany survey
+  var getEngagementUrl = function(locale) {
+    if (locale == "de") {
+      return `https://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41-German?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
+    }
+    if (/^en-/.test(locale)) {
+      return cutBreaks(eUrls, breaks)
+    } 
+    return
+  }
+
+  let engagementUrl = getEngagementUrl(locale);
   if (phConfig.testing && engagementUrl) {
     engagementUrl = engagementUrl + "&testing=1"; // only if testing.
   }
@@ -257,7 +270,7 @@ let run = function (state, extras) {
     local.flow_id,
     local.question_text,
     thankyou,
-    /^en-/.test(locale) && engagementUrl || null, // only if en-*
+    engagementUrl || null, // already checked locale
     learnmore,  // learn more text
     learnmoreUrl,  // learn more link
     phaseCallback
