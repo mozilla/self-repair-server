@@ -171,7 +171,7 @@ let run = function (state, extras) {
     "Möchten Sie an einer Umfrage teilnehmen um Firefox zu verbessern?",
     "Vielen Dank dass Sie an der Umfrage teilgenommen haben. Ihre Antworten helfen uns dabei Firefox zu verbessern.",
     flowid,
-    `http://qsurvey.mozilla.com/s3/Private-Browsing-Survey?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
+    `http://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41-German?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
     null, // learn more text
     null, // learn more link
     {
