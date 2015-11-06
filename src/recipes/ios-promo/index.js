@@ -12,13 +12,9 @@
 
 "use strict";
 let common     = require("../../common");
-let allconfigs = require("./config");
+let configFile = require("./config");
 let actions    = common.actions;
 let log        = actions.log.bind(actions.log, "pb-mode-survey");
-
-let { Flow, phonehome } = require("../../common/heartbeat/");
-let phConfig   = phonehome.config;
-phonehome      = phonehome.phonehome;
 
 let uuid       = require("node-uuid").v4;
 let events     = require("../../common/events");
@@ -51,55 +47,16 @@ let { Lstore } = require("../../common/recipe-utils");
 */
 let days = 24 * 60 * 60 * 1000;
 
-let thankyou = "We hope that you enjoy Firefox on your mobile device!";
-let url      = "https://www-demo3.allizom.org/en-US/firefox/mobile-download/"; //TODO
-let button   = "Get it now";
-
-const BASE_NAME = "marketing";
-
-let branches = [
-  {
-    name:     BASE_NAME + "_Tabs",
-    prompt:   "Take your open tabs on the road with you when using Firefox for iOS and Android.",
-    thankyou: thankyou,
-    url:      url,
-    button:   button
-  },
-  {
-    name:     BASE_NAME + "_Mobile",
-    prompt:   "Get Firefox on your iOS and Android devices.",
-    thankyou: thankyou,
-    url:      url,
-    button:   button
-  },
-  {
-    name:     BASE_NAME + "_Other",
-    prompt:   "Bring your bookmarks & passwords with you. Firefox is now on iOS & Android.",
-    thankyou: thankyou,
-    url:      url,
-    button:   button
-  }
-];
-
-//Gets a random branch (even distribution)
-let getbranch = function(branches) {
-  let myRng = Math.random();
-  let num_branches = branches.length;
-  for (var i = 1; i <= num_branches ; i++) {
-    if (myRng < (i/(num_branches))) {
-      return branches[i-1];
-    }
-  }
-};
-
-const BRANCH     = getbranch(branches);
-const NAME       = BRANCH.name;
-const VERSION    = 1;
-const DELAY      = 60*1000 * (1 + 4*Math.random()) // Delay the start by 1-5 minutes
+const BRANCH        = configFile.study.branch;
+const NAME          = configFile.study.name;
+const VERSION       = configFile.study.version;
+const DELAY         = configFile.study.delay;
+const KEY           = configFile.study.key;
+//const PHONEHOMEPCT = configFile.study.phonehomepct
 
 let config = {
-  lskey :     BASE_NAME,
-  survey_id : BASE_NAME
+  lskey:     KEY,
+  survey_id: KEY
 };
 
 // setup state?
@@ -131,14 +88,14 @@ var eData = setupState();
 
 // ELIGIBLE.  parts of the eligibility, made explicit for testability
 
-/* is dayspassed >= restDays
-*/
+/* For this survey we're testing to see if it's ever been seen
+// is dayspassed >= restDays
 let waitedEnough = function (restDays, last, now) {
   now = now || Date.now();
   let dayspassed = ((now - last)/days);
   return dayspassed >= restDays ;
 };
-
+*/
 
 /** run or not, given configs?
   *
@@ -160,7 +117,7 @@ let waitedEnough = function (restDays, last, now) {
   */
 let shouldRun = function (userstate, config, extras) {
 
-  config = config || allconfigs.all;
+  config = config || configFile.channels.all;
   if (!config) {
     events.message(NAME, "no-config", {});
     return false;
@@ -188,7 +145,7 @@ let shouldRun = function (userstate, config, extras) {
     return false;
   }
 
-  /*
+  /* For this survey we're testing to see if it's ever been seen
   // Another survey was run recently
   if (!waitedEnough(restdays, lastRun, now)) {
     events.message(NAME, "too-soon", {restdays: restdays, lastRun: lastRun, now: now});
@@ -228,11 +185,32 @@ let run = function (state, extras) {
     eData.store();
   }.bind(null, local.flow_id);
 
+  /* Using Telemetry instead of phonehome
+  let maybePhonehome = function (flow) {
+    if (!extras.simulate) {
+      let myRng = ;
+      if (Math.random() < PHONEHOMEPCT) {
+        phonehome(flow.data);
+        events.message(flowid, "attempted-phonehome", flow.data);
+      } else {
+        events.message(flowid, "attempted-phonehome", flow.data);
+      }
+    } else {
+      events.message(flowid, "simulated-phonehome", flow.data);
+    }
+  };
+
+  // make and setup flow
+  let flow = new Flow(local);  // create and update
+  flow.began();
+  maybePhonehome(flow);
+  */
+
   storeFlow({data:{}});
   events.message(local.flow_id, "began", {});
 
   // Add parameters to url
-  let fullUrl = BRANCH.url + `?source=hb&hbv=${VERSION}&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}`;
+  let fullUrl = BRANCH.url + `?source=hb&hbv=${VERSION}&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}&b=${BRANCH.name}`;
   setTimeout(function() {
     UITour.showHeartbeat(
       BRANCH.prompt,
@@ -250,9 +228,8 @@ let run = function (state, extras) {
   return Promise.resolve(local.flow_id);
 };
 
-// TODO: If this is not phoned home, remove the branch logic
-exports.name        = BRANCH.name; //BASE_NAME
-exports.description = "Marketing-" + BRANCH.name; //Marketing
+exports.name        = KEY; // BRANCH.name;
+exports.description = 'Marketing promo'; // "Marketing-" + BRANCH.name;
 exports.shouldRun   = shouldRun;
 exports.run         = run;
 exports.owner       = "Robert Rayborn <rrayborn@mozilla.com>";
@@ -262,7 +239,7 @@ exports.config      = config;
 // extras that we want for testing
 // TODO:  these should spin off into another module, by v.11
 exports.testable = {
-  waitedEnough: waitedEnough,
+//  waitedEnough: waitedEnough,//For this survey we're testing to see if it's ever been seen
   eData: eData,
   setupState: setupState
 };
