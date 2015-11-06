@@ -55,7 +55,7 @@ let thankyou = "We hope that you enjoy Firefox on your mobile device!";
 let url      = "https://www-demo3.allizom.org/en-US/firefox/mobile-download/"; //TODO
 let button   = "Get it now";
 
-const BASE_NAME = "ios-promo";
+const BASE_NAME = "marketing";
 
 let branches = [
   {
@@ -95,26 +95,12 @@ let getbranch = function(branches) {
 const BRANCH     = getbranch(branches);
 const NAME       = BRANCH.name;
 const VERSION    = 1;
-const GLOBAL_KEY = "heartbeat-global";
+const DELAY      = 60*1000 * (1 + 4*Math.random()) // Delay the start by 1-5 minutes
 
 let config = {
   lskey :     BASE_NAME,
   survey_id : BASE_NAME
 };
-
-// This is to prevent collisions between surveys, we need to build this in later
-let globalRestdays = 7;
-let globalConfigs = [
-  {
-    lskey :     "pb-mode-survey",
-    survey_id : "pb-mode-survey",
-  },
-  {
-    lskey :     "heartbeat-by-user-first-impressions",
-    survey_id : "heartbeat-by-user-first-impressions",
-  },
-  config  // this config
-];
 
 // setup state?
 
@@ -140,48 +126,8 @@ var setupState = function (key, storage) {
   return eData;
 };
 
-/*eData = {
-  data: {
-    flows: {},
-    lastRun: number
-  }
-},
-*/
-
-// Populates a global state by looping over the known discrete states
-var setupGlobalState = function (key, storage) {
-  key     = GLOBAL_KEY;
-  storage = storage || localStorage;
-
-  var eData = new Lstore(key, storage).revive().store();  // create or revive
-
-  if ( !eData.data.lastRun ) { // Only populate if the global state doesn't exist
-    var lastRun = eData.data.lastRun || 0;
-    var flows   = eData.data.flows   || {};
-    for (var other_config in globalConfigs) {
-      if (globalConfigs.hasOwnProperty(other_config)) {
-        var otherEData   = new Lstore(other_config.lskey, localStorage).revive().store();
-        var otherLastRun = otherEData.data.lastRun || 0;
-        var otherFlows   = otherEData.data.flows   || {};
-        lastRun = (otherLastRun > lastRun) ? otherLastRun : lastRun;
-        for (var flow_key in otherFlows) {
-          if (otherFlows.hasOwnProperty(flow_key)) {
-            flows.flow_key = otherFlows.flow_key;
-          }
-        }
-      }
-    }
-    eData.data.flows   = flows;
-    eData.data.lastRun = lastRun;
-  }
-
-  eData.store();
-  return eData;
-};
-
 // module level
 var eData = setupState();
-var globalEData = setupGlobalState();
 
 // ELIGIBLE.  parts of the eligibility, made explicit for testability
 
@@ -224,7 +170,6 @@ let shouldRun = function (userstate, config, extras) {
   let now = extras.when || Date.now();
   //let channel = userstate.updateChannel || extras.updateChannel;
   let lastRun = extras.lastRun || eData.lastRun || 0;
-  let lastGlobalRun = extras.globalLastRun || globalEData.lastRun || 0;
   let locale = (userstate.locale || extras.locale || "unknown").toLowerCase();
   //let restdays = config.restdays; // Only run once
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
@@ -237,17 +182,18 @@ let shouldRun = function (userstate, config, extras) {
     return false;
   }
 
-  // Another survey was run recently
-  if (!waitedEnough(globalRestdays, lastGlobalRun, now)) {
-    events.message(NAME, "global-too-soon", {globalRestdays: globalRestdays, lastGlobalRun: lastGlobalRun, now: now});
-    return false;
-  }
-
   // Already ran this
   if (lastRun !== 0) { // This recipe is only showed once
     events.message(NAME, "already-run", {lastRun: lastRun});
     return false;
   }
+
+  /*
+  // Another survey was run recently
+  if (!waitedEnough(restdays, lastRun, now)) {
+    events.message(NAME, "too-soon", {restdays: restdays, lastRun: lastRun, now: now});
+    return false;
+  }*/
 
   // Sample
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
@@ -262,16 +208,14 @@ let shouldRun = function (userstate, config, extras) {
 
 // run / do
 let run = function (state, extras) {
-
   // TODO: We may target different messages by OS / Channel
 
   extras = extras || {};
   let now = extras.when || Date.now();
+  let delay = extras.delay || DELAY;
 
   eData.data.lastRun = now;
   eData.store();
-  globalEData.data.lastRun = now;
-  globalEData.store();
 
 
   let flowid = extras.flow_id || uuid();
@@ -288,24 +232,27 @@ let run = function (state, extras) {
   events.message(local.flow_id, "began", {});
 
   // Add parameters to url
-  let full_url = BRANCH.url + `?source=hb&hbv=${VERSION}&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}`;
-
-  UITour.showHeartbeat(
-    BRANCH.prompt,
-    BRANCH.thankyou,
-    flowid,
-    full_url,
-    null, // learn more text, TODO: should this be "What's this?" or something?
-    null, // learn more link
-    {
-      engagementButtonLabel: BRANCH.button
-    }
+  let fullUrl = BRANCH.url + `?source=hb&hbv=${VERSION}&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}`;
+  setTimeout(function() {
+    UITour.showHeartbeat(
+      BRANCH.prompt,
+      BRANCH.thankyou,
+      flowid,
+      fullUrl,
+      null, // learn more text, TODO: should this be "What's this?" or something?
+      null, // learn more link
+      {
+        engagementButtonLabel: BRANCH.button
+      }
+    )},
+    delay
   );
   return Promise.resolve(local.flow_id);
 };
 
-exports.name        = BRANCH.name;
-exports.description = "iOS heartbeat campaign branch: " + BRANCH.name;
+// TODO: If this is not phoned home, remove the branch logic
+exports.name        = BRANCH.name; //BASE_NAME
+exports.description = "Marketing-" + BRANCH.name; //Marketing
 exports.shouldRun   = shouldRun;
 exports.run         = run;
 exports.owner       = "Robert Rayborn <rrayborn@mozilla.com>";

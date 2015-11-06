@@ -20,6 +20,7 @@ let days = 24 * 60 * 60 * 1000;
 module.exports = {
   "all": {
     sample: 1 * percent, // will be 1.0 when we launch
-    locales: ["en-AU", "en-NZ", "en-CA"] // will be en-* locales when we launch
+    //restdays: 30,
+    locales: ["en-CA"] // will be en-* locales when we launch
   }
 };
