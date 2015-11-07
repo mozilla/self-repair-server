@@ -210,7 +210,9 @@ let run = function (state, extras) {
   events.message(local.flow_id, "began", {});
 
   // Add parameters to url
-  let fullUrl = BRANCH.url + `?source=hb&hbv=${VERSION}&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}&b=${BRANCH.name}`;
+  let fullUrl = `${BRANCH.url}?source=hb&hbv=${VERSION}` +
+      `&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}` +
+      `&b=${BRANCH.name}`;
   setTimeout(function() {
     UITour.showHeartbeat(
       BRANCH.prompt,

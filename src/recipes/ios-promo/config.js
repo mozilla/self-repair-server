@@ -17,9 +17,6 @@ let thousand = Math.pow(10,3);
 let percent = 0.01;
 let days = 24 * 60 * 60 * 1000;
 
-
-
-
 //Gets a random branch (even distribution)
 let getbranch = function(branches) {
   let myRng = Math.random();
@@ -32,7 +29,7 @@ let getbranch = function(branches) {
 };
 
 let thankyou = "We hope that you enjoy Firefox on your mobile device!";
-let url      = "https://www-demo3.allizom.org/en-US/firefox/mobile-download/"; //TODO
+let url      = "https://www.mozilla.org/en-US/firefox/mobile-download/";
 let button   = "Get it now";
 let branches = [
   {
