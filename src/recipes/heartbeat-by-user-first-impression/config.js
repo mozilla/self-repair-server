@@ -50,7 +50,7 @@ module.exports = {
   },
   "release": {
     restdays: 30,
-    sample: 20 * 10/million,  // 1 in 100000
+    sample: 10/million,  // 1 in 100000
     locales: supportedLocales
   }
 };

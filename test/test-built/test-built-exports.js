@@ -48,7 +48,7 @@ describe("built file exports", function () {
         let hb = heartbeat.recipes[0];
         expect(heartbeat.runner.validateConfig(hb)[1]).true();
         expect(hb.name).equal("heartbeat by user v1");
-        expect(hb.version).equal(22);
+        expect(hb.version).equal(23);
       });
       it("has ios promo, right version", function () {
         let ios = heartbeat.recipes[1];
@@ -76,8 +76,8 @@ describe("built file exports", function () {
     // one fail per line.
     //it.skip('if fail, revert sampling back (see #139)', bomb('Aug 17 2015'));
 
-    it('if fail, revert sampling back from 42 oversamle', bomb('Nov 9 2015'));
-    
+    //it('if fail, revert sampling back from 42 oversamle', bomb('Nov 9 2015'));
+
     it('if fail, turn off germany pbm survey re 174', bomb('Nov 15 2015'));
 
   })
