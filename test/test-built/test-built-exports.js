@@ -42,13 +42,19 @@ describe("built file exports", function () {
     }
   });
   describe("recipe list", function () {
-    it("has 1 recipe.", () => {
-      expect(heartbeat.recipes.length).to.equal(1);
+    it("has 2 recipes.", () => {
+      expect(heartbeat.recipes.length).to.equal(2);
       it("has heartbeat, right version", function () {
         let hb = heartbeat.recipes[0];
         expect(heartbeat.runner.validateConfig(hb)[1]).true();
         expect(hb.name).equal("heartbeat by user v1");
-        expect(hb.version).equal(22);
+        expect(hb.version).equal(23);
+      });
+      it("has ios promo, right version", function () {
+        let ios = heartbeat.recipes[1];
+        expect(heartbeat.runner.validateConfig(ios)[1]).true();
+        expect(ios.name).equal("ios-promo");
+        expect(ios.version).equal(1);
       })
       // it("has pb mode survey", function () {
       //   let R = heartbeat.recipes[1];
@@ -70,8 +76,8 @@ describe("built file exports", function () {
     // one fail per line.
     //it.skip('if fail, revert sampling back (see #139)', bomb('Aug 17 2015'));
 
-    it('if fail, revert sampling back from 42 oversamle', bomb('Nov 9 2015'));
-    
+    //it('if fail, revert sampling back from 42 oversamle', bomb('Nov 9 2015'));
+
     it('if fail, turn off germany pbm survey re 174', bomb('Nov 15 2015'));
 
   })

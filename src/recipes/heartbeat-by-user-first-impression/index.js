@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=22;
+const VERSION=23;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -248,7 +248,7 @@ let run = function (state, extras) {
 
   let breaks = [1.0];
 
-  
+
 
   //ad-hoc for germany survey
   var getEngagementUrl = function(locale) {
@@ -257,7 +257,7 @@ let run = function (state, extras) {
     }
     if (/^en-/.test(locale)) {
       return cutBreaks(eUrls, breaks)
-    } 
+    }
     return
   }
 
