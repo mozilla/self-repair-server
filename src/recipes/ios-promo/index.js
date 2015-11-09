@@ -14,7 +14,6 @@
 let common     = require("../../common");
 let configFile = require("./config");
 let actions    = common.actions;
-let log        = actions.log.bind(actions.log, "pb-mode-survey");
 
 let uuid       = require("node-uuid").v4;
 let events     = require("../../common/events");
@@ -23,8 +22,8 @@ let { hasAny } = require("../../jetpack/array");
 
 let UITour     = require("thirdparty/uitour");
 
+let { Flow, phonehome } = require("../../common/heartbeat/");
 let { Lstore } = require("../../common/recipe-utils");
-
 
 // TODO, is it module level config, or function level?
 // so far, 3 systems
@@ -47,11 +46,24 @@ let { Lstore } = require("../../common/recipe-utils");
 */
 let days = 24 * 60 * 60 * 1000;
 
-const BRANCH        = configFile.study.branch;
-const NAME          = configFile.study.name;
-const VERSION       = configFile.study.version;
-const DELAY         = configFile.study.delay;
-const KEY           = configFile.study.key;
+
+//Gets a random branch (even distribution)
+let chooseBranch = function(branches, rng=Math.random() ) {
+  let num_branches = branches.length;
+  for (var i = 1; i <= num_branches ; i++) {
+    if (rng < (i/(num_branches))) {
+      return branches[i-1];
+    }
+  }
+  return branches[num_branches-1];
+};
+
+const BRANCH        = chooseBranch(configFile.studies);
+const NAME          = BRANCH.key;
+const VARIATION     = BRANCH.name;
+const VERSION       = BRANCH.version;
+const DELAY         = BRANCH.delay;
+const KEY           = BRANCH.key;  //  'ios-promo'.  keys localstore
 //const PHONEHOMEPCT = configFile.study.phonehomepct
 
 let config = {
@@ -96,6 +108,13 @@ let waitedEnough = function (restDays, last, now) {
 };
 
 
+// OH BOY.  This is scary :)
+let isAustralia = function () {
+  var current_date = new Date( );
+  var gmt_offset = current_date.getTimezoneOffset( ) / 60;
+  return  ( -11 <= gmt_offset ) && (gmt_offset <= -8  )
+};
+
 /** run or not, given configs?
   *
   * Args:
@@ -128,31 +147,36 @@ let shouldRun = function (userstate, config, extras) {
   let restdays = config.restdays; // Only run once
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
 
+
+  let geoOK= extras.geoOK || isAustralia();
+
   // All versions
 
   // Bad locale
-  console.log({
-    now: now,
-    lastRun: lastRun,
-    locale: locale,
-    restdays: restdays,
-    locales: locales,
-  })
+  //console.log({
+  //  now: now,
+  //  lastRun: lastRun,
+  //  locale: locale,
+  //  restdays: restdays,
+  //  locales: locales,
+  //  getOK: geoOK
+  //});
+
   if (!hasAny(locales, [locale, "*"])) {
     events.message(NAME, "bad-locale", {locale: locale, locales: locales});
     return false;
   }
-  //// Already ran this
-  //if (lastRun !== 0) { // This recipe is only showed once
-  //  events.message(NAME, "already-run", {lastRun: lastRun});
-  //  return false;
-  //}
-
-  // Another survey was run recently
-  if (!waitedEnough(restdays, lastRun, now)) {
-    events.message(NAME, "too-soon", {restdays: restdays, lastRun: lastRun, now: now});
+  // Already ran this
+  if (lastRun !== 0) { // This recipe is only showed once
+    events.message(NAME, "already-run", {lastRun: lastRun});
     return false;
   }
+
+  if (!geoOK) {
+    events.message(NAME, "bad-geo", {});
+    return false;
+  }
+
   // Sample
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
 
@@ -165,20 +189,21 @@ let shouldRun = function (userstate, config, extras) {
 };
 
 // run / do
-let run = function (state, extras) {
+let run = function (state, extras = {}) {
   // TODO: We may target different messages by OS / Channel
 
-  extras = extras || {};
   let now = extras.when || Date.now();
   let delay = extras.delay || DELAY;
+  let branch = extras.branch || BRANCH.branch;
 
   eData.data.lastRun = now;
   eData.store();
 
-
   let flowid = extras.flow_id || uuid();
   let local = {
     flow_id: flowid,
+    variation_id: branch.name,
+    survey_id: NAME
   };
 
   let storeFlow = function (flow_id, flow) {
@@ -186,7 +211,9 @@ let run = function (state, extras) {
     eData.store();
   }.bind(null, local.flow_id);
 
-  /* Using Telemetry instead of phonehome
+  /* Commented b/c we will use Telemetry instead of phonehome
+     and assume 100% of all users in locale sampled.
+
   let maybePhonehome = function (flow) {
     if (!extras.simulate) {
       let myRng = ;
@@ -207,23 +234,28 @@ let run = function (state, extras) {
   maybePhonehome(flow);
   */
 
-  storeFlow({data:{}});
-  events.message(local.flow_id, "began", {});
+  // make and setup flow
+  let flow = new Flow(local);  // create and update
+  flow.began();
+  // maybePhonehome(flow);
+
+  storeFlow(flow);
+  events.message(local.flow_id, "began", flow.data);
 
   // Add parameters to url
-  let fullUrl = `${BRANCH.url}?source=hb&hbv=${VERSION}` +
+  let fullUrl = `${branch.url}?source=hb&hbv=${VERSION}` +
       `&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}` +
-      `&b=${BRANCH.name}`;
+      `&b=${branch.name}`;
   setTimeout(function() {
     UITour.showHeartbeat(
-      BRANCH.prompt,
-      BRANCH.thankyou,
+      branch.prompt,
+      branch.thankyou,
       flowid,
       fullUrl,
       null, // learn more text, TODO: should this be "What's this?" or something?
       null, // learn more link
       {
-        engagementButtonLabel: BRANCH.button
+        engagementButtonLabel: branch.button
       }
     )},
     delay
@@ -231,14 +263,17 @@ let run = function (state, extras) {
   return Promise.resolve(local.flow_id);
 };
 
-exports.name        = KEY; // BRANCH.name;
-exports.description = 'Marketing promo'; // "Marketing-" + BRANCH.name;
+exports.name        = NAME; // BRANCH.name;
+exports.description = 'Marketing promo for iOS'; // "Marketing-" + BRANCH.name;
 exports.shouldRun   = shouldRun;
 exports.run         = run;
 exports.owner       = "Robert Rayborn <rrayborn@mozilla.com>";
 exports.version     = VERSION;
 
 exports.config      = config;
+
+exports.branchConfig = configFile;
+
 // extras that we want for testing
 // TODO:  these should spin off into another module, by v.11
 exports.testable = {

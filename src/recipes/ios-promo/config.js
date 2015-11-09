@@ -17,17 +17,6 @@ let thousand = Math.pow(10,3);
 let percent = 0.01;
 let days = 24 * 60 * 60 * 1000;
 
-//Gets a random branch (even distribution)
-let getbranch = function(branches) {
-  let myRng = Math.random();
-  let num_branches = branches.length;
-  for (var i = 1; i <= num_branches ; i++) {
-    if (myRng < (i/(num_branches))) {
-      return branches[i-1];
-    }
-  }
-};
-
 let thankyou = "We hope that you enjoy Firefox on your mobile device!";
 let url      = "https://www.mozilla.org/en-US/firefox/mobile-download/";
 let button   = "Get it now";
@@ -55,22 +44,20 @@ let branches = [
   }
 ];
 
-let branch = getbranch(branches);
-
 module.exports = {
-  study: {
-    branch: branch,
-    name: branch.name,
-    key: 'marketing',
+  studies: branches.map(function (b) { return {
+    branch: b,
+    name: b.name,
+    key: 'ios-promo',
     version: 1,
     delay: 60 * 1000 * (1 + 4*Math.random()), // Delay the start by 1-5 minutes
     //phonehomepct: .01*percent
-  },
+  };}),
   channels: {
     all: {
-      sample: 1 * percent, // will be 1.0 when we launch
-      restdays: 1000,
-      locales: ["en-CA"], // will be en-* locales when we launch
+      sample: 10 * percent, // will be 1.0 when we launch
+      restdays: null,  // irrelevant
+      locales: ["en-US", "en-GB"], // will be en-* locales when we launch
     }
   }
 };

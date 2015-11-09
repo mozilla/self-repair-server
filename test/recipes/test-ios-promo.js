@@ -33,7 +33,6 @@ let personinfo = require("../../src/common/personinfo");
 let R = require("../../src/recipes/ios-promo");
 let C = require("../../src/recipes/ios-promo/config");
 
-
 const percent = 0.01;
 let days = 1000 * 60 * 60 * 24;
 
@@ -109,12 +108,11 @@ describe("ios-promo", function () {
           expect(C.channels).keys(allchannels);
         })
 
-        // check that each channel behaves
-        it('stop run if too recent', function (done){
+        it('should only ever show once', function (done) {
           allchannels.forEach(function (channel) {
             let obs = events.observe(R.name, (msg, data) => {
               events.unobserve(obs);
-              if (msg === "too-soon") {
+              if (msg === "already-run") {
                 done()
               } // else {
               //  done(new Error([msg, data]));
@@ -126,27 +124,14 @@ describe("ios-promo", function () {
             let restdays = C.channels[channel].restdays;
             let now = Date.now();
             let ans = R.shouldRun(state, C.channels[channel],
-              {when: now - 1, lastRun: now - (restdays * days)
+              {when: now - 1, lastRun: now - (restdays * days),
+               geoOK: true
             })
             expect(ans, channel).false();
           })
           done();
         });
-        it('go if been long enough!', function (){
-          allchannels.forEach(function (channel) {
-            // use the real configs, as though this is a nightly
-            let goodLocale = C.channels[channel].locales[0];
-            let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: goodLocale};
-            let restdays = C.channels[channel].restdays;
-            let now = Date.now();
-            let ans = R.shouldRun(state, undefined,
-              { when: now,
-                lastRun: now - (restdays * days),
-                randomNumber: .99 * C.channels[channel].sample // also clear the sampler!
-              })
-            expect(ans, channel).true();
-          })
-        });
+
         it('should respect the sampling percentage', function (){
           allchannels.forEach(function (channel) {
             let goodLocale = C.channels[channel].locales[0];
@@ -157,12 +142,15 @@ describe("ios-promo", function () {
             expect(R.shouldRun(state, null, {
               randomNumber: 99*percent*p,
               when: now,
-              lastRun: now - (restdays * days)
+              lastRun: 0,
+              geoOK: true
+
             }), channel + ' 99% of rng is good!').true();
             expect(R.shouldRun(state, null, {
               randomNumber: 101*percent*p,
               when: now,
-              lastRun: now - (restdays * days)
+              lastRun: now - (restdays * days),
+              geoOK: true
             }), channel + ' 101% of rng is bad').false();
           })
         });
@@ -177,11 +165,32 @@ describe("ios-promo", function () {
               expect(R.shouldRun(state, null, {
                 randomNumber: 0,
                 when: now,
-                lastRun: now - (restdays * days)
+                lastRun: 0,
+                geoOK: true
               }), channel + " " + locale).true();
             })
           })
         })
+
+        it('refuses bad geo', function (done) {
+          let channel = Object.keys(C.channels)[0];
+          let locale = C.channels[channel].locales[0];
+          let observed = events.observe(R.name, function (msg, data) {
+            if (msg === "bad-geo") {
+              done();
+              events.unobserve(observed);
+            }
+          })
+          let now = Date.now();
+          let restdays = C.channels[channel].restdays;
+          let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: locale};
+          expect(R.shouldRun(state, null, {
+            randomNumber: 0,
+            when: now,
+            lastRun: 0,
+            geoOK: false
+          }), channel + " " + locale).true();
+        });
 
         it('refuses bad locale', function (done) {
           allchannels.forEach(function (channel) {
@@ -198,7 +207,8 @@ describe("ios-promo", function () {
             expect(R.shouldRun(state, null, {
               randomNumber: 0,
               when: now,
-              lastRun: now - (restdays * days)
+              lastRun: now - (restdays * days),
+              geoOK: true
             }), channel + ' bad locale is bad').false();
           })
           done();
@@ -213,7 +223,7 @@ describe("ios-promo", function () {
             restdays: 0,
             locales: ["*"]
           },
-          {lastRun: 0}
+          {lastRun: 0, geoOK: true}
           )).to.be.true();
         });
 
@@ -233,7 +243,7 @@ describe("ios-promo", function () {
               restdays: 0
             }
           };
-          let extras = {lastRun: 0, when: Date.now()}
+          let extras = {lastRun: 0, when: Date.now(), geoOK: true};
           it("should respect good locales", function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(['ru-RU', 'it-IT']);
@@ -278,13 +288,13 @@ describe("ios-promo", function () {
         expect("you just have to believe this").a("string");
       });
 
-      it("creates a stored (empty) flow by side effect", function (done) {
+      it("creates a stored flow by side effect", function (done) {
         let u = uuid();
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           () => {
+            //console.log(E.data.flows[u]);
             expect(E.data.flows[u], "must exist").exist();
-            expect(E.data.flows[u], "must be an empty obj").deep.equal({}); // must be empty
             done();
           }
         );
