@@ -88,14 +88,13 @@ var eData = setupState();
 
 // ELIGIBLE.  parts of the eligibility, made explicit for testability
 
-/* For this survey we're testing to see if it's ever been seen
 // is dayspassed >= restDays
 let waitedEnough = function (restDays, last, now) {
   now = now || Date.now();
   let dayspassed = ((now - last)/days);
   return dayspassed >= restDays ;
 };
-*/
+
 
 /** run or not, given configs?
   *
@@ -116,42 +115,44 @@ let waitedEnough = function (restDays, last, now) {
   * - randomNumber (0,1)
   */
 let shouldRun = function (userstate, config, extras) {
-
   config = config || configFile.channels.all;
   if (!config) {
     events.message(NAME, "no-config", {});
     return false;
   }
-
   extras = extras || {};
   let now = extras.when || Date.now();
   //let channel = userstate.updateChannel || extras.updateChannel;
   let lastRun = extras.lastRun || eData.lastRun || 0;
-  let locale = (userstate.locale || extras.locale || "unknown").toLowerCase();
-  //let restdays = config.restdays; // Only run once
+  let locale = (extras.locale || userstate.locale || "unknown").toLowerCase();
+  let restdays = config.restdays; // Only run once
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
 
   // All versions
 
   // Bad locale
+  console.log({
+    now: now,
+    lastRun: lastRun,
+    locale: locale,
+    restdays: restdays,
+    locales: locales,
+  })
   if (!hasAny(locales, [locale, "*"])) {
     events.message(NAME, "bad-locale", {locale: locale, locales: locales});
     return false;
   }
+  //// Already ran this
+  //if (lastRun !== 0) { // This recipe is only showed once
+  //  events.message(NAME, "already-run", {lastRun: lastRun});
+  //  return false;
+  //}
 
-  // Already ran this
-  if (lastRun !== 0) { // This recipe is only showed once
-    events.message(NAME, "already-run", {lastRun: lastRun});
-    return false;
-  }
-
-  /* For this survey we're testing to see if it's ever been seen
   // Another survey was run recently
   if (!waitedEnough(restdays, lastRun, now)) {
     events.message(NAME, "too-soon", {restdays: restdays, lastRun: lastRun, now: now});
     return false;
-  }*/
-
+  }
   // Sample
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
 
@@ -241,7 +242,7 @@ exports.config      = config;
 // extras that we want for testing
 // TODO:  these should spin off into another module, by v.11
 exports.testable = {
-//  waitedEnough: waitedEnough,//For this survey we're testing to see if it's ever been seen
+  waitedEnough: waitedEnough,
   eData: eData,
   setupState: setupState
 };

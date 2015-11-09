@@ -63,13 +63,13 @@ module.exports = {
     name: branch.name,
     key: 'marketing',
     version: 1,
-    delay: 1 || 60 * 1000 * (1 + 4*Math.random()), // Delay the start by 1-5 minutes
+    delay: 60 * 1000 * (1 + 4*Math.random()), // Delay the start by 1-5 minutes
     //phonehomepct: .01*percent
   },
   channels: {
     all: {
-      sample: 100 * percent, // will be 1.0 when we launch
-      //restdays: 30,
+      sample: 1 * percent, // will be 1.0 when we launch
+      restdays: 1000,
       locales: ["en-CA"], // will be en-* locales when we launch
     }
   }
