@@ -56,11 +56,25 @@ UITour.observe(heartbeatsCallback);
   *    aData:
   *      - flowid: an id
   *
+  *  extraOptions:
+  *    engagementButtonLabel:
+  *    privateWindowsOnly:
+  *    surveyId:
+  *    surveyVersion:
+  *
+  *  This now exactly mirrors the tour UI, except that callback is bound in
+  *  a weird spot.
   *
   *  return BoundHeartbeat
   *  - flow: state
   **/
-let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMoreMsg, learnMoreUrl,  callback) {
+let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMoreMsg,
+    learnMoreUrl,  callback, extraOptions
+          {
+        engagementButtonLabel: "Take Survey",
+        privateWindowsOnly: true,
+      }
+  ) {
   callback = type.isFunction(callback) ? callback : null;
 
   _callbacks[flowid] = callback;  // this registers it.
@@ -71,7 +85,8 @@ let showHeartbeat = function (flowid, message, thanksMsg, engagementUrl, learnMo
     flowid,             //
     engagementUrl,
     learnMoreMsg,
-    learnMoreUrl
+    learnMoreUrl,
+    options
   );
 
   return {flowid: flowid};
