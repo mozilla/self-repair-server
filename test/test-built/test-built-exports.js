@@ -42,26 +42,26 @@ describe("built file exports", function () {
     }
   });
   describe("recipe list", function () {
-    it("has 2 recipes.", () => {
-      expect(heartbeat.recipes.length).to.equal(2);
+    it("has 3 recipes.", () => {
+      expect(heartbeat.recipes.length).to.equal(3);
       it("has heartbeat, right version", function () {
         let hb = heartbeat.recipes[0];
         expect(heartbeat.runner.validateConfig(hb)[1]).true();
         expect(hb.name).equal("heartbeat by user v1");
-        expect(hb.version).equal(23);
+        expect(hb.version).equal(24);
       });
+      it("has pb mode survey", function () {
+        let R = heartbeat.recipes[2];
+        expect(heartbeat.runner.validateConfig(R)[1]).true();
+        expect(R.name).equal("pb-mode-survey");
+        expect(R.version).equal(2);
+      })
       it("has ios promo, right version", function () {
-        let ios = heartbeat.recipes[1];
+        let ios = heartbeat.recipes[2];
         expect(heartbeat.runner.validateConfig(ios)[1]).true();
         expect(ios.name).equal("ios-promo");
         expect(ios.version).equal(1);
       })
-      // it("has pb mode survey", function () {
-      //   let R = heartbeat.recipes[1];
-      //   expect(heartbeat.runner.validateConfig(R)[1]).true();
-      //   expect(R.name).equal("pb-mode-survey");
-      //   expect(R.version).equal(2);
-      // })
     })
   })
 
