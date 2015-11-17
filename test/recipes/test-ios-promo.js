@@ -124,7 +124,7 @@ describe("ios-promo", function () {
             let restdays = C.channels[channel].restdays;
             let now = Date.now();
             let ans = R.shouldRun(state, C.channels[channel],
-              {when: now - 1, lastRun: now - (restdays * days)}
+              {when: now - 1, lastRun: 1}
             )
             expect(ans, channel).false();
           })
@@ -146,8 +146,35 @@ describe("ios-promo", function () {
             expect(R.shouldRun(state, null, {
               randomNumber: 101*percent*p,
               when: now,
-              lastRun: now - (restdays * days)
+              lastRun: 0
             }), channel + ' 101% of rng is bad').false();
+          })
+        });
+
+        it('only runs on 41+', function () {
+          let locale = "en-US";
+          let now = Date.now();
+
+          // good!
+          allchannels.forEach(function (channel) {
+
+            let goodLocale = C.channels[channel].locales[0];
+            let restdays = C.channels[channel].restdays;
+            let state = {updateChannel: channel, locale: goodLocale};
+
+            state.fxVersion = "41.0a1";
+            expect(R.shouldRun(state, null, {
+              randomNumber: 0,
+              when: now,
+              lastRun: 0
+            }), channel + " version okay").true();
+
+            state.fxVersion = "40.0a1";
+            expect(R.shouldRun(state, null, {
+              randomNumber: 0,
+              when: now,
+              lastRun: 0
+            }), channel + " version bad").false();
           })
         });
 
@@ -182,7 +209,7 @@ describe("ios-promo", function () {
             expect(R.shouldRun(state, null, {
               randomNumber: 0,
               when: now,
-              lastRun: now - (restdays * days)
+              lastRun: 0
             }), channel + ' bad locale is bad').false();
           })
           done();
@@ -298,7 +325,6 @@ describe("ios-promo", function () {
           }
         );
       });
-
     });
 
     describe("testable functions", function () {

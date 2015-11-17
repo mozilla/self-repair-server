@@ -108,6 +108,15 @@ let waitedEnough = function (restDays, last, now) {
 };
 
 
+//// OH BOY.  This is scary :)
+//let isAustralia = function () {
+//  var current_date = new Date( );
+//  var gmt_offset = current_date.getTimezoneOffset( ) / 60;
+//  return  ( -11 <= gmt_offset ) && (gmt_offset <= -8  )
+//};
+//
+
+
 /** run or not, given configs?
   *
   * Args:
@@ -140,16 +149,23 @@ let shouldRun = function (userstate, config, extras) {
   let restdays = config.restdays; // Only run once
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
 
+  //let geoOK= extras.geoOK || isAustralia();
 
-  // All versions
+  // bad version.
+  let shortVersion = 1 * (userstate.fxVersion.match(/^[0-9]+/) || 0);
+  if (shortVersion < 41) { // TODO: Represent this in config long-term
+    events.message(NAME, "bad-version", {shortVersion: shortVersion});
+    return false;
+  }
 
-  // Bad locale
+  //// Bad locale
   //console.log({
   //  now: now,
   //  lastRun: lastRun,
   //  locale: locale,
   //  restdays: restdays,
-  //  locales: locales
+  //  locales: locales//,
+  //  //geoOK: geoOK
   //});
 
   if (!hasAny(locales, [locale, "*"])) {
@@ -161,6 +177,11 @@ let shouldRun = function (userstate, config, extras) {
     events.message(NAME, "already-run", {lastRun: lastRun});
     return false;
   }
+
+  //if (!geoOK) {
+  //  events.message(NAME, "bad-geo", {});
+  //  return false;
+  //}
 
   // Sample
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
