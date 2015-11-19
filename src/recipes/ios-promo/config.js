@@ -21,7 +21,7 @@ let thankyou = "We hope that you enjoy Firefox on your mobile device!";
 let url      = "https://www.mozilla.org/en-US/firefox/mobile-download/";
 let button   = "Get it now";
 let branches = [
-  /*{
+  /*{ // Lowest performing branch
     name:     "tabs",
     prompt:   "Take your open tabs on the road with you when using Firefox for iOS and Android.",
     thankyou: thankyou,

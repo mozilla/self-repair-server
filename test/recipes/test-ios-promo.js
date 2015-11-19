@@ -151,6 +151,28 @@ describe("ios-promo", function () {
           })
         });
 
+        it('should override the sampling percentage for AUS', function (){
+          allchannels.forEach(function (channel) {
+            let goodLocale = C.channels[channel].locales[0];
+            let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: goodLocale};
+            let p = C.channels[channel].sample;
+            let restdays = C.channels[channel].restdays;
+            let now = Date.now();
+            expect(R.shouldRun(state, null, {
+              randomNumber: 1.0,
+              when: now,
+              lastRun: 0,
+              geoAus: true
+            }), channel + 'Aus is overridden!').true();
+            expect(R.shouldRun(state, null, {
+              randomNumber: 1.0,
+              when: now,
+              lastRun: 0,
+              geoAus: false
+            }), channel + 'non-Aus is not overridden').false();
+          })
+        });
+
         it('only runs on 41+', function () {
           let locale = "en-US";
           let now = Date.now();

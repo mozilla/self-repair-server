@@ -107,14 +107,21 @@ let waitedEnough = function (restDays, last, now) {
   return dayspassed >= restDays ;
 };
 
+// if input is random and long this should return an suitably even hash
+let stringNumberGenerator = function (input, modulo = 100) {
+  let total = 0;
+  for ( var i = 0; i < input.length; i++ ) {
+    total += input.charCodeAt(i);
+  }
+  return (total % modulo) / modulo;
+};
 
-//// OH BOY.  This is scary :)
-//let isAustralia = function () {
-//  var current_date = new Date( );
-//  var gmt_offset = current_date.getTimezoneOffset( ) / 60;
-//  return  ( -11 <= gmt_offset ) && (gmt_offset <= -8  )
-//};
-//
+// OH BOY.  This is scary :)
+let isAustralia = function () {
+  var current_date = new Date( );
+  var gmt_offset = current_date.getTimezoneOffset( ) / 60;
+  return  ( -11 <= gmt_offset ) && (gmt_offset <= -8  )
+};
 
 
 /** run or not, given configs?
@@ -149,7 +156,7 @@ let shouldRun = function (userstate, config, extras) {
   let restdays = config.restdays; // Only run once
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
 
-  //let geoOK= extras.geoOK || isAustralia();
+  let geoAus= extras.geoAus || isAustralia();
 
   // bad version.
   let shortVersion = 1 * (userstate.fxVersion.match(/^[0-9]+/) || 0);
@@ -165,7 +172,7 @@ let shouldRun = function (userstate, config, extras) {
   //  locale: locale,
   //  restdays: restdays,
   //  locales: locales//,
-  //  //geoOK: geoOK
+  //  //geoAus: geoAus
   //});
 
   if (!hasAny(locales, [locale, "*"])) {
@@ -178,15 +185,18 @@ let shouldRun = function (userstate, config, extras) {
     return false;
   }
 
-  //if (!geoOK) {
-  //  events.message(NAME, "bad-geo", {});
-  //  return false;
-  //}
+  let sample = config.sample;
+  if (geoAus) { // Override sample if AUS
+    sample = 1.0;
+  }
 
   // Sample
-  let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
+  let flowid = extras.flow_id || uuid();
+  let myRng  = extras.randomNumber !== undefined ? extras.randomNumber : stringNumberGenerator(flowid);
 
-  if (myRng <= config.sample) {
+  //let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
+
+  if (myRng <= sample) {
     return true;
   } else {
     events.message(NAME, "bad-random-number", {randomNumber: myRng});
@@ -201,6 +211,8 @@ let run = function (state, extras = {}) {
   let now = extras.when || Date.now();
   let delay = extras.delay || DELAY;
   let branch = extras.branch || BRANCH.branch;
+
+  let geoAus= extras.geoAus || isAustralia();
 
   eData.data.lastRun = now;
   eData.store();
@@ -251,7 +263,7 @@ let run = function (state, extras = {}) {
   // Add parameters to url
   let fullUrl = `${branch.url}?source=hb&hbv=${VERSION}` +
       `&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}` +
-      `&b=${branch.name}`;
+      `&b=${branch.name}&g=${geoAus}`;
   setTimeout(function() {
     UITour.showHeartbeat(
       branch.prompt,
