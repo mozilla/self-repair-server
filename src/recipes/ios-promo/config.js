@@ -21,13 +21,13 @@ let thankyou = "We hope that you enjoy Firefox on your mobile device!";
 let url      = "https://www.mozilla.org/en-US/firefox/mobile-download/";
 let button   = "Get it now";
 let branches = [
-  /*{ // Lowest performing branch
+  {
     name:     "tabs",
     prompt:   "Take your open tabs on the road with you when using Firefox for iOS and Android.",
     thankyou: thankyou,
     url:      url,
     button:   button
-  },*/
+  },
   {
     name:     "general",
     prompt:   "Get Firefox on your iOS and Android devices.",
@@ -49,7 +49,7 @@ module.exports = {
     branch: b,
     name: b.name,
     key: 'ios-promo',
-    version: 2,
+    version: 1,
     delay: 60 * 1000 * (1 + 4*Math.random()), // Delay the start by 1-5 minutes
     //phonehomepct: .01*percent
   };}),
@@ -57,7 +57,7 @@ module.exports = {
     all: {
       sample: 10 * percent, // will be 1.0 when we launch
       restdays: null,  // irrelevant
-      locales: ["en-US", "en-GB", "en-ZA"] // All English locales that we support
+      locales: ["en-US", "en-GB"], // will be en-* locales when we launch
     }
   }
 };
