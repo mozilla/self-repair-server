@@ -89,6 +89,7 @@ var setupState = function (key, storage) {
 
   if (! eData.data.flows)   eData.data.flows   = {};
   if (! eData.data.lastRun) eData.data.lastRun = 0;
+  if (! eData.data.uuid)    eData.data.uuid    = uuid(); // used for repeat sample targeting, NOT sent server-side
 
   eData.store();
 
@@ -134,6 +135,9 @@ let isAustralia = function () {
   * - randomNumber (0,1)
   */
 let shouldRun = function (userstate, config, extras) {
+
+  let data = eData.data; // Until we have better testing, point directly to data
+
   config = config || configFile.channels.all;
   if (!config) {
     events.message(NAME, "no-config", {});
@@ -142,7 +146,7 @@ let shouldRun = function (userstate, config, extras) {
   extras = extras || {};
   let now = extras.when || Date.now();
   //let channel = userstate.updateChannel || extras.updateChannel;
-  let lastRun = extras.lastRun || eData.lastRun || 0;
+  let lastRun = extras.lastRun || data.lastRun || 0;
   let locale = (extras.locale || userstate.locale || "unknown").toLowerCase();
   let restdays = config.restdays; // Only run once
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
@@ -177,10 +181,18 @@ let shouldRun = function (userstate, config, extras) {
     return false;
   }
 
+<<<<<<< Updated upstream
   // Sample
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
 
   if (myRng <= config.sample) {
+=======
+  // Sample based on uuid
+  let myRng  = extras.randomNumber !== undefined ? extras.randomNumber : stringNumberGenerator(data.uuid);
+  //let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
+
+  if (myRng <= sample) {
+>>>>>>> Stashed changes
     return true;
   } else {
     events.message(NAME, "bad-random-number", {randomNumber: myRng});

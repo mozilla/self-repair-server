@@ -49,7 +49,11 @@ module.exports = {
     branch: b,
     name: b.name,
     key: 'ios-promo',
+<<<<<<< Updated upstream
     version: 1,
+=======
+    version: 3,
+>>>>>>> Stashed changes
     delay: 60 * 1000 * (1 + 4*Math.random()), // Delay the start by 1-5 minutes
     //phonehomepct: .01*percent
   };}),

@@ -15,6 +15,10 @@
 let repairList = module.exports = [
   //require("./always"),
   require("./recipes/heartbeat-by-user-first-impression"),
+<<<<<<< Updated upstream
   require("./recipes/pb-mode-survey"),
+=======
+  require("./recipes/pb-mode-survey")//,
+>>>>>>> Stashed changes
   //require("./recipes/ios-promo")
 ];
