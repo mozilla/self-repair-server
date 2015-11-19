@@ -56,21 +56,12 @@ describe("built file exports", function () {
         expect(R.name).equal("pb-mode-survey");
         expect(R.version).equal(3);
       })
-<<<<<<< Updated upstream
-      //it("has ios promo, right version", function () {
-      //  let ios = heartbeat.recipes[2];
-      //  expect(heartbeat.runner.validateConfig(ios)[1]).true();
-      //  expect(ios.name).equal("ios-promo");
-      //  expect(ios.version).equal(1);
-      //})
-=======
       it("has ios promo, right version", function () {
         let ios = heartbeat.recipes[2];
         expect(heartbeat.runner.validateConfig(ios)[1]).true();
         expect(ios.name).equal("ios-promo");
         expect(ios.version).equal(3);
       })
->>>>>>> Stashed changes
     })
   })
 
