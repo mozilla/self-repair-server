@@ -23,6 +23,7 @@
   *
   **/
 var Lstore = function (key, storage) {
+  "use strict";
   if ( !(this instanceof Lstore) )
     return new Lstore(key, storage);
 
@@ -46,7 +47,26 @@ var Lstore = function (key, storage) {
     return this;
   };
   this.revive().store(); // always comes started
-  return Object.preventExtensions(this); // freezing would break clear/revive
+
+  let noGet = function (target, name) {
+      if (name in target) {
+        return target[name];
+      } else {
+        throw new Error(`Lstore prevented access to non-existent key: "${name}".  You probably want .data.["${name}"]`)
+      }
+    }
+  let noSet = function (target, name, val) {
+      if (name in target) {
+        return target[name] = val;
+      } else {
+        throw new Error(`Lstore prevented setting to non-existent key: "${name}".  You probably want .data.["${name}"]`)
+      }
+    }
+  var handler = {
+    get:  noGet,
+    set:  noSet
+  };
+  return new Proxy(this, handler); // freezing would break clear/revive
 };
 
 module.exports = {

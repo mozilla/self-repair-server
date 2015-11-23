@@ -63,7 +63,7 @@ describe("recipe-utils", function () {
       expect(localStorage[u]).equal("{}");
     });
 
-    it("is sealed to prevent setting keys on it instead of data", function () {
+    it("is preventExtensions to prevent setting keys on it instead of data", function () {
       // warning, only in strict mode!
       expect(()=>{L.someProp = 1}).throw();
     });
@@ -86,6 +86,13 @@ describe("recipe-utils", function () {
       expect(L.store() === L).true();
       expect(L.revive() === L).true();
       expect(L.clear() === L).true();
+    })
+
+    it("accessing and setting keys on the Lstore itself will throw.", () => {
+      let u = uuid();
+      let re = new RegExp(u);
+      expect(()=>L[u]).to.throw(Error, re);
+      expect(()=>{L[u] = 1}).to.throw(Error, re);
     })
   })
 })
