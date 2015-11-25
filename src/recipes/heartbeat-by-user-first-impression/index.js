@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=25;
+const VERSION=26;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -106,10 +106,12 @@ let waitedEnough = function (restDays, last, now) {
   * - randomNumber (0,1)
   */
 let shouldRun = function (userstate, config, extras) {
+  let data = eData.data; // Until we have better testing, point directly to data
+
   extras = extras || {};
   let now = extras.when || Date.now();
   let channel = userstate.updateChannel || extras.updateChannel;
-  let lastRun = extras.lastRun || eData.lastRun || 0;
+  let lastRun = extras.lastRun || data.lastRun || 0;
   let locale = (userstate.locale || extras.locale || "unknown").toLowerCase();
 
   config = config || allconfigs[channel];
