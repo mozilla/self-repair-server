@@ -24,7 +24,9 @@ function ShimTour () {
     appinfo: {
       defaultUpdateChannel: "shim",
       version: "3.5"
-    }
+    },
+    sync: {},
+    selectedSearchEngine: {}
   },
   // var avail = ["sync", "appinfo", "availableTargets", "selectedSearchEngine"];
   this.getConfiguration = function(which, cb) {
