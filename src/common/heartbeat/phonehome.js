@@ -70,7 +70,14 @@ let annotate = function (obj) {
           crashes: data.crashes || {},
           //prefs: data.prefs,  // dropped per https://bugzilla.mozilla.org/show_bug.cgi?id=1092375
           engage: obj.flow_links,
-          numflows: 0
+          numflows: 0,
+          // new in #203
+          searchEngine: data.searchEngine,
+          syncSetup: data.syncSetup,
+          defaultBrowser: data.defaultBrowser,
+          plugins: data.plugins,
+          flashVersion: data.flashVersion,
+          doNotTrack: data.doNotTrack
         };
 
         obj.experiment_version = data.addonVersion || "-";

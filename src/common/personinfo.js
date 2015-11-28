@@ -23,6 +23,26 @@ let config = exports.config = {
   timeout: 5000
 };
 
+
+let navigatorInfo = function (navigator = window.navigator) {
+  let flash = Object.keys(navigator.plugins).filter((p)=>/flash/i.test(p))[0]
+  flash = navigator.plugins[flash] || {};
+  //
+  //let flash = Object.keys(navigator.plugins).filter((p)=>/flash/i.test(p))[0]
+  //flash = navigator.plugins[flash] || {};
+
+  let plugins = {};
+  Object.keys(navigator.plugins).filter((p)=>!/[0-9]+/i.test(p)).forEach(
+    (p) => plugins[p]=navigator.plugins[p].version
+  )
+
+  return {
+    doNotTrack:  Boolean(1*navigator.doNotTrack),  // can be "1","0",undefined.  handles all.
+    plugins:  plugins,
+    flashVersion: flash.version // undefined if none.
+  }
+};
+
 // wants TONS MORE DATA.  Day of cycle, etc.
 // TODO, this in theory can have to wait forever, if something goes wrong.
 // TODO this is super tied to the tour, but won't be in future.
@@ -60,21 +80,28 @@ let personinfo = function (tour, aConfig) {
       return out;
     };
 
+    let out = navigatorInfo();
 
     // the output data structure.
-    let out = {
+    merge(out, {
       updateChannel:  "unknown",
       fxVersion: "unknown",
       locale: "unknown",
       country: "unknown",  // to match the upload spec
       flags: {
       }
-    };
+    });
 
     tour = tour || UITour;
 
     // ## providers
-    let avail = ["sync","appinfo","availableTargets","selectedSearchEngine"];
+    let avail = [
+      "appinfo",
+      /*"availableTargets", */
+      /*"loop", */
+      "selectedSearchEngine",
+      "sync"
+    ];
     // add new providers here, so that the time out and message mechanism works.
     let nontour = ['country'];
 
@@ -87,19 +114,29 @@ let personinfo = function (tour, aConfig) {
         case "appinfo": {
           out.updateChannel = data.defaultUpdateChannel;
           out.fxVersion = data.version;
+          out.defaultBrowser = data.defaultBrowser;
           break;
         }
-
-        case "sync":
-        case "selectedSearchEngine":
-        case "availableTargets":
+        case "availableTargets": {
+          // list of things the "tour" can highlight
           break;
-
+        }
+        case "loop": {
+          //  not interesting.  => "gettingStartedSeen": false
+          break;
+        }
+        case "selectedSearchEngine": {
+          out.searchEngine = data.searchEngineIdentifier;
+          break;
+        }
+        case "sync": {
+          out.syncSetup = data.setup;
+          break;
+        }
         case "country": {
           out.country = data;
           break;
         }
-
         default:
           break;
       }
@@ -131,7 +168,7 @@ let personinfo = function (tour, aConfig) {
 };
 
 exports.personinfo = personinfo;
-
+exports.navigatorInfo = navigatorInfo;
 
 /*
 
