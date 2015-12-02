@@ -49,8 +49,8 @@ module.exports = {
     branch: b,
     name: b.name,
     key: 'ios-promo',
-    version: 3,
-    delay: 60 * 1000 * (1 + 4*Math.random()), // Delay the start by 1-5 minutes
+    version: 4,
+    delay: 60 * 1000 * (1 + 4*Math.random())//, // Delay the start by 1-5 minutes
     //phonehomepct: .01*percent
   };}),
   channels: {

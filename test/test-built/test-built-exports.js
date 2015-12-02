@@ -50,18 +50,18 @@ describe("built file exports", function () {
         expect(hb.name).equal("heartbeat by user v1");
         expect(hb.version).equal(27);
       });
-      it("has pb mode survey", function () {
-        let R = heartbeat.recipes[2];
-        expect(heartbeat.runner.validateConfig(R)[1]).true();
-        expect(R.name).equal("pb-mode-survey");
-        expect(R.version).equal(3);
-      })
+//      it("has pb mode survey", function () {
+//        let R = heartbeat.recipes[2];
+//        expect(heartbeat.runner.validateConfig(R)[1]).true();
+//        expect(R.name).equal("pb-mode-survey");
+//        expect(R.version).equal(3);
+//      });
       it("has ios promo, right version", function () {
-        let ios = heartbeat.recipes[2];
+        let ios = heartbeat.recipes[1];
         expect(heartbeat.runner.validateConfig(ios)[1]).true();
         expect(ios.name).equal("ios-promo");
-        expect(ios.version).equal(3);
-      })
+        expect(ios.version).equal(4);
+      });
     })
   })
 
