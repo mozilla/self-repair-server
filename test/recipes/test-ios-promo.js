@@ -151,7 +151,7 @@ describe("ios-promo", function () {
           })
         });
 
-        it('should override the sampling percentage for AUS', function (){
+        /*it('should override the sampling percentage for AUS', function (){
           allchannels.forEach(function (channel) {
             let goodLocale = C.channels[channel].locales[0];
             let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: goodLocale};
@@ -171,7 +171,7 @@ describe("ios-promo", function () {
               geoAus: false
             }), channel + 'non-Aus is not overridden').false();
           })
-        });
+        });*/
 
         it('only runs on 41+', function () {
           let locale = "en-US";

@@ -118,11 +118,12 @@ let stringNumberGenerator = function (input, modulo = 100) {
 };
 
 // OH BOY.  This is scary :)
+/*
 let isAustralia = function () {
   var current_date = new Date( );
   var gmt_offset = current_date.getTimezoneOffset( ) / 60;
   return  ( -11 <= gmt_offset ) && (gmt_offset <= -8  )
-};
+};*/
 
 
 /** run or not, given configs?
@@ -160,7 +161,7 @@ let shouldRun = function (userstate, config, extras) {
   let restdays = config.restdays; // Only run once
   let locales = (config.locales || []).map((x)=>x.toLowerCase());
 
-  let geoAus= extras.geoAus || isAustralia();
+  //let geoAus= extras.geoAus || isAustralia();
 
   // bad version.
   let shortVersion = 1 * (userstate.fxVersion.match(/^[0-9]+/) || 0);
@@ -190,9 +191,9 @@ let shouldRun = function (userstate, config, extras) {
   }
 
   let sample = config.sample;
-  if (geoAus) { // Override sample if AUS
+  /*if (geoAus) { // Override sample if AUS
     sample = 1.0;
-  }
+  }*/
 
   // Sample based on uuid
   let myRng  = extras.randomNumber !== undefined ? extras.randomNumber : stringNumberGenerator(data.uuid);
@@ -214,7 +215,7 @@ let run = function (state, extras = {}) {
   let delay = extras.delay || DELAY;
   let branch = extras.branch || BRANCH.branch;
 
-  let geoAus= extras.geoAus || isAustralia();
+  //let geoAus= extras.geoAus || isAustralia();
 
   eData.data.lastRun = now;
   eData.store();
@@ -265,7 +266,7 @@ let run = function (state, extras = {}) {
   // Add parameters to url
   let fullUrl = `${branch.url}?source=hb&hbv=${VERSION}` +
       `&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}` +
-      `&b=${branch.name}&g=${geoAus}`;
+      `&b=${branch.name}`;//&g=${geoAus}
   setTimeout(function() {
     UITour.showHeartbeat(
       branch.prompt,
