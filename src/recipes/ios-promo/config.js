@@ -49,13 +49,13 @@ module.exports = {
     branch: b,
     name: b.name,
     key: 'ios-promo',
-    version: 4,
+    version: 5,
     delay: 60 * 1000 * (1 + 4*Math.random())//, // Delay the start by 1-5 minutes
     //phonehomepct: .01*percent
   };}),
   channels: {
     all: {
-      sample: 10 * percent, // will be 1.0 when we launch
+      sample: 100 * percent,
       restdays: null,  // irrelevant
       locales: ["en-US", "en-GB", "en-ZA"] // All English locales that we support
     }

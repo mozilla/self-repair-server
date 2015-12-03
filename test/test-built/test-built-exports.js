@@ -61,7 +61,7 @@ describe("built file exports", function () {
       let ios = heartbeat.recipes[1];
       expect(heartbeat.runner.validateConfig(ios)[1]).true();
       expect(ios.name).equal("ios-promo");
-      expect(ios.version).equal(4);
+      expect(ios.version).equal(5);
     });
   })
 
