@@ -11,7 +11,7 @@ before_script:  # turn off screen
   - sh -e /etc/init.d/xvfb start
 
 addons:
-  firefox: "40.0"
+  firefox: "latest"
 notifications:
   email: false
 
