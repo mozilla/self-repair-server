@@ -49,8 +49,30 @@ describe("built file exports", function () {
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true();
       expect(hb.name).equal("heartbeat by user v1");
-      expect(hb.version).equal(40);
+      expect(hb.version).equal(50);
     });
+  })
+
+  describe("main", function () {
+    let heartbeat = window.heartbeat;
+    it("will reject if localStorage is not persistent", function (done) {
+      localStorage.clear(); // bam.
+      expect(heartbeat.personinfo.isLocalStoragePersistent()).to.be.false();
+      heartbeat.main([]).then(
+        (e) => {done(new Error("should reject as invalid"))},
+        (e) => {done()}
+      );
+    })
+    it("will resolve if localStorage is ok", function (done) {
+      localStorage.clear(); // bam.
+      heartbeat.personinfo.tryLocalStorage();
+      heartbeat.personinfo.tryLocalStorage();
+      expect(heartbeat.personinfo.isLocalStoragePersistent()).to.be.true();
+      heartbeat.main([]).then(
+        (e) => {done()},
+        (e) => {done(new Error("should have resolved true"))}
+      );
+    })
   })
 
   describe('time bombs', function () {
