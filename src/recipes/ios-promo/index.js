@@ -15,7 +15,7 @@ let common     = require("../../common");
 let configFile = require("./config");
 let actions    = common.actions;
 
-let uuid       = require("node-uuid").v4;
+let uuid       = require("uuid").v4;
 let events     = require("../../common/events");
 
 let { hasAny } = require("../../jetpack/array");

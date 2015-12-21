@@ -22,7 +22,7 @@ chai.config.includeStack = true;
 chai.config.showDiff = true;
 
 require("../utils").shimTodo(it);
-let uuid = require("node-uuid").v4;
+let uuid = require("uuid").v4;
 
 
 let ru = require("../../src/common/recipe-utils");

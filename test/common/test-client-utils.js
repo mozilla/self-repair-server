@@ -23,7 +23,7 @@ let { expect } = require('chai');
 let clientUtils = require('../../src/common/client-utils');
 require('../utils').shimTodo(it);
 
-let uuid = require('node-uuid').v4;
+let uuid = require('uuid').v4;
 
 describe('window-utils', () => {
   describe('module', () => {

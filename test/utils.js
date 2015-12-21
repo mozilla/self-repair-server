@@ -19,4 +19,4 @@ exports.shimTodo = function (itFn) {
   };
 };
 
-exports.uuid = require('node-uuid');
+exports.uuid = require('uuid');

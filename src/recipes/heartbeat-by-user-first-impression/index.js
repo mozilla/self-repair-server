@@ -22,7 +22,7 @@ let { Lstore } = require("../../common/recipe-utils");
 let phConfig = phonehome.config;
 phonehome = phonehome.phonehome;
 
-let uuid = require("node-uuid").v4;
+let uuid = require("uuid").v4;
 let events = require("../../common/events");
 
 let { hasAny } = require("../../jetpack/array");
