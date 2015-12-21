@@ -23,7 +23,7 @@ let { expect } = require("chai");
 let events = require("../../src/common/events");
 require("../utils").shimTodo(it);
 
-let uuid = require("node-uuid").v4;
+let uuid = require("uuid").v4;
 
 describe("events", () => {
   it("has these methods", ()=>{

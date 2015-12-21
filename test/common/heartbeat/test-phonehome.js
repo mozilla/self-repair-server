@@ -18,7 +18,7 @@ var expect = require("chai").expect;
 var chai = require("chai");
 
 require("../../utils").shimTodo(it);
-let uuid = require("node-uuid").v4;
+let uuid = require("uuid").v4;
 
 let events = require("../../../src/common/events");
 let runner = require("../../../src/runner");
