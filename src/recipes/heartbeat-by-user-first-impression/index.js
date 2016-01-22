@@ -13,6 +13,8 @@
 "use strict";
 let common = require("../../common");
 let allconfigs = require("./config");
+let { getEngagementUrl } = require("./utils");
+
 let actions  = common.actions;
 let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
@@ -26,6 +28,7 @@ let uuid = require("uuid").v4;
 let events = require("../../common/events");
 
 let { hasAny } = require("../../jetpack/array");
+const { extend } = require("../../jetpack/object");
 
 // TODO, is it module level config, or function level?
 // so far, 3 systems
@@ -48,7 +51,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=32;
+const VERSION=allconfigs.VERSION;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -60,7 +63,6 @@ const days = 24 * 60 * 60 * 1000;
 
 
 let translations = require('../../localeStrings');
-
 
 // setup state?
 
@@ -114,7 +116,7 @@ let shouldRun = function (userstate, config, extras) {
   let lastRun = extras.lastRun || data.lastRun || 0;
   let locale = (userstate.locale || extras.locale || "unknown").toLowerCase();
 
-  config = config || allconfigs[channel];
+  config = config || allconfigs.sampling[channel];
   if (!config) {
     events.message(NAME, "no-config", {});
     return false;
@@ -142,6 +144,7 @@ let shouldRun = function (userstate, config, extras) {
     return false;
   }
 };
+
 
 // run / do
 /* */
@@ -193,6 +196,7 @@ let run = function (state, extras) {
   storeFlow(flow);
   events.message(local.flow_id, "began", flow.data);
 
+  // bind locals into the UI callback
   let phaseCallback = function phaseCallback (flowid, action, data) {
     let msg = action.split(":")[1].toLowerCase().replace("notification","");
     switch (msg) {
@@ -224,49 +228,10 @@ let run = function (state, extras) {
     }
   };
 
-  //      updateChannel:  "unkown",
-  //    fxVersion: "unknown",
-
-  // as shown below, this is en-us only!
   //let engagementUrl =  `https://www.mozilla.org/en-US/firefox/feedback/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`;  //"http://localhost/enagement.html",
+  let eOpts = extend(state, {VERSION: VERSION, locale: locale})
+  let engagementUrl = getEngagementUrl(eOpts, allconfigs.engagementRules);
 
-  let eUrls = [
-    //`https://qsurvey.mozilla.com/s3/Firefox-User-Sentiment/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
-  ];
-
-  let cutBreaks = function (arr, breaks, rng=Math.random()) {
-    // should have tests, gah!  was not ready to deal with this yet.
-    // should have way of overring rng too
-    let out;
-    for (let ii = 0; ii < breaks.length; ii++) {
-      if (rng <= breaks[ii]) {
-        return arr[ii];
-      }
-    }
-  };
-
-  let breaks = [1.0];
-
-
-
-  //ad-hoc for germany survey, dev-edition survey
-  var getEngagementUrl = function(locale) {
-    if (locale == "de") {
-      return null
-      // return `https://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41-German?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
-    }
-    if (/^en-/.test(locale)) {
-      if (/^aurora/i.test(state.updateChannel)) {
-        return `https://qsurvey.mozilla.com/s3/Developer-Audience-Survey-V2/?s=hb&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
-      }
-      else {
-        return cutBreaks(eUrls, breaks);
-      }
-    }
-    return
-  }
-
-  let engagementUrl = getEngagementUrl(locale);
   if (phConfig.testing && engagementUrl) {
     engagementUrl = engagementUrl + "&testing=1"; // only if testing.
   }

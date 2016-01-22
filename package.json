@@ -1,6 +1,6 @@
 {
   "name": "self-repair-server",
-  "version": "0.11.8",
+  "version": "0.12.0",
   "description": "Server package for Mozilla self-repair-server.",
   "main": "",
   "repository": {
@@ -48,7 +48,8 @@
     "thirdparty": "python scripts/check-ui-tour-changes.py thirdparty/uitour.js",
     "serve": "serve -p 3111",
     "open-local": "opener 'http://localhost:3111/deploy/en-US/repair/?{\"runner\":{\"alwaysRun\":true}}'",
-    "open-prod": "opener 'https://self-repair.mozilla.org/en-US/repair/?{\"runner\":{\"alwaysRun\":true}}'"
+    "open-prod": "opener 'https://self-repair.mozilla.org/en-US/repair/?{\"runner\":{\"alwaysRun\":true}}'",
+    "surveys": "TRAVIS=1 NPM_CONFIG_KARMAFILES=\"test/**/*deployed-survey-config.js\" npm run test"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
   "license": "MPL 2"
