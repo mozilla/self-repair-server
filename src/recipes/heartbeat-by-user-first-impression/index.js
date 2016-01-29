@@ -231,12 +231,15 @@ let run = function (state, extras) {
   //let engagementUrl =  `https://www.mozilla.org/en-US/firefox/feedback/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`;  //"http://localhost/enagement.html",
 
   let eUrls = [
-    `https://qsurvey.mozilla.com/s3/Firefox-User-Sentiment/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
+    `https://qsurvey.mozilla.com/s3/Firefox-User-Sentiment/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
+    `http://www.surveygizmo.com/s3/2564349/Developer-Audience-Survey-V2/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
   ];
 
   let cutBreaks = function (arr, breaks, rng=Math.random()) {
     // should have tests, gah!  was not ready to deal with this yet.
     // should have way of overring rng too
+    // TODO: I'd argue that it's more natural to describe a pct bracket not a cumulative
+    //       e.g. [.8, .2] not [.8, 1.0]
     let out;
     for (let ii = 0; ii < breaks.length; ii++) {
       if (rng <= breaks[ii]) {
@@ -245,16 +248,16 @@ let run = function (state, extras) {
     }
   };
 
-  let breaks = [1.0];
 
+  let breaks = (state.updateChannel !== 'aurora') ? [1.0] : [.75, 1];
 
 
   //ad-hoc for germany survey
   var getEngagementUrl = function(locale) {
-    if (locale == "de") {
-      return null
+    //if (locale == "de") {
+    //  return null
       // return `https://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41-German?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
-    }
+    //}
     if (/^en-/.test(locale)) {
       return cutBreaks(eUrls, breaks)
     }
