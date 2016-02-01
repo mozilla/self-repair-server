@@ -49,7 +49,7 @@ describe("built file exports", function () {
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true();
       expect(hb.name).equal("heartbeat by user v1");
-      expect(hb.version).equal(30);
+      expect(hb.version).equal(31);
     });
   })
 
@@ -61,7 +61,6 @@ describe("built file exports", function () {
     var bomb = function (strWhen) {
       return function () { expect(DateAfter(strWhen), "Time bomb:" + strWhen).to.be.false() };
     };
-    it("if fail, remove the user-sentiment (see #218)", bomb("Feb 2 2016"));
     // one fail per line.
     //it.skip('if fail, revert sampling back (see #139)', bomb('Aug 17 2015'));
 

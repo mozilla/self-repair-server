@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=30;
+const VERSION=31;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -231,7 +231,7 @@ let run = function (state, extras) {
   //let engagementUrl =  `https://www.mozilla.org/en-US/firefox/feedback/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`;  //"http://localhost/enagement.html",
 
   let eUrls = [
-    `https://qsurvey.mozilla.com/s3/Firefox-User-Sentiment/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
+    //`https://qsurvey.mozilla.com/s3/Firefox-User-Sentiment/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
   ];
 
   let cutBreaks = function (arr, breaks, rng=Math.random()) {
