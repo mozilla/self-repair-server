@@ -248,7 +248,7 @@ let run = function (state, extras) {
   };
 
 
-  let channel_breaks = {'aurora':[1]};
+  let channel_breaks = {'aurora':[.3]};
 
   //ad-hoc for germany survey
   var getEngagementUrl = function(channel_breaks, locale = null, channel = null) {
