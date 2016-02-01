@@ -48,7 +48,7 @@ let { hasAny } = require("../../jetpack/array");
 */
 
 const NAME="heartbeat by user v1";
-const VERSION=30;
+const VERSION=32;
 
 let config = {
   lskey : 'heartbeat-by-user-first-impressions',
@@ -231,7 +231,6 @@ let run = function (state, extras) {
   //let engagementUrl =  `https://www.mozilla.org/en-US/firefox/feedback/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`;  //"http://localhost/enagement.html",
 
   let eUrls = [
-    `https://qsurvey.mozilla.com/s3/Firefox-User-Sentiment/?updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
     `http://qsurvey.mozilla.com/s3/Developer-Audience-Survey-V2/?s=hb&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
   ];
 
@@ -249,22 +248,21 @@ let run = function (state, extras) {
   };
 
 
-  let breaks = (state.updateChannel !== 'aurora') ? [1.0] : [.75, 1];
-
+  let channel_breaks = {'aurora':[1]};
 
   //ad-hoc for germany survey
-  var getEngagementUrl = function(locale) {
+  var getEngagementUrl = function(channel_breaks, locale = null, channel = null) {
     //if (locale == "de") {
     //  return null
       // return `https://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41-German?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`
     //}
-    if (/^en-/.test(locale)) {
-      return cutBreaks(eUrls, breaks)
+    if ((/^en-/.test(locale)) && channel_breaks[channel]) {
+      return cutBreaks(eUrls, channel_breaks[channel])
     }
     return
   }
 
-  let engagementUrl = getEngagementUrl(locale);
+  let engagementUrl = getEngagementUrl(channel_breaks, locale, state.updateChannel);
   if (phConfig.testing && engagementUrl) {
     engagementUrl = engagementUrl + "&testing=1"; // only if testing.
   }
