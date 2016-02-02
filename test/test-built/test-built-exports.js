@@ -49,7 +49,7 @@ describe("built file exports", function () {
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true();
       expect(hb.name).equal("heartbeat by user v1");
-      expect(hb.version).equal(31);
+      expect(hb.version).equal(32);
     });
   })
 
@@ -62,11 +62,6 @@ describe("built file exports", function () {
       return function () { expect(DateAfter(strWhen), "Time bomb:" + strWhen).to.be.false() };
     };
     // one fail per line.
-    //it.skip('if fail, revert sampling back (see #139)', bomb('Aug 17 2015'));
-
-    //it('if fail, revert sampling back from 42 oversamle', bomb('Nov 9 2015'));
-
-    //it('if fail, turn off germany pbm survey re 174', bomb('Nov 15 2015'));
-
+    it('if fail, kill dev-ed survey v2  back (see #227)', bomb('Feb 12 2016'));
   })
 });
