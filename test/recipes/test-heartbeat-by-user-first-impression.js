@@ -32,6 +32,7 @@ let personinfo = require("../../src/common/personinfo");
 
 let R = require("../../src/recipes/heartbeat-by-user-first-impression");
 let C = require("../../src/recipes/heartbeat-by-user-first-impression/config");
+let U = require("../../src/recipes/heartbeat-by-user-first-impression/utils");
 
 
 const percent = 0.01;
@@ -43,6 +44,38 @@ let sendTourEvent = function (aEventName, aData) {
       {event: aEventName,
         params: aData});
 };
+
+/**
+  * same length, increasing, 1 for right endpoint
+  */
+function okEngagementSpec(spec, name) {
+  let {urls, breaks} = spec;
+  let msg = `${name} wrong length of breaks`;
+  expect(urls.length, msg).equal(breaks.length);
+  msg = `are not strictly increasing: ${name}, ${breaks}`;
+  expect(U._increasing(breaks), msg).to.be.true();
+  if (breaks.length) {
+    msg = `should end with 1: ${name}, ${breaks}`;
+    expect(breaks[breaks.length-1], msg).to.equal(1);
+  }
+}
+
+describe("hb config", function () {
+  it("has right exports", function () {
+    let expected = ['engagementRules',"VERSION",'sampling', 'supportedLocales'];
+    expect(C).keys(expected);
+  });
+
+  describe("engagementRules", function () {
+    //  engagementRules: engagementRules,
+    it("has breaks that are sorted, right length, 1 for right endpooint, and monotonically increasing in all locales", function (){
+      let rules = C.engagementRules;
+      for (let k=0; k<rules.length; k++) {
+        okEngagementSpec(rules[k],k);
+      }
+    })
+  })
+});
 
 describe("heartbeat-by-user-first-impression", function () {
   // these feel very action at a distance to me!
@@ -80,9 +113,6 @@ describe("heartbeat-by-user-first-impression", function () {
       });
     });
 
-
-
-
     describe("eStore stores things", function () {
       // all of these are tested in the racing test.
       it("knows last Run", function (){});
@@ -117,7 +147,7 @@ describe("heartbeat-by-user-first-impression", function () {
         var allchannels = ['nightly', 'aurora', 'beta', 'release'];
 
         it('config has right channels: '+ allchannels.join('|'), () => {
-          expect(C).keys(allchannels);
+          expect(C.sampling).keys(allchannels);
         })
 
         // check that each channel behaves
@@ -133,9 +163,9 @@ describe("heartbeat-by-user-first-impression", function () {
             })
 
             let state = {updateChannel: channel, locale: "en-US"};
-            let restdays = C[channel].restdays;
+            let restdays = C.sampling[channel].restdays;
             let now = Date.now();
-            let ans = R.shouldRun(state, C[channel],
+            let ans = R.shouldRun(state, C.sampling[channel],
               {when: now - 1, lastRun: now - (restdays * days)
             })
             expect(ans, channel).false();
@@ -145,12 +175,12 @@ describe("heartbeat-by-user-first-impression", function () {
           allchannels.forEach(function (channel) {
             // use the real configs, as though this is a nightly
             let state = {updateChannel: channel, locale: "en-US"};
-            let restdays = C[channel].restdays;
+            let restdays = C.sampling[channel].restdays;
             let now = Date.now();
             let ans = R.shouldRun(state, undefined,
               { when: now,
                 lastRun: now - (restdays * days),
-                randomNumber: .99 * C[channel].sample // also clear the sampler!
+                randomNumber: .99 * C.sampling[channel].sample // also clear the sampler!
               })
             expect(ans, channel).true();
           })
@@ -158,8 +188,8 @@ describe("heartbeat-by-user-first-impression", function () {
         it('should respect the sampling percentage', function (){
           allchannels.forEach(function (channel) {
             let state = {updateChannel: channel, locale: "en-US"};
-            let p = C[channel].sample;
-            let restdays = C[channel].restdays;
+            let p = C.sampling[channel].sample;
+            let restdays = C.sampling[channel].restdays;
             let now = Date.now();
             expect(R.shouldRun(state, null, {
               randomNumber: 99*percent*p,
@@ -187,8 +217,8 @@ describe("heartbeat-by-user-first-impression", function () {
           allchannels.forEach(function (channel) {
             oklocales.forEach(function (locale) {
               let now = Date.now();
-              let p = C[channel].sample;
-              let restdays = C[channel].restdays;
+              let p = C.sampling[channel].sample;
+              let restdays = C.sampling[channel].restdays;
               let state = {updateChannel: channel, locale: locale};
                 expect(R.shouldRun(state, null, {
                 randomNumber: 0,
@@ -209,7 +239,7 @@ describe("heartbeat-by-user-first-impression", function () {
               }
             })
             let now = Date.now();
-            let restdays = C[channel].restdays;
+            let restdays = C.sampling[channel].restdays;
             let state = {updateChannel: channel, locale: badlocale};
               expect(R.shouldRun(state, null, {
               randomNumber: 0,
@@ -456,7 +486,7 @@ describe("heartbeat-by-user-first-impression", function () {
         // chaijs/chai/issues/359
         expect(R.testable, "keys exist").keys(expected.slice(0));
         expected.slice(1).forEach((k) => {
-          expect(R.testable[k], `[${k} function]`).a("function");
+          expect(R.testable[k], `[${name} function]`).a("function");
         })
       });
       it("setupState makes a good eData", () => {
@@ -466,3 +496,107 @@ describe("heartbeat-by-user-first-impression", function () {
     });
   });
 })
+
+describe("hb utils", function () {
+  it("has right exports", function () {
+    let expected = ['_increasing', 'cutBreaks', "getEngagementUrl"];
+    expect(U).keys(expected);
+  });
+
+  describe("_increasing", function () {
+    var _increasing = U._increasing;
+    it("_increasing works for usual floats", function () {
+      var a = [
+        [[1,2,3.0], true],
+        [[3, 2], false],
+        [[-1, 2, 3], true],
+        [[-1.0, -1, 2], false],
+        [[2, 2, 3], false]
+      ];
+      a.map( (t) => expect(_increasing(t[0])).to.equal(t[1]))
+    })
+  })
+
+  describe("cutBreaks", function () {
+    var cutBreaks = U.cutBreaks;
+    it("big numbers return nothing" , function () {
+      expect(cutBreaks(['a','b'],[1], 1.5)).to.equal(undefined)
+    });
+    it("small numbers return first" , function () {
+      expect(cutBreaks(['a','b'],[1], -1)).to.equal('a')
+    });
+    it("right endpoint returns left" , function () {
+      expect(cutBreaks(['a','b'],[.5], .5)).to.equal('a')
+    });
+  })
+
+//var getEngagementUrl = function(locale, opts, engagementRules, rng) {
+//   let engagementUrl = getEngagementUrl(locale, {VERSION: VERSION, state:state}, allconfigs.engagementRules);
+  describe("getEngagementUrl", function () {
+    var person = {
+      VERSION: '123',  // of the recipe
+      locale: 'en-us',
+      updateChannel: 'release',
+      fxVersion: '47.0.1'
+    }
+    var getEngagementUrl = U.getEngagementUrl;
+    it("adds on qargs to qsurvey" , function () {
+      let rules = [{
+        rule: {},
+        urls: ['http://qsurvey.mozilla.org/some-url/'],
+        breaks: [1.0]
+      }]
+      let ans = getEngagementUrl(person,rules)
+      expect(/source=/.test(ans)).to.be.true();
+    });
+
+    it("passes non qsurvey unmodified" , function () {
+      let rules = [{
+        rule:{},
+        urls: ['http://another-url/some-url/'],
+        breaks: [1.0]
+      }]
+      let ans = getEngagementUrl(person,rules)
+      expect(/source=/.test(ans)).to.be.false();
+    });
+
+    it("gets it right!", function () {
+      let rules = [{
+        rule:{locale:  'de'},
+        urls: ['wrong-germany'],
+        breaks: []
+      },
+      {  // this is the right one!
+        rule:{
+          locale: /^en/,
+          updateChannel: 'release',
+          fxVersion: /^47/
+        },
+        urls: [
+          'http://qsurvey.mozilla.org/low-rng',
+          'http://somewhere-else/high-rng/'
+        ],
+        breaks: [.7,1.0]
+      },
+      {
+        rule:{},
+        urls: ['fallback-url'],
+        breaks: [1.0]
+      },
+      ]
+      let ans;
+      ans = getEngagementUrl(person,rules,.6);
+      expect(/low-rng/.test(ans),"1. is low rng").to.be.true();
+      expect(/source=/.test(ans),"1. has qargs").to.be.true();
+
+      ans = getEngagementUrl(person,rules,.7);
+      expect(/low-rng/.test(ans),"2. is low rng").to.be.true();
+      expect(/source=/.test(ans),"2. has qargs").to.be.true();
+
+      ans = getEngagementUrl(person,rules,.72);
+      expect(/high-rng/.test(ans),"3. is high-rng").to.be.true();
+      expect(/source=/.test(ans),"3. no qargs").to.be.false();
+
+    })
+  })
+});
