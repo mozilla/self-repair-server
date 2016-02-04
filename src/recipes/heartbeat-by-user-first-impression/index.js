@@ -20,6 +20,7 @@ let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
 let { Flow, phonehome } = require("../../common/heartbeat/");
 let { Lstore } = require("../../common/recipe-utils");
+let { releaseDateMultiplier } = require("../../common/sampling/releasedate");
 
 let phConfig = phonehome.config;
 phonehome = phonehome.phonehome;
@@ -89,6 +90,7 @@ let waitedEnough = function (restDays, last, now) {
   return dayspassed >= restDays ;
 };
 
+
 /** run or not, given configs?
   *
   * Args:
@@ -135,9 +137,10 @@ let shouldRun = function (userstate, config, extras) {
     return false;
   }
 
+  let multiplier = releaseDateMultiplier(userstate, extras);
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
 
-  if (myRng <= config.sample) {
+  if (myRng <= multiplier*config.sample) {
     return true;
   } else {
     events.message(NAME, "bad-random-number", {randomNumber: myRng});
