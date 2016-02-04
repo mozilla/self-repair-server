@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=33;
+const VERSION=34;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -40,8 +40,8 @@ const engagementRules = [
   {
     alias: '^en, ^aurora',
     rule: {
-      locale: /^en/,
-      channel: /^aurora/
+      locale: /^en/i,
+      updateChannel: /^aurora/i
     },
     urls: [
       "https://qsurvey.mozilla.com/s3/Developer-Audience-Survey-V2/"
@@ -54,7 +54,7 @@ const engagementRules = [
   {
     alias: '^en',
     rule: {
-      locale: /^en/
+      locale: /^en/i
     },
     urls: [
     ],
