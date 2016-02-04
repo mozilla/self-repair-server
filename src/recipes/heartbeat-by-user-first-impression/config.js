@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=34;
+const VERSION=35;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -129,7 +129,7 @@ module.exports = {
     },
     "aurora": {
       restdays: 30,
-      sample: 20 * percent * percent,  // 1 in 500
+      sample: 10 * 20 * percent * percent,  // 1 in 50 formerly 1 in 500
       locales: supportedLocales
     },
     "beta": {

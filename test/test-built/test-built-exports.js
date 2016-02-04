@@ -49,7 +49,7 @@ describe("built file exports", function () {
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true();
       expect(hb.name).equal("heartbeat by user v1");
-      expect(hb.version).equal(34);
+      expect(hb.version).equal(35);
     });
   })
 
@@ -62,6 +62,6 @@ describe("built file exports", function () {
       return function () { expect(DateAfter(strWhen), "Time bomb:" + strWhen).to.be.false() };
     };
     // one fail per line.
-    it('if fail, kill dev-ed survey v2  back (see #227)', bomb('Feb 12 2016'));
+    it('if fail, kill dev-ed survey v2  back (see #227, #230)', bomb('Feb 12 2016'));
   })
 });
