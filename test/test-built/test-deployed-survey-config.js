@@ -37,7 +37,7 @@ function genProducts() {
     for (let c of channels) {
       out.push({
         //fxVersion: v,
-        channel: c,
+        updateChannel: c,
         locale: l
       })
     }
