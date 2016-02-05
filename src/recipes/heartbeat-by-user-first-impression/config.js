@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=35;
+const VERSION=36;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -34,6 +34,18 @@ const days = 24 * 60 * 60 * 1000;
   * 6.  If you would rather specify rule breaks in a 'proportional' style,
   *     use `asBreaks([50,25,25])` => [.50,.75,1]
   */
+
+
+const filterFields = [
+  "updateChannel",
+  "fxVersion",
+  "locale",
+  "country",
+  "defaultBrowser",
+  "searchEngine",
+  "syncSetup"
+];
+
 
 const engagementRules = [
   // en, aurora.
@@ -143,5 +155,6 @@ module.exports = {
       locales: supportedLocales
     }
   },
-  supportedLocales: supportedLocales
+  supportedLocales: supportedLocales,
+  filterFields
 };

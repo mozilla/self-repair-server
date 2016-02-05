@@ -62,7 +62,7 @@ function okEngagementSpec(spec, name) {
 
 describe("hb config", function () {
   it("has right exports", function () {
-    let expected = ['engagementRules',"VERSION",'sampling', 'supportedLocales'];
+    let expected = ['engagementRules',"filterFields","VERSION",'sampling', 'supportedLocales'];
     expect(C).keys(expected);
   });
 
@@ -73,6 +73,14 @@ describe("hb config", function () {
       for (let k=0; k<rules.length; k++) {
         okEngagementSpec(rules[k],k);
       }
+    })
+    it("has rules that only use allowed fields", function (){
+      let rules = C.engagementRules;
+      rules.map((r) => {
+
+        let allOk = Object.keys(r.rule).every((k)=>C.filterFields.indexOf(k)>=0);
+        expect(allOk, "at least one key not allowed in filterFields => "+Object.keys(r.rule)).to.be.true()
+      })
     })
   })
 });
