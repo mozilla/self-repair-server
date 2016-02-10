@@ -1,6 +1,6 @@
 {
   "name": "self-repair-server",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Server package for Mozilla self-repair-server.",
   "main": "",
   "repository": {
@@ -52,5 +52,5 @@
     "surveys": "TRAVIS=1 NPM_CONFIG_KARMAFILES=\"test/**/*deployed-survey-config.js\" npm run test"
   },
   "author": "Gregg Lind <glind@mozilla.com>",
-  "license": "MPL 2"
+  "license": "MPL-2.0"
 }
