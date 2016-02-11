@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=36;
+const VERSION=37;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -48,20 +48,6 @@ const filterFields = [
 
 
 const engagementRules = [
-  // en, aurora.
-  {
-    alias: '^en, ^aurora',
-    rule: {
-      locale: /^en/i,
-      updateChannel: /^aurora/i
-    },
-    urls: [
-      "https://qsurvey.mozilla.com/s3/Developer-Audience-Survey-V2/"
-    ],
-    breaks: asBreaks([
-      100
-    ])
-  },
   // en-*, general
   {
     alias: '^en',
@@ -141,7 +127,7 @@ module.exports = {
     },
     "aurora": {
       restdays: 30,
-      sample: 10 * 20 * percent * percent,  // 1 in 50 formerly 1 in 500
+      sample: 20 * percent * percent,  // 1 in 500
       locales: supportedLocales
     },
     "beta": {
