@@ -13,23 +13,18 @@
 
 "use strict";
 
-/* this code mostly exists
-   - for coverage sake
-   - catch when new actions are added
-*/
 let { expect } = require("chai");
 let rulesMod = require("../../src/common/rules");
-
 
 let C = require("../../src/recipes/heartbeat-by-user-first-impression/config");
 let U = require("../../src/recipes/heartbeat-by-user-first-impression/utils");
 
 
-// idea... print out the survey audit?
+let {isRe, regexReplacer, isConfigSorted} = require('../utils');
 
 let locales = ['en-us','en-uk', 'es-mx', 'zh-cn', 'de'];
 let versions = ['46.0.1','47.0.1'];
-let channels = ['aurora','release', 'beta', 'nightly']
+let channels = ['aurora','release', 'beta', 'nightly'];
 
 function genProducts() {
   let out = [];
@@ -45,28 +40,9 @@ function genProducts() {
   return out
 }
 
-/*
-  [a,b],
-  [c,d],
-  [e,f]
-
-  a c e
-  a c f
-  a d e
-  a d f
-
-
-  for k in _gen([c,d], [e,f]):
-    _out.push([a] + k)
-
-
-*/
-
-
-
+// for every possible combo, see which rule matches, and what urls there are!
 let possibles = genProducts();
 
-// for every possible combo, see which rule matches, and what urls there are!
 
 function isRe (thing) {
   return Object.prototype.toString.call( thing ) == "[object RegExp]"
@@ -76,6 +52,11 @@ function regexReplacer (key, value) {
   if (isRe(value)) return '' + value;
   return value;
 }
+
+
+
+
+
 
 describe("Survey Rules Report", function () {
   var getEngagementUrl = U.getEngagementUrl;
@@ -120,6 +101,10 @@ ${JSON.stringify(C.engagementRules, regexReplacer, 2)}
 `)
 
   it ("should report", ()=>expect(true).to.be.true());
+
+  it ("should be sorted restrictive rules first", function () {
+    expect(isConfigSorted(C.engagementRules)).to.be.true();
+  })
 
 })  // end of test.
 
