@@ -1,6 +1,6 @@
 {
   "name": "self-repair-server",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "Server package for Mozilla self-repair-server.",
   "main": "",
   "repository": {
