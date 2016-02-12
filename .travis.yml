@@ -12,12 +12,19 @@ before_script:  # turn off screen
 
 addons:
   firefox: "latest"
+
 notifications:
   email: false
 
 before_deploy:
   - touch deploy/releases
   - date >> deploy/releases
+  - ls -R .tests
+  - cp -rf .tests deploy/
+
+after_success:
+  - ls -R .tests
+
 
 deploy:
   provider: s3
