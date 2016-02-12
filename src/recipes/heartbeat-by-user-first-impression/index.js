@@ -243,7 +243,11 @@ let run = function (state, extras) {
     engagementUrl || null, // already checked locale
     learnmore,  // learn more text
     learnmoreUrl,  // learn more link
-    phaseCallback
+    phaseCallback,
+    {   // telemetry
+      surveyId: local.survey_id,
+      surveyVersion: local.variation_id
+    }
   );
 
   return Promise.resolve(local.flow_id);
