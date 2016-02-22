@@ -187,3 +187,9 @@ https://self-repair.mozilla.org/en-US/repair/?{"runner":{"alwaysRun":true}}
 ## Issues / Bugs
 
 For now, github issues at https://github.com/mozilla/self-repair-server/issues
+
+
+## Population
+
+- runs once per session, about 5 minutes after startup.
+- because of issue #212, people who clear localStorage won't see heartbeat things.  This includes users of some addons, and those with some privacy sensitive settings.

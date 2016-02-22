@@ -33,7 +33,7 @@ let navigatorInfo = function (navigator = window.navigator) {
 
   let plugins = {};
   Object.keys(navigator.plugins).filter((p)=>!/[0-9]+/i.test(p)).forEach(
-    (p) => plugins[p]=navigator.plugins[p].version
+    (p) => plugins[p] = navigator.plugins[p].version
   )
 
   return {
@@ -167,8 +167,32 @@ let personinfo = function (tour, aConfig) {
   });
 };
 
+const PERSISTENT_LOCALSTORAGE_KEY = "localStorageUsed";
+function tryLocalStorage (store = localStorage) {
+  try {
+    var haveChecked = JSON.parse(store.getItem(PERSISTENT_LOCALSTORAGE_KEY) || 0);
+    if (!haveChecked || haveChecked < 2) {
+      store.setItem(PERSISTENT_LOCALSTORAGE_KEY, ++haveChecked);
+    }
+  } catch (e) {
+    store.setItem(PERSISTENT_LOCALSTORAGE_KEY, 1);
+  }
+};
+
+function isLocalStoragePersistent (store = localStorage) {
+  try {
+    var haveChecked = store.getItem(PERSISTENT_LOCALSTORAGE_KEY) || 0;
+    return JSON.parse(haveChecked) >= 2;
+  } catch (e) {
+    return false;
+  }
+};
+
 exports.personinfo = personinfo;
 exports.navigatorInfo = navigatorInfo;
+exports.tryLocalStorage = tryLocalStorage;
+exports.isLocalStoragePersistent = isLocalStoragePersistent;
+
 
 /*
 

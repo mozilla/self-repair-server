@@ -47,33 +47,54 @@ let { paramsToObj, guessLocale } = require("./common/client-utils");
 
 let merge = require("./jetpack/object").merge;
 
-// allow overrides of any part of the system at client runtime.
-// TODO, decide useful ones!
+/* allow overrides of any part of the system at client runtime, using query args.
+
+  Example:
+
+  http://localhost:3111/deploy/en-US/repair/index.html?{%22phonehome%22:{%22testing%22:true},%22runner%22:{%22alwaysRun%22:true},%22personinfo%22:{%22updateChannel%22:%20%22aurora%22}}
+
+  Or:
+
+  {
+    "phonehome": {
+        "testing":true
+      },
+    "runner": {
+      "alwaysRun":true
+    },
+    "personinfo": {
+      "updateChannel":"aurora"
+    }
+  }
+*/
+
 let runtimeConfig = {};
-let runSafe = false; // for now, just sets phonehome.testing = true;
-let loud = false;
+let interactive = false;
+
 if (typeof window !== "undefined") {
   runtimeConfig = paramsToObj(window.location.search);
-  loud = runSafe = !!window.location.search; // anything passed!
+  interactive = !!window.location.search; // interactive.  has anything in the search string / query args.
 }
-
-
-// will only catch things from other windows
-//if (window) {
-//  window.addEventListener("storage", function (e) {
-//    log("storage", key, oldValue, newValue, uri);
-//  }, false);
-//}
-
 
 // is there a timer here? I dunno!
 let mainloop = function (repairsList) {
-  loud && actions.log("heartbeat main loop");
-  runner.runAll(repairsList,
+  interactive && actions.log("heartbeat main loop");
+  personinfo.tryLocalStorage();  // 1st attempt, see #212.
+
+  // if interactive mode, pretend it's 2nd time.
+  interactive && personinfo.tryLocalStorage();
+
+  if (!personinfo.isLocalStoragePersistent()) {
+    let err = "first time run, cannot guarantee persistent localStorage (see #212)";
+    interactive && actions.log(err);
+    return Promise.reject(err);
+  };
+
+  return runner.runAll(repairsList,
     personinfo.personinfo,
     null
   ).then(
-    function () { loud && actions.log("mainloop runAll callback"); }
+    function () { interactive && actions.log("mainloop runAll callback"); }
   );
 };
 
@@ -84,7 +105,7 @@ if (guessedLocale) {
 } // use this locale first.
 
 
-phonehome.config.testing = runSafe; // first guess, true if any params
+phonehome.config.testing = interactive; // first guess, true if any params
 
 // process config.  TODO, use a lib for this?
 for (let key in runtimeConfig) {
@@ -124,7 +145,7 @@ ${recipes.map(function(r) {return '- ' + r.name}).join("\n")}
 
 
 
-loud && console.log(about);
+interactive && console.log(about);
 
 window.heartbeat = {
   actions: actions,

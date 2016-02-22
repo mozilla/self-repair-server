@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=40;
+const VERSION=50;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
