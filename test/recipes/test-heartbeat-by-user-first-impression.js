@@ -36,7 +36,7 @@ let U = require("../../src/recipes/heartbeat-by-user-first-impression/utils");
 
 
 const percent = 0.01;
-let days = 1000 * 86400;
+const days = 1000 * 86400;
 
 let sendTourEvent = function (aEventName, aData) {
   events.dispatchEvent(document,
@@ -132,23 +132,6 @@ describe("heartbeat-by-user-first-impression", function () {
       it.todo("should cap the number of flows (for localStorage size)", new Function());
 
     });
-
-    describe("waitedEnough", function(){
-      let waitedEnough = R.testable.waitedEnough;
-      //waitedEnough(restdays, lastRun, now)
-      it("correct answers", ()=> {
-        let now = Date.now();
-        expect(waitedEnough(10, now - 10*days, now), 'diff == days').true;
-        expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true;
-        expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false;
-        expect(waitedEnough(10, 0, now), "0 lastRun").true;
-
-        // implict Date.now() at function
-        expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true;
-        expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false;
-
-      })
-    })
 
     describe("should-run", function () {
       describe("known channels", function () {
@@ -497,18 +480,14 @@ describe("heartbeat-by-user-first-impression", function () {
           expect(R.testable[k], `[${name} function]`).a("function");
         })
       });
-      it("setupState makes a good eData", () => {
-        let u = uuid();
-        expect(R.testable.setupState(u)).a("object");
-      })
     });
   });
 })
 
 describe("hb utils", function () {
   it("has right exports", function () {
-    let expected = ['_increasing', 'cutBreaks', "getEngagementUrl"];
-    expect(U).keys(expected);
+    let expected = ['_increasing', 'cutBreaks', "getEngagementUrl", "waitedEnough", "setupState"];
+    expect(U).to.have.all.keys(expected);
   });
 
   describe("_increasing", function () {
@@ -522,6 +501,30 @@ describe("hb utils", function () {
         [[2, 2, 3], false]
       ];
       a.map( (t) => expect(_increasing(t[0])).to.equal(t[1]))
+    })
+  })
+
+  describe("waitedEnough", function(){
+    let waitedEnough = R.testable.waitedEnough;
+    //waitedEnough(restdays, lastRun, now)
+    it("correct answers", ()=> {
+      let now = Date.now();
+      expect(waitedEnough(10, now - 10*days, now), 'diff == days').true;
+      expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true;
+      expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false;
+      expect(waitedEnough(10, 0, now), "0 lastRun").true;
+
+      // implict Date.now() at function
+      expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true;
+      expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false;
+
+    })
+  })
+
+  describe("setupState", function () {
+    it("setupState makes a good eData", () => {
+      let u = uuid();
+      expect(R.testable.setupState(u)).a("object");
     })
   })
 

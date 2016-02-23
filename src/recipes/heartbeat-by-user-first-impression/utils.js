@@ -12,6 +12,7 @@
 
 const { extend } = require("../../jetpack/object");
 const { firstMatch } = require("../../common/rules");
+const { Lstore } = require("../../common/recipe-utils");
 
 let cutBreaks = function (arr, breaks, rng=Math.random()) {
   // should have tests, gah!  was not ready to deal with this yet.
@@ -43,8 +44,25 @@ var _increasing = function (anArray) {
    return anArray.map((k,i,arr) => {return (i == 0 || arr[i] > arr[i-1])}).every(Boolean)
 }
 
+
+function setupState(key, storage=localStorage) {
+  var eData = new Lstore(key, storage).revive().store();  // create or revive
+  if (! eData.data.flows) eData.data.flows = {};
+  if (! eData.data.lastRun) eData.data.lastRun = 0;
+  eData.store();
+  return eData;
+};
+
+function waitedEnough(restDays, last, now=Date.now()) {
+  let days = 1000 * 86400;
+  let dayspassed = ((now - last)/days);
+  return dayspassed >= restDays ;
+};
+
 module.exports = {
   cutBreaks: cutBreaks,
   getEngagementUrl: getEngagementUrl,
-  _increasing: _increasing
+  _increasing: _increasing,
+  setupState: setupState,
+  waitedEnough: waitedEnough
 }
