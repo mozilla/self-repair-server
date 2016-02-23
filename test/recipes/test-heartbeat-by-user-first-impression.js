@@ -505,7 +505,7 @@ describe("hb utils", function () {
   })
 
   describe("waitedEnough", function(){
-    let waitedEnough = R.testable.waitedEnough;
+    let waitedEnough = U.waitedEnough;
     //waitedEnough(restdays, lastRun, now)
     it("correct answers", ()=> {
       let now = Date.now();
@@ -517,14 +517,13 @@ describe("hb utils", function () {
       // implict Date.now() at function
       expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true;
       expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false;
-
     })
   })
 
   describe("setupState", function () {
     it("setupState makes a good eData", () => {
       let u = uuid();
-      expect(R.testable.setupState(u)).a("object");
+      expect(U.setupState(u)).a("object");
     })
   })
 
