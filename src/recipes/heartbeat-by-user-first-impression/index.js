@@ -13,13 +13,12 @@
 "use strict";
 let common = require("../../common");
 let allconfigs = require("./config");
-let { getEngagementUrl } = require("./utils");
+let { getEngagementUrl, setupState, waitedEnough } = require("./utils");
 
 let actions  = common.actions;
 let log = actions.log.bind(actions.log, "heartbeat-by-user-first-impression");
 
 let { Flow, phonehome } = require("../../common/heartbeat/");
-let { Lstore } = require("../../common/recipe-utils");
 
 let phConfig = phonehome.config;
 phonehome = phonehome.phonehome;
@@ -58,36 +57,14 @@ let config = {
   survey_id : "heartbeat-by-user-first-impression",
 };
 
-
 const days = 24 * 60 * 60 * 1000;
-
 
 let translations = require('../../localeStrings');
 
-// setup state?
-
-var setupState = function (key, storage) {
-  key = key || config.lskey;
-  storage = storage || localStorage;
-  var eData = new Lstore(key, storage).revive().store();  // create or revive
-  if (! eData.data.flows) eData.data.flows = {};
-  if (! eData.data.lastRun) eData.data.lastRun = 0;
-  eData.store();
-  return eData;
-};
-
-// module level
-var eData = setupState();
+// recipe level localStorage setup / revive
+var eData = setupState(config.lskey);
 
 // ELIGIBLE.  parts of the eligibility, made explicit for testability
-
-/* is dayspassed >= restDays
-*/
-let waitedEnough = function (restDays, last, now) {
-  now = now || Date.now();
-  let dayspassed = ((now - last)/days);
-  return dayspassed >= restDays ;
-};
 
 /** run or not, given configs?
   *
@@ -107,7 +84,7 @@ let waitedEnough = function (restDays, last, now) {
   * - lastRun (replace eData.lastRun).  epoch_ms
   * - randomNumber (0,1)
   */
-let shouldRun = function (userstate, config, extras) {
+let shouldRun = function (userstate, config, extras={}) {
   let data = eData.data; // Until we have better testing, point directly to data
 
   extras = extras || {};
@@ -149,8 +126,7 @@ let shouldRun = function (userstate, config, extras) {
 // run / do
 /* */
 // TODO, audit 'extras'
-let run = function (state, extras) {
-  extras = extras || {};
+let run = function (state, extras={}) {
   eData.data.lastRun = extras.when || Date.now();
   eData.store();
 

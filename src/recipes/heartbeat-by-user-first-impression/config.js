@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=50;
+const VERSION=51;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -142,5 +142,5 @@ module.exports = {
     }
   },
   supportedLocales: supportedLocales,
-  filterFields
+  filterFields: filterFields
 };
