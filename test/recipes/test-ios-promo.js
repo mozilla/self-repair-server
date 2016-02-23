@@ -55,7 +55,7 @@ describe("ios-promo", function () {
   describe("ios-promo", function () {
     it("is valid recipe", ()=>{
       try {
-        expect(runner.validateConfig(R)[1]).to.be.true();
+        expect(runner.validateConfig(R)[1]).to.be.true;
       } catch (e) {
         console.log(runner.validateConfig(R)[0]);
         throw e;
@@ -68,7 +68,7 @@ describe("ios-promo", function () {
         expect(E.key, "wrong ls key").equal(R.config.lskey);
         expect(E, "wrong keys").keys("store", "revive", "data", "key", "clear");
         expect(E.data, "wrong data keys").contain.keys("flows","lastRun");
-        expect(E.key in localStorage, "E.key not in localStorage. ${localStoreMsg}").true();
+        expect(E.key in localStorage, "E.key not in localStorage. ${localStoreMsg}").true;
       });
     });
 
@@ -88,14 +88,14 @@ describe("ios-promo", function () {
       //waitedEnough(restdays, lastRun, now)
       it("correct answers", ()=> {
         let now = Date.now();
-        expect(waitedEnough(10, now - 10*days, now), 'diff == days').true();
-        expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true();
-        expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false();
-        expect(waitedEnough(10, 0, now), "0 lastRun").true();
+        expect(waitedEnough(10, now - 10*days, now), 'diff == days').true;
+        expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true;
+        expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false;
+        expect(waitedEnough(10, 0, now), "0 lastRun").true;
 
         // implict Date.now() at function
-        expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true();
-        expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false();
+        expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true;
+        expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false;
 
       })
     })
@@ -126,7 +126,7 @@ describe("ios-promo", function () {
             let ans = R.shouldRun(state, C.channels[channel],
               {when: now - 1, lastRun: 1}
             )
-            expect(ans, channel).false();
+            expect(ans, channel).false;
           })
           done();
         });
@@ -142,12 +142,12 @@ describe("ios-promo", function () {
               randomNumber: 99*percent*p,
               when: now,
               lastRun: 0
-            }), channel + ' 99% of rng is good!').true();
+            }), channel + ' 99% of rng is good!').true;
             expect(R.shouldRun(state, null, {
               randomNumber: 101*percent*p,
               when: now,
               lastRun: 0
-            }), channel + ' 101% of rng is bad').false();
+            }), channel + ' 101% of rng is bad').false;
           })
         });
 
@@ -163,13 +163,13 @@ describe("ios-promo", function () {
               when: now,
               lastRun: 0,
               geoAus: true
-            }), channel + 'Aus is overridden!').true();
+            }), channel + 'Aus is overridden!').true;
             expect(R.shouldRun(state, null, {
               randomNumber: 1.0,
               when: now,
               lastRun: 0,
               geoAus: false
-            }), channel + 'non-Aus is not overridden').false();
+            }), channel + 'non-Aus is not overridden').false;
           })
         });*/
 
@@ -189,14 +189,14 @@ describe("ios-promo", function () {
               randomNumber: 0,
               when: now,
               lastRun: 0
-            }), channel + " version okay").true();
+            }), channel + " version okay").true;
 
             state.fxVersion = "40.0a1";
             expect(R.shouldRun(state, null, {
               randomNumber: 0,
               when: now,
               lastRun: 0
-            }), channel + " version bad").false();
+            }), channel + " version bad").false;
           })
         });
 
@@ -211,7 +211,7 @@ describe("ios-promo", function () {
                 randomNumber: 0,
                 when: now,
                 lastRun: 0
-              }), channel + " " + locale).true();
+              }), channel + " " + locale).true;
             })
           })
         })
@@ -232,7 +232,7 @@ describe("ios-promo", function () {
               randomNumber: 0,
               when: now,
               lastRun: 0
-            }), channel + ' bad locale is bad').false();
+            }), channel + ' bad locale is bad').false;
           })
           done();
         })
@@ -247,14 +247,14 @@ describe("ios-promo", function () {
             locales: ["*"]
           },
           {lastRun: 0}
-          )).to.be.true();
+          )).to.be.true;
         });
 
         it("should not run, b/c no config", function(){
           ["release","aurora","beta","release"].forEach(function(c){
             let state = {fxVersion:  "41.0a1", updateChannel: c};
             R.shouldRun(state);
-            expect(R.shouldRun(state)).to.be.false();
+            expect(R.shouldRun(state)).to.be.false;
           });
         });
 
@@ -271,26 +271,26 @@ describe("ios-promo", function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(['ru-RU', 'it-IT']);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).true();
+            expect(ans).true;
           });
           it("should respect bad locales", function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(['ru-RU']);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).false();
+            expect(ans).false;
           })
           it("should treat unspecified locales as NONE",
            function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig();
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).false();
+            expect(ans).false;
           });
           it("should treat * as 'any'", function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(["*"]);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).true();
+            expect(ans).true;
           })
         })
       });
@@ -317,7 +317,7 @@ describe("ios-promo", function () {
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           () => {
             //console.log(E.data.flows[u]);
-            expect(E.data.flows[u], "must exist").exist();
+            expect(E.data.flows[u], "must exist").exist;
             done();
           }
         );
@@ -328,7 +328,7 @@ describe("ios-promo", function () {
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           (reutrned_u) => {
-            expect(E.data.flows[u]).exist();
+            expect(E.data.flows[u]).exist;
             expect(u).equal(reutrned_u);
             done();
           }
@@ -342,7 +342,7 @@ describe("ios-promo", function () {
           (u) => {
             expect(u,"flow_id is string").a("string");
             expect(before, 'should not be seen before.').not.include(u);
-            expect(E.data.flows[u], 'should be seen now').exist();
+            expect(E.data.flows[u], 'should be seen now').exist;
             done();
           }
         );

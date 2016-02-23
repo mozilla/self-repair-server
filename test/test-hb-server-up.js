@@ -60,7 +60,7 @@ describe("hb server", function () {
     it("should accept input", function (done) {
       let isdone = false;
       let safedone = function (a) {
-        if (!isdone) {isdone=true; expect(true).true(); done(a)}
+        if (!isdone) {isdone=true; expect(true).true; done(a)}
       };
 
       this.timeout(5000);
@@ -84,7 +84,7 @@ describe("hb server", function () {
     it.skip("should not accept garbage input", function (done) {
       let isdone = false;
       let safedone = function (a) {
-        if (!isdone) {isdone=true; expect(true).true(); done(a)}
+        if (!isdone) {isdone=true; expect(true).true; done(a)}
       };
 
       this.timeout(2000);
@@ -108,7 +108,7 @@ describe("hb server", function () {
     it("should not exist", function (done) {
       let isdone = false;
       let safedone = function (a) {
-        if (!isdone) {isdone=true; expect(true).true(); done(a);}
+        if (!isdone) {isdone=true; expect(true).true; done(a);}
       };
       this.timeout(500);
       setTimeout(

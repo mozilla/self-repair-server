@@ -81,7 +81,7 @@ describe('rules', () => {
       ]
       for (let k in somerules) {
         let d = somerules[k];
-        expect(match(d[0], d[1]), d[2]).to.be.true();
+        expect(match(d[0], d[1]), d[2]).to.be.true;
       }
     });
     it("not matching rules dont", function () {
@@ -92,7 +92,7 @@ describe('rules', () => {
       ]
       for (let k in somerules) {
         let d = somerules[k];
-        expect(match(d[0], d[1]), d[2]).to.be.false();
+        expect(match(d[0], d[1]), d[2]).to.be.false;
       }
     });
   });
@@ -100,14 +100,14 @@ describe('rules', () => {
   describe('matchRulePart', function () {
     let matchRulePart = rulesMod.matchRulePart;
     it("treats regex as a regex", function () {
-      expect(matchRulePart('a',/^a/)).to.be.true();
-      expect(matchRulePart('ab','^a')).to.be.false();
+      expect(matchRulePart('a',/^a/)).to.be.true;
+      expect(matchRulePart('ab','^a')).to.be.false;
     });
     it("treats other things a js '=='' match, warts and all", function () {
-      expect(matchRulePart(1, 1)).to.be.true();
-      expect(matchRulePart('bcd', 'bcd')).to.be.true();
-      expect(matchRulePart(1, '1')).to.be.true(); // ugh, js!
-      expect(matchRulePart('bcd', 3)).to.be.false();
+      expect(matchRulePart(1, 1)).to.be.true;
+      expect(matchRulePart('bcd', 'bcd')).to.be.true;
+      expect(matchRulePart(1, '1')).to.be.true; // ugh, js!
+      expect(matchRulePart('bcd', 3)).to.be.false;
     })
   });
 

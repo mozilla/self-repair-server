@@ -56,7 +56,7 @@ describe("pb-mode-survey", function () {
   describe("heartbeat-by-user-first-impression", function () {
     it("is valid recipe", ()=>{
       try {
-        expect(runner.validateConfig(R)[1]).to.be.true();
+        expect(runner.validateConfig(R)[1]).to.be.true;
       } catch (e) {
         console.log(runner.validateConfig(R)[0]);
         throw e;
@@ -69,7 +69,7 @@ describe("pb-mode-survey", function () {
         expect(E.key, "wrong ls key").equal(R.config.lskey);
         expect(E, "wrong keys").keys("store", "revive", "data", "key", "clear");
         expect(E.data, "wrong data keys").contain.keys("flows","lastRun");
-        expect(E.key in localStorage, "E.key not in localStorage. ${localStoreMsg}").true();
+        expect(E.key in localStorage, "E.key not in localStorage. ${localStoreMsg}").true;
       });
     });
 
@@ -89,14 +89,14 @@ describe("pb-mode-survey", function () {
       //waitedEnough(restdays, lastRun, now)
       it("correct answers", ()=> {
         let now = Date.now();
-        expect(waitedEnough(10, now - 10*days, now), 'diff == days').true();
-        expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true();
-        expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false();
-        expect(waitedEnough(10, 0, now), "0 lastRun").true();
+        expect(waitedEnough(10, now - 10*days, now), 'diff == days').true;
+        expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true;
+        expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false;
+        expect(waitedEnough(10, 0, now), "0 lastRun").true;
 
         // implict Date.now() at function
-        expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true();
-        expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false();
+        expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true;
+        expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false;
 
       })
     })
@@ -127,7 +127,7 @@ describe("pb-mode-survey", function () {
             let ans = R.shouldRun(state, C[channel],
               {when: now - 1, lastRun: now - (restdays * days)
             })
-            expect(ans, channel).false();
+            expect(ans, channel).false;
           })
         });
         it('go if been long enough!', function (){
@@ -141,7 +141,7 @@ describe("pb-mode-survey", function () {
                 lastRun: now - (restdays * days),
                 randomNumber: .99 * C[channel].sample // also clear the sampler!
               })
-            expect(ans, channel).true();
+            expect(ans, channel).true;
           })
         });
         it('should respect the sampling percentage', function (){
@@ -154,12 +154,12 @@ describe("pb-mode-survey", function () {
               randomNumber: 99*percent*p,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + ' 99% of rng is good!').true();
+            }), channel + ' 99% of rng is good!').true;
             expect(R.shouldRun(state, null, {
               randomNumber: 101*percent*p,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + ' 101% of rng is bad').false();
+            }), channel + ' 101% of rng is bad').false;
           })
         });
 
@@ -176,14 +176,14 @@ describe("pb-mode-survey", function () {
               randomNumber: 0,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + " version okay").true();
+            }), channel + " version okay").true;
 
             state = {fxVersion:  "40.0a1", updateChannel: 'nightly', locale: locale};
             expect(R.shouldRun(state, null, {
               randomNumber: 0,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + " version bad").false();
+            }), channel + " version bad").false;
           })
         });
 
@@ -199,7 +199,7 @@ describe("pb-mode-survey", function () {
                 randomNumber: 0,
                 when: now,
                 lastRun: now - (restdays * days)
-              }), channel + " " + locale).true();
+              }), channel + " " + locale).true;
             })
           })
         })
@@ -220,7 +220,7 @@ describe("pb-mode-survey", function () {
               randomNumber: 0,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + ' bad locale is bad').false();
+            }), channel + ' bad locale is bad').false;
           })
         })
       });
@@ -234,14 +234,14 @@ describe("pb-mode-survey", function () {
             locales: ["*"]
           },
           {lastRun: 0}
-          )).to.be.true();
+          )).to.be.true;
         });
 
         it("should not run, b/c no config", function(){
           ["release","aurora","beta","release"].forEach(function(c){
             let state = {fxVersion:  "41.0a1", updateChannel: c};
             R.shouldRun(state);
-            expect(R.shouldRun(state)).to.be.false();
+            expect(R.shouldRun(state)).to.be.false;
           });
         });
 
@@ -258,26 +258,26 @@ describe("pb-mode-survey", function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(['ru-RU', 'it-IT']);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).true();
+            expect(ans).true;
           });
           it("should respect bad locales", function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(['ru-RU']);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).false();
+            expect(ans).false;
           })
           it("should treat unspecified locales as NONE",
            function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig();
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).false();
+            expect(ans).false;
           });
           it("should treat * as 'any'", function () {
             let userstate = {fxVersion:  "41.0a1", locale: "it-IT"};
             let config = genConfig(["*"]);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).true();
+            expect(ans).true;
           })
         })
       });
@@ -303,7 +303,7 @@ describe("pb-mode-survey", function () {
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           () => {
-            expect(E.data.flows[u], "must exist").exist();
+            expect(E.data.flows[u], "must exist").exist;
             expect(E.data.flows[u], "must be an empty obj").deep.equal({}); // must be empty
             done();
           }
@@ -315,7 +315,7 @@ describe("pb-mode-survey", function () {
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           (reutrned_u) => {
-            expect(E.data.flows[u]).exist();
+            expect(E.data.flows[u]).exist;
             expect(u).equal(reutrned_u);
             done();
           }
@@ -329,7 +329,7 @@ describe("pb-mode-survey", function () {
           (u) => {
             expect(u,"flow_id is string").a("string");
             expect(before, 'should not be seen before.').not.include(u);
-            expect(E.data.flows[u], 'should be seen now').exist();
+            expect(E.data.flows[u], 'should be seen now').exist;
             done();
           }
         );

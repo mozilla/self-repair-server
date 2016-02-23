@@ -28,7 +28,7 @@ let runner = require("../../src/runner");
 
 describe("always", ()=>{
   it("is valid recipe", ()=>{
-    expect(runner.validateConfig(always)[1]).to.be.true();
+    expect(runner.validateConfig(always)[1]).to.be.true;
   });
   it('.run increments counter', (done)=>{
     let r = Math.floor(1000*Math.random());
@@ -44,6 +44,6 @@ describe("always", ()=>{
     p.then(done);
   });
   it('.shouldRun always true', ()=>{
-    expect(always.shouldRun({'some': 'random'})).true();
+    expect(always.shouldRun({'some': 'random'})).true;
   });
 });

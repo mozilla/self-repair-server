@@ -32,7 +32,7 @@ describe("built file exports", function () {
     'UITour': 'object'
   };
   it("exports names are right", function () {
-    expect(heartbeat).to.exist();
+    expect(heartbeat).to.exist;
     expect(heartbeat).to.have.keys(Object.keys(expected));
   });
   it("types are right", function () {
@@ -47,7 +47,7 @@ describe("built file exports", function () {
     });
     it("has heartbeat, right version", function () {
       let hb = heartbeat.recipes[0];
-      expect(heartbeat.runner.validateConfig(hb)[1]).true();
+      expect(heartbeat.runner.validateConfig(hb)[1]).true;
       expect(hb.name).equal("heartbeat by user v1");
       expect(hb.version).equal(50);
     });
@@ -57,7 +57,7 @@ describe("built file exports", function () {
     let heartbeat = window.heartbeat;
     it("will reject if localStorage is not persistent", function (done) {
       localStorage.clear(); // bam.
-      expect(heartbeat.personinfo.isLocalStoragePersistent()).to.be.false();
+      expect(heartbeat.personinfo.isLocalStoragePersistent()).to.be.false;
       heartbeat.main([]).then(
         (e) => {done(new Error("should reject as invalid"))},
         (e) => {done()}
@@ -67,7 +67,7 @@ describe("built file exports", function () {
       localStorage.clear(); // bam.
       heartbeat.personinfo.tryLocalStorage();
       heartbeat.personinfo.tryLocalStorage();
-      expect(heartbeat.personinfo.isLocalStoragePersistent()).to.be.true();
+      expect(heartbeat.personinfo.isLocalStoragePersistent()).to.be.true;
       heartbeat.main([]).then(
         (e) => {done()},
         (e) => {done(new Error("should have resolved true"))}
@@ -81,7 +81,7 @@ describe("built file exports", function () {
       return Date.now () >= new Date(Date.parse(strWhen))
     };
     var bomb = function (strWhen) {
-      return function () { expect(DateAfter(strWhen), "Time bomb:" + strWhen).to.be.false() };
+      return function () { expect(DateAfter(strWhen), "Time bomb:" + strWhen).to.be.false };
     };
     // one fail per line.
     //it('if fail, kill dev-ed survey v2  back (see #227, #230)', bomb('Feb 12 2016'));
