@@ -16,8 +16,8 @@ var expect = require("chai").expect;
 
 describe("testing environment", function () {
   it('has promises and localStorage', function() {
-    expect(window).to.exist();
-    expect(localStorage).to.exist();
+    expect(window).to.exist;
+    expect(localStorage).to.exist;
     expect(Promise).itself.respondTo("all");
     expect(Promise).itself.respondTo("race");  // etc.
   });

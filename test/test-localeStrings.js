@@ -44,7 +44,7 @@ describe("locales", function () {
     });
 
     it("all locale names are lower case", function () {
-      expect(supportedLocales.every((k) => k.toLowerCase() == k)).to.be.true();
+      expect(supportedLocales.every((k) => k.toLowerCase() == k)).to.be.true;
     });
 
     it("all locales support same strings as `en-us`", function () {

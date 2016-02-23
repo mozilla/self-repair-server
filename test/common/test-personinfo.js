@@ -59,7 +59,7 @@ describe("personalinfo", function () {
       personinfo.personinfo(null, aConfig).then(
         (out) => {
           expect(out.flags.timeout, "timeout").equal(aConfig.timeout);
-          expect(out.flags.incomplete, "incomplete").true();
+          expect(out.flags.incomplete, "incomplete").true;
           done();
         }
       );
@@ -77,7 +77,7 @@ describe("personalinfo", function () {
           expect(out.country).equal(aConfig.overrides.country);
 
           expect(out.flags.timeout).equal(aConfig.timeout);
-          expect(out.flags.incomplete).true();
+          expect(out.flags.incomplete).true;
           done();
         }
       )

@@ -53,7 +53,7 @@ function okEngagementSpec(spec, name) {
   let msg = `${name} wrong length of breaks`;
   expect(urls.length, msg).equal(breaks.length);
   msg = `are not strictly increasing: ${name}, ${breaks}`;
-  expect(U._increasing(breaks), msg).to.be.true();
+  expect(U._increasing(breaks), msg).to.be.true;
   if (breaks.length) {
     msg = `should end with 1: ${name}, ${breaks}`;
     expect(breaks[breaks.length-1], msg).to.equal(1);
@@ -79,7 +79,7 @@ describe("hb config", function () {
       rules.map((r) => {
 
         let allOk = Object.keys(r.rule).every((k)=>C.filterFields.indexOf(k)>=0);
-        expect(allOk, "at least one key not allowed in filterFields => "+Object.keys(r.rule)).to.be.true()
+        expect(allOk, "at least one key not allowed in filterFields => "+Object.keys(r.rule)).to.be.true
       })
     })
   })
@@ -104,7 +104,7 @@ describe("heartbeat-by-user-first-impression", function () {
   describe("heartbeat-by-user-first-impression", function () {
     it("is valid recipe", ()=>{
       try {
-        expect(runner.validateConfig(R)[1]).to.be.true();
+        expect(runner.validateConfig(R)[1]).to.be.true;
       } catch (e) {
         console.log(runner.validateConfig(R)[0]);
         throw e;
@@ -117,7 +117,7 @@ describe("heartbeat-by-user-first-impression", function () {
         expect(E.key, "wrong ls key").equal(R.config.lskey);
         expect(E, "wrong keys").keys("store", "revive", "data", "key", "clear");
         expect(E.data, "wrong data keys").contain.keys("flows","lastRun");
-        expect(E.key in localStorage, "E.key not in localStorage. ${localStoreMsg}").true();
+        expect(E.key in localStorage, "E.key not in localStorage. ${localStoreMsg}").true;
       });
     });
 
@@ -138,14 +138,14 @@ describe("heartbeat-by-user-first-impression", function () {
       //waitedEnough(restdays, lastRun, now)
       it("correct answers", ()=> {
         let now = Date.now();
-        expect(waitedEnough(10, now - 10*days, now), 'diff == days').true();
-        expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true();
-        expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false();
-        expect(waitedEnough(10, 0, now), "0 lastRun").true();
+        expect(waitedEnough(10, now - 10*days, now), 'diff == days').true;
+        expect(waitedEnough(10, now - 10*days, now + 1), "diff > days").true;
+        expect(waitedEnough(10, now - 10*days, now - 1), "diff < days").false;
+        expect(waitedEnough(10, 0, now), "0 lastRun").true;
 
         // implict Date.now() at function
-        expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true();
-        expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false();
+        expect(waitedEnough(10, Date.now()-11*days), "now() internally broken").true;
+        expect(waitedEnough(10, Date.now()-9*days), "now() internally broken").false;
 
       })
     })
@@ -176,7 +176,7 @@ describe("heartbeat-by-user-first-impression", function () {
             let ans = R.shouldRun(state, C.sampling[channel],
               {when: now - 1, lastRun: now - (restdays * days)
             })
-            expect(ans, channel).false();
+            expect(ans, channel).false;
           })
         });
         it('go if been long enough!', function (){
@@ -190,7 +190,7 @@ describe("heartbeat-by-user-first-impression", function () {
                 lastRun: now - (restdays * days),
                 randomNumber: .99 * C.sampling[channel].sample // also clear the sampler!
               })
-            expect(ans, channel).true();
+            expect(ans, channel).true;
           })
         });
         it('should respect the sampling percentage', function (){
@@ -203,12 +203,12 @@ describe("heartbeat-by-user-first-impression", function () {
               randomNumber: 99*percent*p,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + ' 99% of rng is good!').true();
+            }), channel + ' 99% of rng is good!').true;
             expect(R.shouldRun(state, null, {
               randomNumber: 101*percent*p,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + ' 101% of rng is bad').false();
+            }), channel + ' 101% of rng is bad').false;
           })
         });
 
@@ -232,7 +232,7 @@ describe("heartbeat-by-user-first-impression", function () {
                 randomNumber: 0,
                 when: now,
                 lastRun: now - (restdays * days)
-              }), channel + " " + locale).true();
+              }), channel + " " + locale).true;
             })
           })
         })
@@ -253,7 +253,7 @@ describe("heartbeat-by-user-first-impression", function () {
               randomNumber: 0,
               when: now,
               lastRun: now - (restdays * days)
-            }), channel + ' bad locale is bad').false();
+            }), channel + ' bad locale is bad').false;
           })
         })
       });
@@ -267,14 +267,14 @@ describe("heartbeat-by-user-first-impression", function () {
             locales: ["*"]
           },
           {lastRun: 0}
-          )).to.be.true();
+          )).to.be.true;
         });
 
         it("should not run, b/c no config", function(){
           ["release","aurora","beta","release"].forEach(function(c){
             let state = {updateChannel: c};
             R.shouldRun(state);
-            expect(R.shouldRun(state)).to.be.false();
+            expect(R.shouldRun(state)).to.be.false;
           });
         });
 
@@ -291,26 +291,26 @@ describe("heartbeat-by-user-first-impression", function () {
             let userstate = {locale: "it-IT"};
             let config = genConfig(['ru-RU', 'it-IT']);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).true();
+            expect(ans).true;
           });
           it("should respect bad locales", function () {
             let userstate = {locale: "it-IT"};
             let config = genConfig(['ru-RU']);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).false();
+            expect(ans).false;
           })
           it("should treat unspecified locales as NONE",
            function () {
             let userstate = {locale: "it-IT"};
             let config = genConfig();
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).false();
+            expect(ans).false;
           });
           it("should treat * as 'any'", function () {
             let userstate = {locale: "it-IT"};
             let config = genConfig(["*"]);
             let ans = R.shouldRun(userstate, config, extras);
-            expect(ans).true();
+            expect(ans).true;
           })
         })
       });
@@ -336,7 +336,7 @@ describe("heartbeat-by-user-first-impression", function () {
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           () => {
-            expect(E.data.flows[u]).exist();
+            expect(E.data.flows[u]).exist;
             done();
           }
         );
@@ -347,7 +347,7 @@ describe("heartbeat-by-user-first-impression", function () {
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           (reutrned_u) => {
-            expect(E.data.flows[u]).exist();
+            expect(E.data.flows[u]).exist;
             expect(u).equal(reutrned_u);
             done();
           }
@@ -361,7 +361,7 @@ describe("heartbeat-by-user-first-impression", function () {
           (u) => {
             expect(u,"flow_id is string").a("string");
             expect(before, 'should not be seen before.').not.include(u);
-            expect(E.data.flows[u], 'should be seen now').exist();
+            expect(E.data.flows[u], 'should be seen now').exist;
             done();
           }
         );
@@ -447,7 +447,7 @@ describe("heartbeat-by-user-first-impression", function () {
 
                 if (msg === "voted") {
                   expect(E.data.flows[u].score).equal(3);
-                  expect(E.data.lastScore).exist(); // now it's set
+                  expect(E.data.lastScore).exist; // now it's set
                   expect(seen).deep.equal({
                     began: true,
                     voted: true,
@@ -555,7 +555,7 @@ describe("hb utils", function () {
         breaks: [1.0]
       }]
       let ans = getEngagementUrl(person,rules)
-      expect(/source=/.test(ans)).to.be.true();
+      expect(/source=/.test(ans)).to.be.true;
     });
 
     it("passes non qsurvey unmodified" , function () {
@@ -565,7 +565,7 @@ describe("hb utils", function () {
         breaks: [1.0]
       }]
       let ans = getEngagementUrl(person,rules)
-      expect(/source=/.test(ans)).to.be.false();
+      expect(/source=/.test(ans)).to.be.false;
     });
 
     it("gets it right!", function () {
@@ -594,16 +594,16 @@ describe("hb utils", function () {
       ]
       let ans;
       ans = getEngagementUrl(person,rules,.6);
-      expect(/low-rng/.test(ans),"1. is low rng").to.be.true();
-      expect(/source=/.test(ans),"1. has qargs").to.be.true();
+      expect(/low-rng/.test(ans),"1. is low rng").to.be.true;
+      expect(/source=/.test(ans),"1. has qargs").to.be.true;
 
       ans = getEngagementUrl(person,rules,.7);
-      expect(/low-rng/.test(ans),"2. is low rng").to.be.true();
-      expect(/source=/.test(ans),"2. has qargs").to.be.true();
+      expect(/low-rng/.test(ans),"2. is low rng").to.be.true;
+      expect(/source=/.test(ans),"2. has qargs").to.be.true;
 
       ans = getEngagementUrl(person,rules,.72);
-      expect(/high-rng/.test(ans),"3. is high-rng").to.be.true();
-      expect(/source=/.test(ans),"3. no qargs").to.be.false();
+      expect(/high-rng/.test(ans),"3. is high-rng").to.be.true;
+      expect(/source=/.test(ans),"3. no qargs").to.be.false;
 
     })
   })

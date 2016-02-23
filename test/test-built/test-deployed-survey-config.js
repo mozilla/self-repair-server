@@ -100,10 +100,10 @@ ${blobs.join("\n\n")}
 ${JSON.stringify(C.engagementRules, regexReplacer, 2)}
 `)
 
-  it ("should report", ()=>expect(true).to.be.true());
+  it ("should report", ()=>expect(true).to.be.true);
 
   it ("should be sorted restrictive rules first", function () {
-    expect(isConfigSorted(C.engagementRules)).to.be.true();
+    expect(isConfigSorted(C.engagementRules)).to.be.true;
   })
 
 })  // end of test.

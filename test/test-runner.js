@@ -257,10 +257,10 @@ describe("runAll", function () {
       // state machinery
       let attemptedFixes = 0;
       let canonicalState = {hasBadAddon: true};
-      expect(canonicalState.hasBadAddon).true();
+      expect(canonicalState.hasBadAddon).true;
       let stateFn = () => {return Promise.resolve(canonicalState);};
       stateFn().then(
-        (state) => expect(state.hasBadAddon).true()
+        (state) => expect(state.hasBadAddon).true
       );
 
       // simulate synchronous addon removal recipe.
@@ -290,9 +290,9 @@ describe("runAll", function () {
 
           expect(p.map((o)=>o.status)).deep.equal(['ok', 'not-run', 'not-run']);
           stateFn().then(
-            (state) => {expect(state.hasBadAddon).false();}
+            (state) => {expect(state.hasBadAddon).false;}
           );
-          expect(canonicalState.hasBadAddon).false();
+          expect(canonicalState.hasBadAddon).false;
           done();
         },
         () => done(new Error("should run, not reject"))

@@ -78,14 +78,14 @@ describe("recipe-utils", function () {
       L.data.c = 1;
       L.store();
       L.clear();
-      expect(JSON.parse(localStorage[L.key]).c).not.exist();
-      expect(L.data.c).not.exist();
+      expect(JSON.parse(localStorage[L.key]).c).not.exist;
+      expect(L.data.c).not.exist;
     })
 
     it("methods return this", () =>{
-      expect(L.store() === L).true();
-      expect(L.revive() === L).true();
-      expect(L.clear() === L).true();
+      expect(L.store() === L).true;
+      expect(L.revive() === L).true;
+      expect(L.clear() === L).true;
     })
 
     it("accessing and setting keys on the Lstore itself will throw.", () => {
