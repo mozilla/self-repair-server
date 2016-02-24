@@ -15,30 +15,23 @@
 
 "use strict";
 
-var $script = require("scriptjs");
-
-var GEO_URL = 'https://geo.mozilla.org/country.js';
+// https://github.com/mozilla/self-repair-server/issues/239
+var GEO_URL = 'https://location.services.mozilla.com/v1/country?key=fcce8909-53a6-4d26-83da-e822cdf4ac13';
 var GEO_CACHE_DURATION = 1000 * 60 * 60 * 24 * (30 + Math.random()); // 30-ish days
 
 function downloadUserCountry() {
-  return new Promise(function (resolve, reject) {
-    $script(GEO_URL, 'geo');
-    $script.ready('geo', function() {
-      try {
-        if (typeof geoip_country_code == "undefined") {
-          throw(new Error("geo: unable to load js file."))
-        }
-        gSnippetsMap.set('geoCountry', geoip_country_code());
-        gSnippetsMap.set('geoLastUpdated', new Date());
-        resolve();
-      } catch (e) {
-        reject(e);
-        // Most likely failed to load JS file. Continue on without us,
-        // we'll try again next time.
-      }
-      resolve();
-    });
-  });
+  return fetch(GEO_URL).then((response) => {
+    /*
+    {
+      "country_code": "US",
+      "country_name": "United States",
+      "fallback": "ipf"
+    }*/
+    return response.json()
+  }).then( (data) => {
+    gSnippetsMap.set('geoCountry', data["country_code"]);
+    gSnippetsMap.set('geoLastUpdated', new Date());
+  })
 }
 
 // Check whether we have the user's country stored and if it is still valid.
