@@ -30,13 +30,13 @@ let runner = require("../../src/runner");
 let phonehome = require("../../src/common/heartbeat/phonehome");
 let personinfo = require("../../src/common/personinfo");
 
-let R = require("../../src/recipes/ios-promo");
-let C = require("../../src/recipes/ios-promo/config");
+let R = require("../../src/recipes/messaging");
+let C = require("../../src/recipes/messaging/config");
 
 const percent = 0.01;
 let days = 1000 * 60 * 60 * 24;
 
-describe("ios-promo", function () {
+describe("messgaging", function () {
   // these feel very action at a distance to me!
   let orig = personinfo.config.timeout;
   beforeEach(function () {
@@ -52,7 +52,7 @@ describe("ios-promo", function () {
 
   There is complex interactions between require, run order, etc when webpack and mocha interact`;
 
-  describe("ios-promo", function () {
+  describe("messaging", function () {
     it("is valid recipe", ()=>{
       try {
         expect(runner.validateConfig(R)[1]).to.be.true;
@@ -102,10 +102,10 @@ describe("ios-promo", function () {
 
     describe("should-run", function () {
       describe("known channels", function () {
-        var allchannels = ['all'];
+        var allchannels = ['nightly','aurora','beta','release'];
 
         it('config has right channels: '+ allchannels.join('|'), () => {
-          expect(C.channels).keys(allchannels);
+          expect(C.sampling).keys(allchannels);
         })
 
         it('should only ever show once', function (done) {
@@ -119,11 +119,11 @@ describe("ios-promo", function () {
               //}
             })
 
-            let goodLocale = C.channels[channel].locales[0];
+            let goodLocale = C.sampling[channel].locales[0];
             let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: goodLocale};
-            let restdays = C.channels[channel].restdays;
+            let restdays = C.sampling[channel].restdays;
             let now = Date.now();
-            let ans = R.shouldRun(state, C.channels[channel],
+            let ans = R.shouldRun(state, C.sampling[channel],
               {when: now - 1, lastRun: 1}
             )
             expect(ans, channel).false;
@@ -133,10 +133,10 @@ describe("ios-promo", function () {
 
         it('should respect the sampling percentage', function (){
           allchannels.forEach(function (channel) {
-            let goodLocale = C.channels[channel].locales[0];
+            let goodLocale = C.sampling[channel].locales[0];
             let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: goodLocale};
-            let p = C.channels[channel].sample;
-            let restdays = C.channels[channel].restdays;
+            let p = C.sampling[channel].sample;
+            let restdays = C.sampling[channel].restdays;
             let now = Date.now();
             expect(R.shouldRun(state, null, {
               randomNumber: 99*percent*p,
@@ -151,28 +151,6 @@ describe("ios-promo", function () {
           })
         });
 
-        /*it('should override the sampling percentage for AUS', function (){
-          allchannels.forEach(function (channel) {
-            let goodLocale = C.channels[channel].locales[0];
-            let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: goodLocale};
-            let p = C.channels[channel].sample;
-            let restdays = C.channels[channel].restdays;
-            let now = Date.now();
-            expect(R.shouldRun(state, null, {
-              randomNumber: 1.0,
-              when: now,
-              lastRun: 0,
-              geoAus: true
-            }), channel + 'Aus is overridden!').true;
-            expect(R.shouldRun(state, null, {
-              randomNumber: 1.0,
-              when: now,
-              lastRun: 0,
-              geoAus: false
-            }), channel + 'non-Aus is not overridden').false;
-          })
-        });*/
-
         it('only runs on 41+', function () {
           let locale = "en-US";
           let now = Date.now();
@@ -180,8 +158,8 @@ describe("ios-promo", function () {
           // good!
           allchannels.forEach(function (channel) {
 
-            let goodLocale = C.channels[channel].locales[0];
-            let restdays = C.channels[channel].restdays;
+            let goodLocale = C.sampling[channel].locales[0];
+            let restdays = C.sampling[channel].restdays;
             let state = {updateChannel: channel, locale: goodLocale};
 
             state.fxVersion = "41.0a1";
@@ -202,10 +180,10 @@ describe("ios-promo", function () {
 
         it('runs in several locales', function () {
           allchannels.forEach(function (channel) {
-            let oklocales = C.channels[channel].locales;
+            let oklocales = C.sampling[channel].locales;
             oklocales.forEach(function (locale) {
               let now = Date.now();
-              let restdays = C.channels[channel].restdays;
+              let restdays = C.sampling[channel].restdays;
               let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: locale};
               expect(R.shouldRun(state, null, {
                 randomNumber: 0,
@@ -218,7 +196,7 @@ describe("ios-promo", function () {
 
         it('refuses bad locale', function (done) {
           allchannels.forEach(function (channel) {
-            let badlocale = "es-MX";
+            let badlocale = "pt-BR";  // brazil not yet supported!
             let observed = events.observe(R.name, function (msg, data) {
               if (msg === "bad-locale" && data.locale === badlocale.toLowerCase()) {
                 done();
@@ -226,7 +204,7 @@ describe("ios-promo", function () {
               }
             })
             let now = Date.now();
-            let restdays = C.channels[channel].restdays;
+            let restdays = C.sampling[channel].restdays;
             let state = {fxVersion:  "41.0a1", updateChannel: channel, locale: badlocale};
             expect(R.shouldRun(state, null, {
               randomNumber: 0,
@@ -311,24 +289,12 @@ describe("ios-promo", function () {
         expect("you just have to believe this").a("string");
       });
 
-      it("creates a stored flow by side effect", function (done) {
-        let u = uuid();
-        let E = R.testable.eData;
-        R.run({},{flow_id: u, simulate:true}).then( // no phoning
-          () => {
-            //console.log(E.data.flows[u]);
-            expect(E.data.flows[u], "must exist").exist;
-            done();
-          }
-        );
-      });
-
       it("promises the flowid", function (done) {
         let u = uuid();
         let E = R.testable.eData;
         R.run({},{flow_id: u, simulate:true}).then( // no phoning
           (reutrned_u) => {
-            expect(E.data.flows[u]).exist;
+            //expect(E.data.flows[u]).exist; // flows only created for real ones
             expect(u).equal(reutrned_u);
             done();
           }
@@ -337,12 +303,9 @@ describe("ios-promo", function () {
 
       it("creates flow_id if necessary", function (done) {
         let E = R.testable.eData;
-        let before = Object.keys(E.data.flows);
         R.run({},{ simulate:true}).then( // no phoning
           (u) => {
             expect(u,"flow_id is string").a("string");
-            expect(before, 'should not be seen before.').not.include(u);
-            expect(E.data.flows[u], 'should be seen now').exist;
             done();
           }
         );

@@ -42,14 +42,20 @@ describe("built file exports", function () {
     }
   });
   describe("recipe list", function () {
-    it("has 1 recipe.", () => {
-      expect(heartbeat.recipes.length).to.equal(1);
+    it("has 2 recipe.", () => {
+      expect(heartbeat.recipes.length).to.equal(2);
     });
     it("has heartbeat, right version", function () {
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true;
       expect(hb.name).equal("heartbeat by user v1");
       expect(hb.version).equal(51);
+    });
+    it("has messaging, right version", function () {
+      let r = heartbeat.recipes[1];
+      expect(heartbeat.runner.validateConfig(r)[1]).true;
+      expect(r.name).equal("Messaging with external links");
+      expect(r.version).equal(10);
     });
   })
 
