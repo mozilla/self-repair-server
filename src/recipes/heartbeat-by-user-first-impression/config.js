@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=51;
+const VERSION=52;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -48,6 +48,18 @@ const filterFields = [
 
 
 const engagementRules = [
+  {
+    alias: '^en, release',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^release/i
+    },
+    urls: [
+      "https://qsurvey.mozilla.com/s3/Firefox-March-Survey"
+    ],
+    breaks: asBreaks([1])
+  },
+
   // en-*, general
   {
     alias: '^en',
@@ -137,7 +149,7 @@ module.exports = {
     },
     "release": {
       restdays: 30,
-      sample: 10/million,  // 1 in 100000
+      sample: 10 * 10/million,  //
       locales: supportedLocales
     }
   },
