@@ -37,13 +37,11 @@ remote:
 
 ## Fix:
 
-curl -sL "{url}" > thirdparty/uitour.js
-# increment thirdparty/package.json version
-npm uinstall thirdparty
-npm install thirdparty
+npm run fix:thirdparty
+./node_modules/.bin/versiony --patch   # if needed
+git add -u
+git commit
 
-git add thirdparty
-git commit -m "new version of thirdparty, new uitour.js
 """.format(
   url = url,
   localhash = localhash,
