@@ -31,6 +31,7 @@
     "shelljs": "^0.5.1",
     "thirdparty": "file:thirdparty",
     "uuid": "^2.0.1",
+    "versiony-cli": "^1.3.0",
     "webpack": "^1.4.13"
   },
   "scripts": {
@@ -45,6 +46,7 @@
     "postcompile": "node scripts/copy-built-international-sites.js && cp scripts/s3_base/index.html deploy/index.html && cp scripts/s3_base/index.html deploy/error.html",
     "demo": "npm run compile && npm test && coverage/unit/*/index.html # open a repar in a safe way too?",
     "new-recipe": "bash scripts/new-recipe.bash",
+    "fix:thirdparty": "bash scripts/upgradeTourLib.sh",
     "thirdparty": "python scripts/check-ui-tour-changes.py thirdparty/uitour.js",
     "serve": "serve -p 3111",
     "open-local": "opener 'http://localhost:3111/deploy/en-US/repair/?{\"runner\":{\"alwaysRun\":true}}'",
