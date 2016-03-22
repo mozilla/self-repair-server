@@ -10,7 +10,7 @@
 
 /*global require, exports, log */
 
-const { extend } = require("../../jetpack/object");
+const { merge } = require("../../jetpack/object");
 const { firstMatch } = require("../../common/rules");
 const { Lstore } = require("../../common/recipe-utils");
 
@@ -24,7 +24,7 @@ var getMessage = function(obj, messages, rng=Math.random()) {
     let possibles = messages[ruleIndex];
     let ans = cutBreaks(possibles.choices, possibles.breaks, rng);
     if (ans) {
-      ans = extend({},ans);  // copy
+      ans = merge({},ans);  // copy
       let url = ans.url;
       if (url && (url.indexOf("qsurvey") >= 0)) {
         //let fullUrl = `${branch.url}?source=hb&hbv=${VERSION}` +

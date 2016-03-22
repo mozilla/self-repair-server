@@ -20,7 +20,7 @@ let uuid       = require("uuid").v4;
 let events     = require("../../common/events");
 
 let { hasAny } = require("../../jetpack/array");
-const { extend } = require("../../jetpack/object");
+const { merge } = require("../../jetpack/object");
 
 let UITour     = require("thirdparty/uitour");
 
@@ -135,7 +135,7 @@ let run = function (state, extras = {}) {
 
   let flowid = extras.flow_id || uuid();
 
-  let eOpts = extend(state, {VERSION: VERSION, locale: locale})
+  let eOpts = merge({}, state, {VERSION: VERSION, locale: locale})
   let message = getMessage(eOpts, configFile.rules); // will be a COPY of the obj.
 
   // nothing to show
@@ -153,7 +153,7 @@ let run = function (state, extras = {}) {
 
   let local = {
     flow_id: flowid,
-    variation_id: message.name,
+    variation_id: message.variation || message.name,
     survey_id: message.name
   };
 
@@ -181,12 +181,13 @@ let run = function (state, extras = {}) {
       surveyId: local.survey_id,
       surveyVersion: local.variation_id,
   }
+
   if (phConfig.testing) {extraTelemetryArgs.testing = 1}
 
-  let extraArgs = extend(extraTelemetryArgs, {
+  let extraArgs = merge({}, extraTelemetryArgs, {
     engagementButtonLabel: message.button,
     privateWindowsOnly: message.privateWindowsOnly
-  })
+  })  // why merge: b/c tour uses .hasOwnProperty
 
   // Prompt with label
   UITour.showHeartbeat(
