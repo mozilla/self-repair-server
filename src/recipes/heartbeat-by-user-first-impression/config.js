@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=52;
+const VERSION=53;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -55,9 +55,8 @@ const engagementRules = [
       updateChannel: /^release/i
     },
     urls: [
-      "https://qsurvey.mozilla.com/s3/Firefox-March-Survey"
     ],
-    breaks: asBreaks([1])
+    breaks: []
   },
 
   // en-*, general
