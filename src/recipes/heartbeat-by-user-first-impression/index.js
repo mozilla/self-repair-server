@@ -209,7 +209,8 @@ let run = function (state, extras={}) {
   let engagementUrl = getEngagementUrl(eOpts, allconfigs.engagementRules);
 
   if (phConfig.testing && engagementUrl) {
-    engagementUrl = engagementUrl + "&testing=1"; // only if testing.
+    let tail = Boolean(new URL(engagementUrl).search) ? "&testing=1" : "?testing=1";
+    engagementUrl = engagementUrl + tail; // only if testing.
   }
 
   // UNIFIED TELEMETRY: https://hg.mozilla.org/mozilla-central/rev/7b81b08f1899

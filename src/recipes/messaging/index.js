@@ -171,7 +171,8 @@ let run = function (state, extras = {}) {
   events.message(local.flow_id, "began", flow.data);
 
   if (phConfig.testing && message.url) {
-    message.url = message.url + "&testing=1"; // only if testing.
+    let tail = Boolean(new URL(message.url).search) ? "&testing=1" : "?testing=1";
+    message.url = message.url + tail; // only if testing.
   }
 
   // UNIFIED TELEMETRY: https://hg.mozilla.org/mozilla-central/rev/7b81b08f1899

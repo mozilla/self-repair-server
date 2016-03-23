@@ -26,7 +26,7 @@ var getMessage = function(obj, messages, rng=Math.random()) {
     if (ans) {
       ans = extend({},ans);  // copy
       let url = ans.url;
-      if (url && url.indexOf("qsurvey") > 0) {
+      if (url && (url.indexOf("qsurvey") >= 0)) {
         //let fullUrl = `${branch.url}?source=hb&hbv=${VERSION}` +
         //    `&c=${state.updateChannel}&v=${state.fxVersion}&l=${state.locale}` +
         //    `&b=${branch.name}`;//&g=${geoAus}
