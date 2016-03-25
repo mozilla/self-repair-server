@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=11;
+const VERSION=12;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -90,6 +90,21 @@ const filterFields = [
 // aliases for MESSAGE CONFIG.  Only need to define overrided fields.
 // TODO, add messageGroup concept, for excluding recent
 
+var ss1msgs = [
+  ['Want to try someting new in Firefox?','want-trynew'],
+  ['Try something new in Firefox.', 'nowant-trynew'],
+  ['Want to shape the future of Firefox?','want-shapefuture'],
+  ['Shape the future of Firefox.','nowant-shapefuture']
+];
+
+/*
+  all the variations need to have the same NAME
+  so that the "don't show twice" will work.
+
+  But different variation ids.
+*/
+let ss1Chosen = chooseEqual(ss1msgs);
+
 let messages = {
 
   // issue #226
@@ -105,6 +120,14 @@ let messages = {
     thankyou:  "We hope that you enjoy Firefox on your mobile device!",
     url:      "https://www.mozilla.org/en-US/firefox/mobile-download/",
     button:   "Get it now"
+  },
+
+  "x-shield-study-performance-1": {
+    prompt:  ss1Chosen[0],
+    variation: ss1Chosen[1],
+    button:   "Get Started",
+    thankyou: "Thank you!",
+    url:      "https://addons.mozilla.org/en-US/firefox/shield-study-1/",
   }
 };
 
@@ -115,14 +138,24 @@ for (let k in messages) { messages[k].name = k }
 // ENROLLMENT RULES
 let rules = [
   {
+    alias: '^en, aurora (dev)',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^aurora/i
+    },
+    choices: [
+      messages['x-shield-study-performance-1'],
+    ],
+    breaks: asBreaks([1])
+  },
+  {
     alias: '^en',
     rule: {
       locale: /^en/i
     },
     choices: [
-      messages['en-user-satisfaction-2']
     ],
-    breaks: asBreaks([1])
+    breaks: []
   },
 ]
 
@@ -155,6 +188,10 @@ function asBreaks(ratios) {
   for (var cumsum = [ratios[0]], i = 0, l = ratios.length-1; i<l; i++)
       cumsum[i+1] = cumsum[i] + ratios[i+1];
   return cumsum.map((x) => x/t)
+}
+
+function chooseEqual (arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 

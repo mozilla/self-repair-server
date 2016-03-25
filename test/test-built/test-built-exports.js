@@ -55,7 +55,7 @@ describe("built file exports", function () {
       let r = heartbeat.recipes[1];
       expect(heartbeat.runner.validateConfig(r)[1]).true;
       expect(r.name).equal("Messaging with external links");
-      expect(r.version).equal(11);
+      expect(r.version).equal(12);
     });
   })
 
