@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=12;
+const VERSION=13;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -142,6 +142,17 @@ let rules = [
     rule: {
       locale: /^en/i,
       updateChannel: /^aurora/i
+    },
+    choices: [
+      messages['x-shield-study-performance-1'],
+    ],
+    breaks: asBreaks([1])
+  },
+  {
+    alias: '^en, beta',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^beta/i
     },
     choices: [
       messages['x-shield-study-performance-1'],
