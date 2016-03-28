@@ -13,6 +13,11 @@
 
 "use strict";
 
+let RECIPEINFO = {
+  "heartbeat by user v1": 53,
+  "Messaging with external links": 15
+};
+
 /* this code mostly exists
    - for coverage sake
    - catch when new actions are added
@@ -49,13 +54,13 @@ describe("built file exports", function () {
       let hb = heartbeat.recipes[0];
       expect(heartbeat.runner.validateConfig(hb)[1]).true;
       expect(hb.name).equal("heartbeat by user v1");
-      expect(hb.version).equal(53);
+      expect(hb.version).equal(RECIPEINFO[hb.name]);
     });
     it("has messaging, right version", function () {
       let r = heartbeat.recipes[1];
       expect(heartbeat.runner.validateConfig(r)[1]).true;
       expect(r.name).equal("Messaging with external links");
-      expect(r.version).equal(14);
+      expect(r.version).equal(RECIPEINFO[r.name]);
     });
   })
 

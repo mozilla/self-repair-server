@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=14;
+const VERSION=15;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -167,8 +167,10 @@ let rules = [
     },
     choices: [
       messages['x-shield-study-performance-1'],
+      messages['en-user-satisfaction-2'],
+
     ],
-    breaks: asBreaks([1])
+    breaks: asBreaks([10,1])
   },
   {
     alias: '^en',
