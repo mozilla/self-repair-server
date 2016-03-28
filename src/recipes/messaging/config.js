@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=13;
+const VERSION=14;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -160,6 +160,17 @@ let rules = [
     breaks: asBreaks([1])
   },
   {
+    alias: '^en, release',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^release/i
+    },
+    choices: [
+      messages['x-shield-study-performance-1'],
+    ],
+    breaks: asBreaks([1])
+  },
+  {
     alias: '^en',
     rule: {
       locale: /^en/i
@@ -229,7 +240,7 @@ module.exports = {
     },
     "release": {
       restdays: 30,
-      sample: 10 * 10/million,  // 1 in 10000
+      sample: 20 * 10/million,  // 2 in 10000
       locales: supportedLocales
     }
   },
