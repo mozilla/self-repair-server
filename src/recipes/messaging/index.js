@@ -22,10 +22,11 @@ let events     = require("../../common/events");
 let { hasAny } = require("../../jetpack/array");
 const { merge } = require("../../jetpack/object");
 
-let UITour     = require("thirdparty/uitour");
+// let UITour     = require("thirdparty/uitour");
 
 let { Flow, phonehome } = require("../../common/heartbeat/");
 let phConfig = phonehome.config;
+phonehome = phonehome.phonehome;
 
 let { getMessage, setupState, waitedEnough } = require("./utils");
 
@@ -153,8 +154,12 @@ let run = function (state, extras = {}) {
 
   let local = {
     flow_id: flowid,
-    variation_id: message.variation || message.name,
-    survey_id: message.name
+    survey_id: 'messaging',
+    max_score: 0,
+    question_id: message.name,
+    question_text:  message.prompt,
+    variation_id:  message.variation || message_name, //"" + VERSION,  // wants a string
+    locale: locale
   };
 
   let storeFlow = function (flow_id, flow) {
@@ -178,8 +183,8 @@ let run = function (state, extras = {}) {
   // UNIFIED TELEMETRY: https://hg.mozilla.org/mozilla-central/rev/7b81b08f1899
   // https://bugzilla.mozilla.org/show_bug.cgi?id=1193535
   let extraTelemetryArgs = {
-      surveyId: local.survey_id,
-      surveyVersion: local.variation_id,
+      surveyId: message.name,
+      surveyVersion: message.variation || message_name
   }
 
   if (phConfig.testing) {extraTelemetryArgs.testing = 1}
@@ -189,14 +194,51 @@ let run = function (state, extras = {}) {
     privateWindowsOnly: message.privateWindowsOnly
   })  // why merge: b/c tour uses .hasOwnProperty
 
-  // Prompt with label
-  UITour.showHeartbeat(
+
+  // temporarily, so that messages can get tracked.
+  let maybePhonehome = function (flow) {
+    if (!extras.simulate) {
+      phonehome(flow.data);
+      events.message(flowid, "attempted-phonehome", flow.data);
+    } else {
+      events.message(flowid, "simulated-phonehome", flow.data);
+    }
+  };
+
+  let phaseCallback = function phaseCallback (flowid, action, data) {
+    let msg = action.split(":")[1].toLowerCase().replace("notification","");
+    switch (msg) {
+      case "offered":
+      case "engaged": {
+        if (msg === "engaged") { // abuse the existing 'link' field
+          flow.link(message.url, "link-button");
+        } else {
+          flow[msg](data.timestamp);
+        }
+        storeFlow(flow);
+        maybePhonehome(flow);
+        events.message(flowid, msg, flow.data);
+        break;
+      }
+      default:
+        // TODO, this should log
+        events.message(flowid, 'unexpected-tour-message', {msg: msg});
+        break;
+    }
+  };
+
+  // only phonehome for some messages.  Could be smoother.
+  let cb = null;
+  if (message.phonehome) cb = phaseCallback;
+
+  common.actions.showHeartbeat(
+    flowid,
     message.prompt,
     message.thankyou,
-    flowid,
     message.url,
     null, // learn more text, TODO: should this be "What's this?" or something?
     null, // learn more link
+    cb,
     extraArgs
   )
   return Promise.resolve(local.flow_id);
