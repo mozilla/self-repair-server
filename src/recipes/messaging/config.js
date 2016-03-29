@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=15;
+const VERSION=16;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -128,6 +128,7 @@ let messages = {
     button:   "Get Started",
     thankyou: "Thank you!",
     url:      "https://addons.mozilla.org/en-US/firefox/shield-study-1/",
+    phonehome:  true
   }
 };
 
