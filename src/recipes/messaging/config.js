@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=16;
+const VERSION=17;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -139,41 +139,6 @@ for (let k in messages) { messages[k].name = k }
 // ENROLLMENT RULES
 let rules = [
   {
-    alias: '^en, aurora (dev)',
-    rule: {
-      locale: /^en/i,
-      updateChannel: /^aurora/i
-    },
-    choices: [
-      messages['x-shield-study-performance-1'],
-    ],
-    breaks: asBreaks([1])
-  },
-  {
-    alias: '^en, beta',
-    rule: {
-      locale: /^en/i,
-      updateChannel: /^beta/i
-    },
-    choices: [
-      messages['x-shield-study-performance-1'],
-    ],
-    breaks: asBreaks([1])
-  },
-  {
-    alias: '^en, release',
-    rule: {
-      locale: /^en/i,
-      updateChannel: /^release/i
-    },
-    choices: [
-      messages['x-shield-study-performance-1'],
-      messages['en-user-satisfaction-2'],
-
-    ],
-    breaks: asBreaks([10,1])
-  },
-  {
     alias: '^en',
     rule: {
       locale: /^en/i
@@ -181,7 +146,7 @@ let rules = [
     choices: [
     ],
     breaks: []
-  },
+  }
 ]
 
 
@@ -243,7 +208,7 @@ module.exports = {
     },
     "release": {
       restdays: 30,
-      sample: 20 * 10/million,  // 2 in 10000
+      sample: 10/million,  // 1 in 100000
       locales: supportedLocales
     }
   },

@@ -158,7 +158,7 @@ let run = function (state, extras = {}) {
     max_score: 0,
     question_id: message.name,
     question_text:  message.prompt,
-    variation_id:  message.variation || message_name, //"" + VERSION,  // wants a string
+    variation_id:  message.variation || message.name, //"" + VERSION,  // wants a string
     locale: locale
   };
 
@@ -184,7 +184,7 @@ let run = function (state, extras = {}) {
   // https://bugzilla.mozilla.org/show_bug.cgi?id=1193535
   let extraTelemetryArgs = {
       surveyId: message.name,
-      surveyVersion: message.variation || message_name
+      surveyVersion: message.variation || message.name
   }
 
   if (phConfig.testing) {extraTelemetryArgs.testing = 1}
