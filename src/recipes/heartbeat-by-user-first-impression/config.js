@@ -12,11 +12,10 @@
 
 "use strict";
 
-const VERSION=53;
+const VERSION=54;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
-const percent = 0.01;
 const days = 24 * 60 * 60 * 1000;
 
 /** EngagementUrl Rules
@@ -47,40 +46,97 @@ const filterFields = [
 ];
 
 
+
+
 const engagementRules = [
   {
-    alias: '^en, release',
+    alias: '^cs, Aurora',
     rule: {
-      locale: /^en/i,
-      updateChannel: /^release/i
+      locale: /^cs/i,
+      updateChannel: /^aurora/i
     },
     urls: [
+      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=cs"
     ],
-    breaks: []
+    breaks: asBreaks([1])
   },
-
-  // en-*, general
   {
-    alias: '^en',
+    alias: '^de, Aurora',
     rule: {
-      locale: /^en/i
+      locale: /^de/i,
+      updateChannel: /^aurora/i
     },
     urls: [
+      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=de"
     ],
-    breaks: [
-    ]
+    breaks: asBreaks([1])
   },
-  // de
   {
-    alias: 'de',
+    alias: '^es, Aurora',
     rule: {
-      locale: 'de'
+      locale: /^es/i,
+      updateChannel: /^aurora/i
     },
     urls: [
+      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=es"
     ],
-    breaks: [
-    ]
+    breaks: asBreaks([1])
   },
+  {
+    alias: '^fr, Aurora',
+    rule: {
+      locale: /^fr/i,
+      updateChannel: /^aurora/i
+    },
+    urls: [
+      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=fr"
+    ],
+    breaks: asBreaks([1])
+  },
+  { //TODO(gregglind)
+    alias: '^it, Aurora',
+    rule: {
+      locale: /^it/i,
+      updateChannel: /^aurora/i
+    },
+    urls: [
+      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=it"
+    ],
+    breaks: asBreaks([1])
+  },
+//  {
+//    alias: '^en, release',
+//    rule: {
+//      locale: /^en/i,
+//      updateChannel: /^release/i
+//    },
+//    urls: [
+//    ],
+//    breaks: []
+//  },
+//
+//  // en-*, general
+//  {
+//    alias: '^en',
+//    rule: {
+//      locale: /^en/i
+//    },
+//    urls: [
+//    ],
+//    breaks: [
+//    ]
+//  },
+//  // de
+//  {
+//    alias: 'de',
+//    rule: {
+//      locale: 'de'
+//    },
+//    urls: [
+//    ],
+//    breaks: [
+//    ]
+//  },
   {
     alias: 'no match',
     rule: {
@@ -94,16 +150,27 @@ const engagementRules = [
   // other
 ];
 
-let supportedLocales = [ 'de',
+let supportedLocales = [
+  'cs',
+  'de',
   'en-US',
   'en-GB',
   'es',
   'es-ES',
   'es-MX',
   'fr',
+  'it',
   'zh-CN',
 ];
 
+const localeMultiplier = { //TODO: Remove this hacky, temp code
+  "cs":    50,
+  "de":    5,
+  "es-ES": 5,
+  "es-MX": 5,
+  "fr":    5,
+  "it":    25
+};
 
 /** convert array of positive numbers to a 'breaks' array
   *
@@ -133,23 +200,24 @@ module.exports = {
   sampling:  {
     "nightly": {
       restdays: 30,
-      sample: 1 / thousand,  // 1 of 1000
-      locales: supportedLocales
+      sample:   1 / thousand,  // 1 of 1000
+      locales:  supportedLocales
     },
     "aurora": {
+      "localeMultiplier": localeMultiplier, //TODO: Remove this hacky, temp code
       restdays: 30,
-      sample: 20 * percent * percent,  // 1 in 500
-      locales: supportedLocales
+      sample:   2 / thousand,  // 1 in 500
+      locales:  supportedLocales
     },
     "beta": {
       restdays: 30,
-      sample: 4 * percent * percent,  // 1 in 2500
-      locales: supportedLocales
+      sample:   400 / million,  // 1 in 2500
+      locales:  supportedLocales
     },
     "release": {
       restdays: 30,
-      sample: 10 * 10/million,  //
-      locales: supportedLocales
+      sample:   100 / million,  // 1 in 10000
+      locales:  supportedLocales
     }
   },
   supportedLocales: supportedLocales,

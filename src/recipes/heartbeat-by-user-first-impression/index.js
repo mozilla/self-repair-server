@@ -114,7 +114,12 @@ let shouldRun = function (userstate, config, extras={}) {
 
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
 
-  if (myRng <= config.sample) {
+  let multiplier = 1; //TODO: Remove this hacky, temp code
+  if (config.localeMultiplier !== undefined  &&  config.localeMultiplier[locale] !== undefined) {
+    multiplier = config.localeMultiplier[locale];
+  }
+
+  if (myRng <= multiplier * config.sample) {
     return true;
   } else {
     events.message(NAME, "bad-random-number", {randomNumber: myRng});
@@ -132,7 +137,6 @@ let run = function (state, extras={}) {
 
   let locale = (state.locale || "UNK").toLowerCase();
   let trans = translations.getTranslation(locale).heartbeat;
-
   let question_text = trans.question_text();
   let learnmore = trans.learnmore();
   let thankyou = trans.thankyou();

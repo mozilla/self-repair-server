@@ -31,9 +31,12 @@ var getEngagementUrl = function(obj, engagementRules, rng=Math.random()) {
   let ruleIndex = firstMatch(obj, rules);
   if (ruleIndex >= 0) {
     let possibles = engagementRules[ruleIndex];
-    let url = cutBreaks(possibles.urls, possibles.breaks, rng)
+
+    let url = cutBreaks(possibles.urls, possibles.breaks, rng);
     if (url && (url.indexOf("qsurvey") >= 0)) {
-      url = url + `?source=heartbeat&surveyversion=${obj.VERSION}&updateChannel=${obj.updateChannel}&fxVersion=${obj.fxVersion}`
+      let connector = Boolean(new URL(url).search) ? "&" : "?";
+
+      url = url + connector + `source=heartbeat&surveyversion=${obj.VERSION}&updateChannel=${obj.updateChannel}&fxVersion=${obj.fxVersion}`;
     }
     return url
   }

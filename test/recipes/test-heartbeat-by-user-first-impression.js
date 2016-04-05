@@ -196,13 +196,16 @@ describe("heartbeat-by-user-first-impression", function () {
         });
 
         it('runs on in several locales', function () {
-          let oklocales = [ 'de',
+          let oklocales = [
+            'cs',
+            'de',
             'en-US',
             'en-GB',
             'es',
             'es-ES',
             'es-MX',
             'fr',
+            'it',
             'zh-CN',
           ];
           allchannels.forEach(function (channel) {
