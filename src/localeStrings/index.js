@@ -24,6 +24,7 @@
 "use strict";
 
 var supported = {
+    'cs'   : require("./cs"),
     'de'   : require("./de"),
     'en-us': require("./en"),  // break up 'en' if needful.
     'en-gb': require("./en"),
@@ -31,6 +32,7 @@ var supported = {
     'es-es': require("./es"),  // break up 'es' if needful.
     'es-mx': require("./es"),
     'fr'   : require("./fr"),
+    'it'   : require("./it"),
     'zh-cn': require("./zh-cn"),  // chose simplified chinese.  TW has traditional.
 
     'unk'  : require("./en") // just in case

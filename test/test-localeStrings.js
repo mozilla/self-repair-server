@@ -16,13 +16,16 @@ let { expect } = require("chai");
 
 let locales = require("../src/localeStrings");
 
-let supportedLocales = [ 'de',
+let supportedLocales = [
+  'cs',
+  'de',
   'en-us',
   'en-gb',
   'es',
   'es-es',
   'es-mx',
   'fr',
+  'it',
   'zh-cn',
   'unk'
 ];

@@ -14,7 +14,7 @@
 "use strict";
 
 let RECIPEINFO = {
-  "heartbeat by user v1": 53,
+  "heartbeat by user v1": 54,
   "Messaging with external links": 17
 };
 
@@ -96,6 +96,6 @@ describe("built file exports", function () {
     };
 
     // one fail per line.
-    //it('if fail, kill dev-ed survey v2  back (see #227, #230)', bomb('Feb 12 2016'));
+    it('if fail, kill dev-lang survey', bomb('April 15 2016'));
   })
 });
