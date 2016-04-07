@@ -36,7 +36,7 @@ var getEngagementUrl = function(obj, engagementRules, rng=Math.random()) {
     if (url && (url.indexOf("qsurvey") >= 0)) {
       let connector = Boolean(new URL(url).search) ? "&" : "?";
 
-      url = url + connector + `source=heartbeat&surveyversion=${obj.VERSION}&updateChannel=${obj.updateChannel}&fxVersion=${obj.fxVersion}`;
+      url = url + connector + `source=heartbeat&surveyversion=${obj.VERSION}&updateChannel=${obj.updateChannel}&fxVersion=${obj.fxVersion}&fxdx=${Number(obj.defaultBrowser)}`;
     }
     return url
   }

@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=54;
+const VERSION=55;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -104,17 +104,18 @@ const engagementRules = [
     ],
     breaks: asBreaks([1])
   },
-//  {
-//    alias: '^en, release',
-//    rule: {
-//      locale: /^en/i,
-//      updateChannel: /^release/i
-//    },
-//    urls: [
-//    ],
-//    breaks: []
-//  },
-//
+  {
+    alias: '^en, release',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^release/i
+    },
+    urls: [
+      "https://qsurvey.mozilla.com/s3/Firefox-Defaultness"
+    ],
+    breaks: asBreaks([1])
+  },
+
 //  // en-*, general
 //  {
 //    alias: '^en',
@@ -216,7 +217,7 @@ module.exports = {
     },
     "release": {
       restdays: 30,
-      sample:   100 / million,  // 1 in 10000
+      sample:   1000 / million,  // 1 in 1000
       locales:  supportedLocales
     }
   },

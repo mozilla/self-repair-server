@@ -34,7 +34,9 @@ var getMessage = function(obj, messages, rng=Math.random()) {
           `&updateChannel=${obj.updateChannel}`+
           `&fxVersion=${obj.fxVersion}` +
           `&locale=${obj.locale}` +
-          `&variation=${ans.name}`
+          `&variation=${ans.name}` +
+          `&fxdx=${Number(obj.defaultBrowser)}`;
+
         ans.url = url;  // copy
       }
     }
