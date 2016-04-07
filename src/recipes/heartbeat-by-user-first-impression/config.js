@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=55;
+const VERSION=56;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -164,13 +164,14 @@ let supportedLocales = [
   'zh-CN',
 ];
 
+// TODO: Warning, this is a bit risky, sampling at 1/20 - 1/5 across these locales.
 const localeMultiplier = { //TODO: Remove this hacky, temp code
-  "cs":    50,
-  "de":    5,
-  "es-ES": 5,
-  "es-MX": 5,
-  "fr":    5,
-  "it":    25
+  "cs":    100,// MIN(100,5*2*50),
+  "de":    25, // MIN(100,5*5),
+  "es-ES": 50, // MIN(100,5*2*5),
+  "es-MX": 50, // MIN(100,5*2*5),
+  "fr":    25, // MIN(100,5*5),
+  "it":    100 // MIN(100,5*25)
 };
 
 /** convert array of positive numbers to a 'breaks' array
