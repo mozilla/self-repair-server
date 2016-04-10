@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=57;
+const VERSION=58;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -225,12 +225,12 @@ module.exports = {
     },
     "beta": {
       restdays: 30,
-      sample:   400 / million,  // 1 in 2500
+      sample:   4 / thousand,  // 1 in 250
       locales:  supportedLocales
     },
     "release": {
       restdays: 30,
-      sample:   1000 / million,  // 1 in 1000
+      sample:   10 * 100 / million,  // 10 * 1 in 10000
       locales:  supportedLocales
     }
   },
