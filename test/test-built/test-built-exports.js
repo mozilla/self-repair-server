@@ -14,7 +14,7 @@
 "use strict";
 
 let RECIPEINFO = {
-  "heartbeat by user v1": 58,
+  "heartbeat by user v1": 59,
   "Messaging with external links": 18
 };
 
