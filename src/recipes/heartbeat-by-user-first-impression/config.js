@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=59;
+const VERSION=60;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -49,79 +49,6 @@ const filterFields = [
 
 
 const engagementRules = [
-  {
-    alias: '^cs, Aurora',
-    rule: {
-      locale: /^cs/i,
-      updateChannel: /^aurora/i
-    },
-    urls: [
-      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=cs"
-    ],
-    breaks: asBreaks([1])
-  },
-  {
-    alias: '^de, Aurora',
-    rule: {
-      locale: /^de/i,
-      updateChannel: /^aurora/i
-    },
-    urls: [
-      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=de"
-    ],
-    breaks: asBreaks([1])
-  },
-  {
-    alias: '^es, Aurora',
-    rule: {
-      locale: /^es/i,
-      updateChannel: /^aurora/i
-    },
-    urls: [
-      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=es"
-    ],
-    breaks: asBreaks([1])
-  },
-  {
-    alias: '^fr, Aurora',
-    rule: {
-      locale: /^fr/i,
-      updateChannel: /^aurora/i
-    },
-    urls: [
-      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=fr"
-    ],
-    breaks: asBreaks([1])
-  },
-  { //TODO(gregglind)
-    alias: '^it, Aurora',
-    rule: {
-      locale: /^it/i,
-      updateChannel: /^aurora/i
-    },
-    urls: [
-      "https://qsurvey.mozilla.com/s3/Developer-Tools-Language?sglocale=it"
-    ],
-    breaks: asBreaks([1])
-  },
-  {
-    alias: '^en, release',
-    rule: {
-      locale: /^en/i,
-      updateChannel: /^release/i
-    },
-    urls: [],
-    breaks: []
-  },
-  {
-    alias: '^en, beta',
-    rule: {
-      locale: /^en/i,
-      updateChannel: /^beta/i
-    },
-    urls: [],
-    breaks: []
-  },
 
 //  // en-*, general
 //  {
@@ -171,15 +98,6 @@ let supportedLocales = [
   'zh-CN',
 ];
 
-// TODO: Warning, this is a bit risky, sampling at 1/20 - 1/5 across these locales.
-const localeMultiplier = { //TODO: Remove this hacky, temp code
-  "cs":    100,// MIN(100,5*2*50),
-  "de":    25, // MIN(100,5*5),
-  "es-ES": 50, // MIN(100,5*2*5),
-  "es-MX": 50, // MIN(100,5*2*5),
-  "fr":    25, // MIN(100,5*5),
-  "it":    100 // MIN(100,5*25)
-};
 
 /** convert array of positive numbers to a 'breaks' array
   *
@@ -213,7 +131,6 @@ module.exports = {
       locales:  supportedLocales
     },
     "aurora": {
-      "localeMultiplier": localeMultiplier, //TODO: Remove this hacky, temp code
       restdays: 30,
       sample:   2 / thousand,  // 1 in 500
       locales:  supportedLocales
