@@ -114,12 +114,7 @@ let shouldRun = function (userstate, config, extras={}) {
 
   let myRng = extras.randomNumber !== undefined ? extras.randomNumber : Math.random();
 
-  let multiplier = 1; //TODO: Remove this hacky, temp code
-  if (config.localeMultiplier !== undefined  &&  config.localeMultiplier[locale] !== undefined) {
-    multiplier = config.localeMultiplier[locale];
-  }
-
-  if (myRng <= multiplier * config.sample) {
+  if (myRng <= config.sample) {
     return true;
   } else {
     events.message(NAME, "bad-random-number", {randomNumber: myRng});
