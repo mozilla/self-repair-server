@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=60;
+const VERSION=62;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -49,6 +49,32 @@ const filterFields = [
 
 
 const engagementRules = [
+
+  // en-*, not nightly
+  {
+    alias: '^en',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^(aurora|release|beta)/i
+    },
+    urls: [
+      "https://qsurvey.mozilla.com/s3/april2016survey1",
+      "https://qsurvey.mozilla.com/s3/add-ons-awareness"
+    ],
+    breaks: asBreaks([.5,.5])
+  },
+  // en-*, nightly
+  {
+    alias: '^en',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^(nightly)/i
+    },
+    urls: [
+      "https://qsurvey.mozilla.com/s3/add-ons-awareness"
+    ],
+    breaks: asBreaks([1])
+  },
 
 //  // en-*, general
 //  {
@@ -127,7 +153,7 @@ module.exports = {
   sampling:  {
     "nightly": {
       restdays: 30,
-      sample:   1 / thousand,  // 1 of 1000
+      sample:   1 / million,  // very rare
       locales:  supportedLocales
     },
     "aurora": {
@@ -137,12 +163,12 @@ module.exports = {
     },
     "beta": {
       restdays: 30,
-      sample:   40 / million,  // 1 in 25000
+      sample:   5*40 / million,  // 5 in 25000
       locales:  supportedLocales
     },
     "release": {
       restdays: 30,
-      sample:   100 / million,  // 1 in 10000
+      sample:   5*100 / million,  // 5 in 10000
       locales:  supportedLocales
     }
   },
