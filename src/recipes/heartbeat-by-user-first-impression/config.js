@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=61;
+const VERSION=62;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -58,9 +58,8 @@ const engagementRules = [
       updateChannel: /^(aurora|release|beta)/i
     },
     urls: [
-      "https://qsurvey.mozilla.com/s3/april2016survey1"
     ],
-    breaks: asBreaks([1])
+    breaks: []
   },
 
 //  // en-*, general
