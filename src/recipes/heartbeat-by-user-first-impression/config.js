@@ -12,7 +12,7 @@
 
 "use strict";
 
-const VERSION=62;
+const VERSION=63;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -50,29 +50,17 @@ const filterFields = [
 
 const engagementRules = [
 
-  // en-*, not nightly
+  // en-*, general
   {
     alias: '^en',
     rule: {
-      locale: /^en/i,
-      updateChannel: /^(aurora|release|beta)/i
+      locale: /^en/i
     },
     urls: [
+      "https://qsurvey.mozilla.com/s3/amo-survey"
     ],
-    breaks: []
+    breaks: asBreaks([1])
   },
-
-//  // en-*, general
-//  {
-//    alias: '^en',
-//    rule: {
-//      locale: /^en/i
-//    },
-//    urls: [
-//    ],
-//    breaks: [
-//    ]
-//  },
 //  // de
 //  {
 //    alias: 'de',
