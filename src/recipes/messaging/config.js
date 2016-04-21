@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=18;
+const VERSION=19;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -90,10 +90,8 @@ const filterFields = [
 // aliases for MESSAGE CONFIG.  Only need to define overrided fields.
 // TODO, add messageGroup concept, for excluding recent
 
-var ss1msgs = [
-  ['Want to try someting new in Firefox?','want-trynew'],
+var ss2msgs = [
   ['Try something new in Firefox.', 'nowant-trynew'],
-  ['Want to shape the future of Firefox?','want-shapefuture'],
   ['Shape the future of Firefox.','nowant-shapefuture']
 ];
 
@@ -103,7 +101,7 @@ var ss1msgs = [
 
   But different variation ids.
 */
-let ss1Chosen = chooseEqual(ss1msgs);
+let ss2Chosen = chooseEqual(ss2msgs);
 
 let messages = {
 
@@ -122,12 +120,12 @@ let messages = {
     button:   "Get it now"
   },
 
-  "x-shield-study-performance-1": {
-    prompt:  ss1Chosen[0],
-    variation: ss1Chosen[1],
+  "x-shield-study-performance-2": {
+    prompt:  ss2Chosen[0],
+    variation: ss2Chosen[1],
     button:   "Get Started",
     thankyou: "Thank you!",
-    url:      "https://addons.mozilla.org/en-US/firefox/shield-study-1/",
+    url:      `https://addons.mozilla.org/en-US/firefox/shield-study-2/?utm_source=${ss2Chosen[1]}`,
     phonehome:  true
   }
 };
@@ -138,6 +136,17 @@ for (let k in messages) { messages[k].name = k }
 
 // ENROLLMENT RULES
 let rules = [
+  {
+    alias: '^en, release',
+    rule: {
+      locale: /^en/i,
+      updateChannel: /^release/i
+    },
+    choices: [
+      messages['x-shield-study-performance-2']
+    ],
+    breaks: asBreaks([1])
+  },
   {
     alias: '^en',
     rule: {
@@ -208,7 +217,7 @@ module.exports = {
     },
     "release": {
       restdays: 30,
-      sample: 10/million,  // 1 in 100000
+      sample: 100/million,  // 1 in 10000
       locales: supportedLocales
     }
   },

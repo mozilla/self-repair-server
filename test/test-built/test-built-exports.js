@@ -15,7 +15,7 @@
 
 let RECIPEINFO = {
   "heartbeat by user v1": 63,
-  "Messaging with external links": 18
+  "Messaging with external links": 19
 };
 
 /* this code mostly exists
