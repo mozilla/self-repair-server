@@ -13,7 +13,7 @@
 
 "use strict";
 
-const VERSION=20;
+const VERSION=21;
 
 const million = Math.pow(10,6);
 const thousand = Math.pow(10,3);
@@ -137,17 +137,6 @@ for (let k in messages) { messages[k].name = k }
 // ENROLLMENT RULES
 let rules = [
   {
-    alias: '^en, release',
-    rule: {
-      locale: /^en/i,
-      updateChannel: /^release/i
-    },
-    choices: [
-      messages['x-shield-study-performance-2']
-    ],
-    breaks: asBreaks([1])
-  },
-  {
     alias: '^en',
     rule: {
       locale: /^en/i
@@ -180,7 +169,7 @@ let supportedLocales = [ 'de',
   *   - scaled cumulative sum of ratios
   */
 function asBreaks(ratios) {
-  if (ratios.length < 1) throw new Error("must have entries")
+  if (ratios.length < 1) return []
   if (ratios.some((x) => typeof x !== 'number')) throw new Error("all must be numbers")
   if (ratios.some((x) => x <= 0)) throw new Error("all must be positive")
   var t = ratios.reduce((x,y) => x+y)
@@ -207,17 +196,17 @@ module.exports = {
     },
     "aurora": {
       restdays: 30,
-      sample: 20 * percent * percent,  // 1 in 500
+      sample: 1 * percent * percent,  // 1 in 10000
       locales: supportedLocales
     },
     "beta": {
       restdays: 30,
-      sample: 4 * percent * percent,  // 1 in 2500
+      sample: 1 * percent * percent,  // 1 in 10000
       locales: supportedLocales
     },
     "release": {
       restdays: 30,
-      sample: 5*100/million,  // 5 in 10000
+      sample: 10/million,  // 1 in 100000
       locales: supportedLocales
     }
   },
