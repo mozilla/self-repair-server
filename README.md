@@ -79,8 +79,8 @@ Build using webpack
 
 #### Automated
 
-- tests in `/tests/recipes/<yourplace>` to mirror your structure.
-- run tests `npm run test:unit --karmafiles="test/**/*.js"
+- tests in `/test/recipes/<yourplace>` to mirror your structure.
+- run tests `npm run test:unit --karmafiles="test/**/*.js"`
 - attempt 100% code coverage
 
 #### Iterative
