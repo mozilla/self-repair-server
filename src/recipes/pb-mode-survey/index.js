@@ -14,7 +14,7 @@
 let common = require("../../common");
 let allconfigs = require("./config");
 let actions  = common.actions;
-let log = actions.log.bind(actions.log, "pb-mode-survey");
+let log = actions.log.bind(actions.log, "pb-mode-survey-germany");
 
 let { Flow, phonehome } = require("../../common/heartbeat/");
 let phConfig = phonehome.config;
@@ -50,12 +50,12 @@ let { Lstore } = require("../../common/recipe-utils");
 
 */
 
-const NAME="pb-mode-survey";
+const NAME="pb-mode-survey-germany";
 const VERSION=2;
 
 let config = {
-  lskey : 'pb-mode-survey',
-  survey_id : "pb-mode-survey",
+  lskey : 'pb-mode-survey-germany',
+  survey_id : "pb-mode-survey-germany",
 };
 
 const days = 24 * 60 * 60 * 1000;
@@ -170,14 +170,14 @@ let run = function (state, extras) {
 
   // https://bugzilla.mozilla.org/show_bug.cgi?id=1196104#c2
   UITour.showHeartbeat(
-    "Would you like to share feedback with Mozilla?",
-    "Thank you!",
+    "Möchten Sie an einer Umfrage teilnehmen um Firefox zu verbessern?",
+    "Vielen Dank dass Sie an der Umfrage teilgenommen haben. Ihre Antworten helfen uns dabei Firefox zu verbessern.",
     flowid,
-    `http://qsurvey.mozilla.com/s3/Private-Browsing-Survey?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
+    `http://qsurvey.mozilla.com/s3/PBM-Survey-Genpop-41-German?source=pb-mode-survey&surveyversion=${VERSION}&updateChannel=${state.updateChannel}&fxVersion=${state.fxVersion}`,
     null, // learn more text
     null, // learn more link
     {
-      engagementButtonLabel: "Take Survey",
+      engagementButtonLabel: "Teilnehmen",
       privateWindowsOnly: true,
     }
   );

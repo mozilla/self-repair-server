@@ -25,22 +25,22 @@ let days = 24 * 60 * 60 * 1000;
 module.exports = {
   "nightly": {
     restdays: 30,
-    sample: 1 / thousand,  // 1 of 1000
+    sample: 0 / thousand,  // 1 of 1000
     locales: ['en-US']
   },
   "aurora": {
     restdays: 30,
-    sample: 20 * percent,
+    sample: 0 * percent,
     locales: ['en-US']
   },
   "beta": {
     restdays: 30,
-    sample: 4 * percent * percent,  // 1 in 2500
+    sample: 0 * percent * percent,  // 1 in 2500
     locales: ['en-US']
   },
   "release": {
     restdays: 30,
     sample: 10/million,  // 1 in 100000
-    locales: ['en-US']
+    locales: ['de']
   }
 };
